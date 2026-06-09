@@ -12,7 +12,49 @@ async function main() {
   schedules.push(...importEibi());
   schedules.push(...importAoki());
 
-  schedules.sort((a, b) => {
+const merged = new Map();
+
+for (const item of schedules) {
+  const key = [
+    item.freq,
+    item.start,
+    item.end,
+    String(item.station).toLowerCase()
+  ].join("|");
+
+  if (!merged.has(key)) {
+    merged.set(key, item);
+    continue;
+  }
+
+  const existing = merged.get(key);
+
+  const sources = new Set(
+    String(existing.source)
+      .split("+")
+      .map(x => x.trim())
+  );
+
+  sources.add(item.source);
+
+  existing.source = [...sources].join("+");
+
+  if (!existing.target && item.target) {
+    existing.target = item.target;
+  }
+
+  if (!existing.language && item.language) {
+    existing.language = item.language;
+  }
+
+  if (!existing.country && item.country) {
+    existing.country = item.country;
+  }
+}
+
+const finalSchedules = [...merged.values()];
+
+  finalSchedules.sort((a, b) => {
     if (a.freq !== b.freq) return a.freq - b.freq;
     return String(a.start).localeCompare(String(b.start));
   });
@@ -24,13 +66,13 @@ async function main() {
     JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
-        count: schedules.length,
+        count: finalSchedules.length
         sources: {
           EiBi: schedules.filter(x => x.source === "EiBi").length,
           AOKI: schedules.filter(x => x.source === "AOKI").length,
           HFCC: schedules.filter(x => x.source === "HFCC").length
         },
-        schedules
+        schedules: finalSchedules
       },
       null,
       2
