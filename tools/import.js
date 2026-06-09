@@ -3,7 +3,7 @@ const path = require("path");
 
 const { importEibi } = require("./import-eibi");
 const { importAoki } = require("./import-aoki");
-// const { importHfcc } = require("./import-hfcc");
+const { importHfcc } = require("./import-hfcc");
 
 const outputPath = path.join(__dirname, "..", "data", "schedules.json");
 
@@ -12,7 +12,7 @@ async function main() {
 
   schedules.push(...importEibi());
   schedules.push(...importAoki());
-  // schedules.push(...importHfcc());
+  schedules.push(...importHfcc());
 
 const merged = new Map();
 
@@ -52,6 +52,11 @@ for (const item of schedules) {
   if (!existing.country && item.country) {
     existing.country = item.country;
   }
+  if (!existing.txSite && item.txSite) existing.txSite = item.txSite;
+if (!existing.txCode && item.txCode) existing.txCode = item.txCode;
+if (!existing.txCountry && item.txCountry) existing.txCountry = item.txCountry;
+if (!existing.txLat && item.txLat) existing.txLat = item.txLat;
+if (!existing.txLon && item.txLon) existing.txLon = item.txLon;
 }
 
 const finalSchedules = [...merged.values()];

@@ -21,6 +21,54 @@ function detectBand(freqKHz) {
   return "";
 }
 
+function parseCoord(value) {
+  const m = String(value || "").match(/^(\d{2,3})([NSEW])(\d{2})$/);
+  if (!m) return null;
+
+  const deg = Number(m[1]);
+  const min = Number(m[3]);
+  const dir = m[2];
+
+  let result = deg + min / 60;
+
+  if (dir === "S" || dir === "W") result *= -1;
+
+  return Number(result.toFixed(4));
+}
+
+function parseSites(zip) {
+  const entry = zip.getEntry("site.txt");
+  if (!entry) return {};
+
+  const raw = entry.getData().toString("latin1");
+  const lines = raw.split(/\r?\n/);
+
+  const sites = {};
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith(";")) continue;
+
+    const match = trimmed.match(/^([A-Z0-9-]{2,6})\s+(.+?)\s+([A-Z]{1,3})\s+(\d{2}[NS]\d{2})\s+(\d{3}[EW]\d{2})$/);
+
+    if (!match) continue;
+
+    const [, code, name, country, latRaw, lonRaw] = match;
+
+    sites[code] = {
+      code,
+      name: name.trim(),
+      country,
+      lat: parseCoord(latRaw),
+      lon: parseCoord(lonRaw)
+    };
+  }
+
+  console.log(`HFCC sites: ${Object.keys(sites).length}`);
+
+  return sites;
+}
+
 function importHfcc() {
   if (!fs.existsSync(inputPath)) {
     console.warn("HFCC file missing:", inputPath);
@@ -28,6 +76,7 @@ function importHfcc() {
   }
 
   const zip = new AdmZip(inputPath);
+  const sites = parseSites(zip);
 
   const entry = zip.getEntries().find(e =>
     e.entryName.toLowerCase().includes("all") &&
@@ -40,7 +89,6 @@ function importHfcc() {
   }
 
   const raw = entry.getData().toString("latin1");
-
   const lines = raw.split(/\r?\n/);
 
   const schedules = [];
@@ -48,36 +96,33 @@ function importHfcc() {
   for (const line of lines) {
     const trimmed = line.trim();
 
-    if (!trimmed) continue;
-
-    if (!/^\d{4,5}\s+\d{4}\s+\d{4}/.test(trimmed)) {
-      continue;
-    }
+    if (!/^\d{4,5}\s+\d{4}\s+\d{4}/.test(trimmed)) continue;
 
     const parts = trimmed.split(/\s+/);
 
     const freq = Number(parts[0]);
     const start = parts[1];
     const end = parts[2];
-
-    if (!freq || !start || !end) continue;
-
-    const country = parts[15] || "";
-    const station = parts[16] || "";
-    const language = parts[13] || "";
-    const target = parts[3] || "";
+    const txCode = parts[4] || "";
+    const site = sites[txCode];
 
     schedules.push({
       freq,
       start,
       end,
       days: parts[9] || "",
-      country,
-      station,
-      language,
-      target,
-      remarks: "",
+      country: parts[15] || "",
+      station: parts[16] || "",
+      language: parts[13] || "",
+      target: parts[3] || "",
+      type: "",
       power: parts[5] || "",
+      txCode,
+      txSite: site?.name || txCode,
+      txCountry: site?.country || "",
+      txLat: site?.lat || null,
+      txLon: site?.lon || null,
+      remarks: trimmed,
       band: detectBand(freq),
       source: "HFCC"
     });

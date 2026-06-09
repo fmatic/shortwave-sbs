@@ -424,6 +424,9 @@ function getFiltered() {
         item.target,
         item.band,
 		item.type,
+		item.txSite,
+item.txCode,
+item.txCountry,
         item.source,
         item.remarks
       ].join(" ").toLowerCase();
@@ -433,6 +436,16 @@ function getFiltered() {
 
     return true;
   });
+}
+
+function formatTxSite(item) {
+  if (item.txSite) {
+    return item.txCode
+      ? `${item.txSite} (${item.txCode})`
+      : item.txSite;
+  }
+
+  return item.type || "—";
 }
 
 function renderActivityOverview() {
@@ -655,7 +668,7 @@ return `
       ${escapeHtml(item.country)}
     </td>
 
-    <td>${escapeHtml(item.type || "—")}</td>
+   <td>${escapeHtml(formatTxSite(item))}</td>
     <td>${escapeHtml(item.source)}</td>
   </tr>
 `;
@@ -701,7 +714,11 @@ function showDetails(item) {
     ["Country", item.country],
     ["Band", item.band],
 	["Type", item.type],
-    ["Days", item.days],
+	["Tx Site", item.txSite],
+	["Tx Code", item.txCode],
+	["Tx Country", item.txCountry],
+	["Tx Coordinates", item.txLat && item.txLon ? `${item.txLat}, ${item.txLon}` : ""],
+	["Days", item.days],
     ["Power", item.power],
     ["Remarks", item.remarks],
     ["Source", item.source],
