@@ -314,6 +314,16 @@ function renderTable() {
   const rows = getFiltered()
     .sort((a, b) => a.freq - b.freq)
     .slice(0, 600);
+	if (!rows.length) {
+  els.scheduleBody.innerHTML = `
+    <tr>
+      <td colspan="8" class="empty-row">
+        No broadcasts found with current filters
+      </td>
+    </tr>
+  `;
+  return;
+}
 
   els.scheduleBody.innerHTML = rows.map((item, index) => {
     const live = isOnAir(item);

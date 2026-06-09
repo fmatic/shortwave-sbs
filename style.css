@@ -620,3 +620,44 @@ tr {
     min-width: 100%;
   }
 }
+
+.empty-row {
+  text-align: center;
+  color: var(--muted) !important;
+  padding: 28px 14px;
+  font-style: italic;
+}
+
+.live-row {
+  transition: background .25s ease;
+}
+
+.band-card,
+.activity-card,
+.insight-card,
+.table-wrap {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@media (max-width: 700px) {
+  h1 {
+    font-size: 40px;
+  }
+
+  .band-card {
+    grid-template-columns: 1fr;
+  }
+
+  .section-head {
+    flex-direction: column;
+  }
+
+  .target-row {
+    grid-template-columns: 110px 1fr 38px;
+  }
+
+  .snapshot {
+    grid-template-columns: 1fr;
+  }
+}
