@@ -561,7 +561,7 @@ tr {
 .toggle input {
   width: 18px;
   height: 18px;
-  accent-color: #5eead4;
+
 }
 
 /* iPad / Safari controls fix */
@@ -811,4 +811,54 @@ tr {
   .condition-row {
     grid-template-columns: 52px 1fr 78px;
   }
+}
+
+/* Cross-browser custom controls */
+.auto-btn,
+.about-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  background: linear-gradient(135deg, rgba(94,234,212,.18), rgba(56,189,248,.14));
+  color: var(--accent);
+  border: 1px solid rgba(94,234,212,.35);
+}
+
+.toggle input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.toggle input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-color: transparent;
+  box-shadow: 0 0 16px rgba(94,234,212,.28);
+}
+
+.toggle input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: #041014;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.toggle input[type="checkbox"]:focus-visible {
+  outline: 2px solid rgba(94,234,212,.65);
+  outline-offset: 3px;
+}
+
+.toggle:has(input[type="checkbox"]:checked) {
+  color: var(--text);
+  border-color: rgba(94,234,212,.28);
+  background: rgba(94,234,212,.07);
 }
