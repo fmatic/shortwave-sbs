@@ -66,7 +66,7 @@ const finalSchedules = [...merged.values()];
     JSON.stringify(
       {
         generatedAt: new Date().toISOString(),
-        count: finalSchedules.length
+        count: finalSchedules.length,
         sources: {
           EiBi: schedules.filter(x => x.source === "EiBi").length,
           AOKI: schedules.filter(x => x.source === "AOKI").length,
