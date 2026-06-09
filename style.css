@@ -122,10 +122,11 @@ h1 {
 }
 
 .controls {
-  display: grid;
-  grid-template-columns: 1fr 160px auto auto auto auto auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 18px;
+  align-items: center;
 }
 
 input,
@@ -538,4 +539,31 @@ tr {
   color: var(--accent);
   font-size: 13px;
   margin-top: 8px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.controls input[type="search"] {
+  flex: 1 1 320px;
+  min-width: 220px;
+}
+
+.controls select {
+  min-width: 110px;
+}
+
+.auto-btn {
+  flex-shrink: 0;
+}
+
+.toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: #5eead4;
 }
