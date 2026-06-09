@@ -152,13 +152,11 @@ function conditionLabel(score) {
   return "Poor";
 }
 
-function renderConditions() {
-  const fallback = {
-    lat: 62.24,
-    lon: 25.75,
-    label: "Jyväskylä fallback"
-  };
-
+const fallback = {
+  lat: 62.24,
+  lon: 25.75,
+  label: "Jyväskylä fallback / Nordic profile"
+};
   const loc = userLocation || fallback;
   const elevation = getSolarElevationApprox(loc.lat, loc.lon);
   const mode = getPathMode(elevation);
@@ -184,7 +182,9 @@ function renderConditions() {
 
 function requestLocation() {
   if (!navigator.geolocation) {
-    els.conditionLocation.textContent = "Geolocation not supported";
+    els.conditionLocation.textContent = "Geolocation not supported • using fallback";
+    userLocation = null;
+    renderConditions();
     return;
   }
 
@@ -201,13 +201,30 @@ function requestLocation() {
       els.locationBtn.textContent = "Location active";
       renderConditions();
     },
-    () => {
+    error => {
       els.locationBtn.textContent = "Use my location";
-      els.conditionLocation.textContent = "Location permission denied";
+      userLocation = null;
+
+      if (error.code === error.PERMISSION_DENIED) {
+        els.conditionLocation.textContent = "Location denied • using fallback";
+      } else if (error.code === error.POSITION_UNAVAILABLE) {
+        els.conditionLocation.textContent = "Location unavailable • using fallback";
+      } else if (error.code === error.TIMEOUT) {
+        els.conditionLocation.textContent = "Location timed out • using fallback";
+      } else {
+        els.conditionLocation.textContent = "Location error • using fallback";
+      }
+
+      console.warn("Geolocation error:", {
+        code: error.code,
+        message: error.message
+      });
+
+      renderConditions();
     },
     {
       enableHighAccuracy: false,
-      timeout: 8000,
+      timeout: 15000,
       maximumAge: 3600000
     }
   );
