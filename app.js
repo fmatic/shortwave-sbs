@@ -423,6 +423,7 @@ function getFiltered() {
         item.country,
         item.target,
         item.band,
+		item.type,
         item.source,
         item.remarks
       ].join(" ").toLowerCase();
@@ -639,22 +640,25 @@ function renderTable() {
   els.scheduleBody.innerHTML = rows.map((item, index) => {
     const live = isOnAir(item);
 
-    return `
-      <tr class="${live ? "live-row" : ""}" data-index="${index}">
-        <td>${escapeHtml(item.freq)} kHz</td>
-        <td>${escapeHtml(fmtTime(item.start, item.end))}</td>
-        <td>${escapeHtml(item.station)}</td>
-        <td>${escapeHtml(item.language)}</td>
-        <td>${escapeHtml(item.target)}</td>
-  <td>
-  <span class="flag ${item.country === 'CLA' ? 'flag-cla' : ''}">
-    ${getFlag(item.country)}
-  </span>
-  ${escapeHtml(item.country)}
-</td>td>${escapeHtml(item.band)}</td>
-        <td>${escapeHtml(item.source)}</td>
-      </tr>
-    `;
+return `
+  <tr class="${live ? "live-row" : ""}" data-index="${index}">
+    <td>${escapeHtml(item.freq)} kHz</td>
+    <td>${escapeHtml(fmtTime(item.start, item.end))}</td>
+    <td>${escapeHtml(item.station)}</td>
+    <td>${escapeHtml(item.language)}</td>
+    <td>${escapeHtml(item.target)}</td>
+
+    <td>
+      <span class="flag ${item.country === 'CLA' ? 'flag-cla' : ''}">
+        ${getFlag(item.country)}
+      </span>
+      ${escapeHtml(item.country)}
+    </td>
+
+    <td>${escapeHtml(item.type || "—")}</td>
+    <td>${escapeHtml(item.source)}</td>
+  </tr>
+`;
   }).join("");
 
   [...els.scheduleBody.querySelectorAll("tr")].forEach((tr, index) => {
@@ -696,6 +700,7 @@ function showDetails(item) {
     ["Target", item.target],
     ["Country", item.country],
     ["Band", item.band],
+	["Type", item.type],
     ["Days", item.days],
     ["Power", item.power],
     ["Remarks", item.remarks],

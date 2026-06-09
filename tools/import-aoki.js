@@ -69,6 +69,7 @@ function importAoki() {
       station,
       language: "",
       target: "",
+	  type: "",
       remarks: trimmed,
       power: "",
       band: detectBand(freq),

@@ -44,20 +44,23 @@ function importEibi() {
 
     if (!freqKHz || !start || !end) continue;
 
-    const schedule = {
-      freq: Math.round(freqKHz),
-      start: start || "",
-      end: end || "",
-      days: cols[2] || "",
-      country: cols[3] || "",
-      station: cols[4] || "",
-      language: cols[5] || "",
-      target: cols[6] || "",
-      remarks: cols[7] || "",
-      power: cols[8] || "",
-      band: detectBand(Math.round(freqKHz)),
-      source: "EiBi"
-    };
+   const schedule = {
+  freq: Math.round(freqKHz),
+  start: start || "",
+  end: end || "",
+  days: cols[2] || "",
+  country: cols[3] || "",
+  station: cols[4] || "",
+  language: cols[5] || "",
+  target: cols[6] || "",
+  type: cols[7] || "",
+  power: cols[8] || "",
+  startDate: cols[9] || "",
+  endDate: cols[10] || "",
+  remarks: cols[11] || "",
+  band: detectBand(Math.round(freqKHz)),
+  source: "EiBi"
+};
 
     schedules.push(schedule);
   }
