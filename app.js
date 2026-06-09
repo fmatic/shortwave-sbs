@@ -39,7 +39,10 @@ activeCountries: document.getElementById("activeCountries"),
 activeStations: document.getElementById("activeStations"),
 sourceToggles: document.querySelectorAll(".sourceToggle"),
 autoBandBtn: document.getElementById("autoBandBtn"),
-bandReason: document.getElementById("bandReason")
+bandReason: document.getElementById("bandReason"),
+aboutBtn: document.getElementById("aboutBtn"),
+aboutModal: document.getElementById("aboutModal"),
+aboutClose: document.getElementById("aboutClose")
 };
 
 function updateClock() {
@@ -66,6 +69,14 @@ function timeToMinutes(value) {
   if (Number.isNaN(h) || Number.isNaN(m)) return null;
 
   return h * 60 + m;
+}
+
+function showAbout() {
+  els.aboutModal.classList.remove("hidden");
+}
+
+function hideAbout() {
+  els.aboutModal.classList.add("hidden");
 }
 
 function isOnAir(item) {
@@ -432,6 +443,12 @@ render();
 els.searchInput.addEventListener("input", render);
 els.bandSelect.addEventListener("change", render);
 els.onAirOnly.addEventListener("change", render);
+els.aboutBtn.addEventListener("click", showAbout);
+els.aboutClose.addEventListener("click", hideAbout);
+
+els.aboutModal.addEventListener("click", event => {
+  if (event.target === els.aboutModal) hideAbout();
+});
 if (els.autoBandBtn) {
   els.autoBandBtn.addEventListener("click", applyAutoBand);
 }
@@ -445,7 +462,10 @@ els.detailModal.addEventListener("click", event => {
 });
 
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape") hideDetails();
+  if (event.key === "Escape") {
+    hideDetails();
+    hideAbout();
+  }
 });
 
 updateClock();

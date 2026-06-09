@@ -30,18 +30,18 @@ function importHfcc() {
   const zip = new AdmZip(inputPath);
 
   const entry = zip.getEntries().find(e =>
-    !e.isDirectory &&
-    /\.(txt|csv|dat)$/i.test(e.entryName)
+    e.entryName.toLowerCase().includes("all") &&
+    e.entryName.toLowerCase().endsWith(".txt")
   );
 
   if (!entry) {
-    console.warn("HFCC zip contains no usable file");
+    console.warn("HFCC TXT file not found");
     return [];
   }
 
   const raw = entry.getData().toString("latin1");
 
-  const lines = raw.split(/\r?\n/).filter(Boolean);
+  const lines = raw.split(/\r?\n/);
 
   const schedules = [];
 
@@ -50,30 +50,34 @@ function importHfcc() {
 
     if (!trimmed) continue;
 
-    if (!/^\d/.test(trimmed)) continue;
+    if (!/^\d{4,5}\s+\d{4}\s+\d{4}/.test(trimmed)) {
+      continue;
+    }
 
-    const cols = trimmed.split(";");
+    const parts = trimmed.split(/\s+/);
 
-    if (cols.length < 8) continue;
+    const freq = Number(parts[0]);
+    const start = parts[1];
+    const end = parts[2];
 
-    const freq = Number(cols[0]);
+    if (!freq || !start || !end) continue;
 
-    if (!freq) continue;
-
-    const start = String(cols[1] || "").padStart(4, "0");
-    const end = String(cols[2] || "").padStart(4, "0");
+    const country = parts[15] || "";
+    const station = parts[16] || "";
+    const language = parts[13] || "";
+    const target = parts[3] || "";
 
     schedules.push({
       freq,
       start,
       end,
-      days: cols[3] || "",
-      country: cols[4] || "",
-      station: cols[5] || "",
-      language: cols[6] || "",
-      target: cols[7] || "",
+      days: parts[9] || "",
+      country,
+      station,
+      language,
+      target,
       remarks: "",
-      power: cols[8] || "",
+      power: parts[5] || "",
       band: detectBand(freq),
       source: "HFCC"
     });

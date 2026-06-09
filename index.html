@@ -15,6 +15,7 @@
       </div>
       <div class="clock">
   <div class="version">v0.2.0</div>
+  <button id="aboutBtn" class="about-btn" type="button">About</button>
   <span id="utcClock">--:-- UTC</span>
   <small id="dataInfo">Loading schedules…</small>
 </div>
@@ -136,6 +137,75 @@
     <button id="modalClose" class="modal-close">×</button>
     <h2 id="modalStation">Station</h2>
     <div id="modalMeta" class="modal-meta"></div>
+  </div>
+</div>
+<div id="aboutModal" class="modal hidden">
+  <div class="modal-card about-card">
+    <button id="aboutClose" class="modal-close">×</button>
+
+    <h2>About shortwave.sbs</h2>
+
+    <div class="about-section">
+      <h3>What is this?</h3>
+      <p>
+        shortwave.sbs is a modern dark-themed HF broadcast monitor
+        built for shortwave listeners and DXers.
+      </p>
+    </div>
+
+    <div class="about-section">
+      <h3>Features</h3>
+      <ul>
+        <li>Live UTC clock</li>
+        <li>HF band activity overview</li>
+        <li>Auto Band recommendation</li>
+        <li>Best DX targets</li>
+        <li>On-air filtering</li>
+        <li>EiBi and AOKI schedule support</li>
+      </ul>
+    </div>
+
+    <div class="about-section">
+      <h3>Data sources</h3>
+      <ul>
+        <li>EiBi schedule database</li>
+        <li>AOKI shortwave schedules</li>
+        <li>HFCC support planned with lookup resolver</li>
+      </ul>
+    </div>
+
+    <div class="about-section">
+      <h3>Changelog & source updates</h3>
+
+      <div class="log-row">
+        <span>09.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added AOKI source support and source filters.</p>
+      </div>
+
+      <div class="log-row">
+        <span>09.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added Auto Band, HF Activity overview, Best DX Targets and Live Snapshot.</p>
+      </div>
+
+      <div class="log-row">
+        <span>09.06.2026</span>
+        <strong>[Update]</strong>
+        <p>EiBi and AOKI lists updated to latest locally available versions.</p>
+      </div>
+    </div>
+
+    <div class="about-section">
+      <h3>Roadmap</h3>
+      <ul>
+        <li>HFCC lookup resolver</li>
+        <li>Geolocation-aware DX targets</li>
+        <li>Propagation-aware Auto Band</li>
+        <li>Greyline visualization</li>
+        <li>HF weather layer</li>
+      </ul>
+    </div>
   </div>
 </div>
 	<footer class="footer">
