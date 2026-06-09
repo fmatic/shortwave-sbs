@@ -152,7 +152,8 @@ function conditionLabel(score) {
   return "Poor";
 }
 
-const fallback = {
+function renderConditions() {
+  const fallback = {
   lat: 62.24,
   lon: 25.75,
   label: "Jyväskylä fallback / Nordic profile"
