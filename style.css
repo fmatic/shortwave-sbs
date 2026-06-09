@@ -836,11 +836,7 @@ tr {
 }
 
 .toggle input[type="checkbox"]:checked::after {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 2px;
-  background: #041014;
+  content: none;
 }
 
 .toggle input[type="checkbox"]:focus-visible {
