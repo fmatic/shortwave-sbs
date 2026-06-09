@@ -1,4 +1,5 @@
 let allSchedules = [];
+let userLocation = null;
 
 const bandRanges = {
   "120m": [2300, 2495],
@@ -42,7 +43,11 @@ autoBandBtn: document.getElementById("autoBandBtn"),
 bandReason: document.getElementById("bandReason"),
 aboutBtn: document.getElementById("aboutBtn"),
 aboutModal: document.getElementById("aboutModal"),
-aboutClose: document.getElementById("aboutClose")
+aboutClose: document.getElementById("aboutClose"),
+locationBtn: document.getElementById("locationBtn"),
+conditionLocation: document.getElementById("conditionLocation"),
+pathMode: document.getElementById("pathMode"),
+conditionBands: document.getElementById("conditionBands")
 };
 
 function updateClock() {
@@ -77,6 +82,135 @@ function showAbout() {
 
 function hideAbout() {
   els.aboutModal.classList.add("hidden");
+}
+
+function degToRad(deg) {
+  return deg * Math.PI / 180;
+}
+
+function radToDeg(rad) {
+  return rad * 180 / Math.PI;
+}
+
+function dayOfYear(date) {
+  const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
+  const diff = date - start;
+  return Math.floor(diff / 86400000);
+}
+
+function getSolarElevationApprox(lat, lon) {
+  const now = new Date();
+  const day = dayOfYear(now);
+  const hourUtc = now.getUTCHours() + now.getUTCMinutes() / 60;
+
+  const decl = 23.44 * Math.sin(degToRad((360 / 365) * (day - 81)));
+  const solarTime = hourUtc + lon / 15;
+  const hourAngle = 15 * (solarTime - 12);
+
+  const elevation = radToDeg(Math.asin(
+    Math.sin(degToRad(lat)) * Math.sin(degToRad(decl)) +
+    Math.cos(degToRad(lat)) * Math.cos(degToRad(decl)) * Math.cos(degToRad(hourAngle))
+  ));
+
+  return elevation;
+}
+
+function getPathMode(elevation) {
+  if (elevation > 8) return "Day";
+  if (elevation > -6) return "Twilight";
+  return "Night";
+}
+
+function getConditionScore(band, mode) {
+  const scores = {
+    Day: {
+      "120m": 15, "90m": 20, "75m": 25, "60m": 35,
+      "49m": 50, "41m": 65, "31m": 80, "25m": 75,
+      "22m": 65, "19m": 55, "16m": 40, "13m": 25, "11m": 15
+    },
+    Twilight: {
+      "120m": 35, "90m": 45, "75m": 55, "60m": 65,
+      "49m": 85, "41m": 80, "31m": 75, "25m": 55,
+      "22m": 40, "19m": 30, "16m": 20, "13m": 15, "11m": 10
+    },
+    Night: {
+      "120m": 60, "90m": 70, "75m": 80, "60m": 85,
+      "49m": 95, "41m": 88, "31m": 60, "25m": 35,
+      "22m": 25, "19m": 15, "16m": 10, "13m": 5, "11m": 5
+    }
+  };
+
+  return scores[mode]?.[band] ?? 0;
+}
+
+function conditionLabel(score) {
+  if (score >= 85) return "Excellent";
+  if (score >= 70) return "Very good";
+  if (score >= 55) return "Good";
+  if (score >= 35) return "Fair";
+  if (score >= 20) return "Weak";
+  return "Poor";
+}
+
+function renderConditions() {
+  const fallback = {
+    lat: 62.24,
+    lon: 25.75,
+    label: "Jyväskylä fallback"
+  };
+
+  const loc = userLocation || fallback;
+  const elevation = getSolarElevationApprox(loc.lat, loc.lon);
+  const mode = getPathMode(elevation);
+
+  els.conditionLocation.textContent = loc.label;
+  els.pathMode.textContent = mode;
+
+  els.conditionBands.innerHTML = bandOrder.map(band => {
+    const score = getConditionScore(band, mode);
+    const label = conditionLabel(score);
+
+    return `
+      <div class="condition-row">
+        <div class="condition-name">${escapeHtml(band)}</div>
+        <div class="condition-meter">
+          <div class="condition-fill" style="width:${score}%"></div>
+        </div>
+        <div class="condition-label">${escapeHtml(label)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function requestLocation() {
+  if (!navigator.geolocation) {
+    els.conditionLocation.textContent = "Geolocation not supported";
+    return;
+  }
+
+  els.locationBtn.textContent = "Locating…";
+
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      userLocation = {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+        label: `${position.coords.latitude.toFixed(2)}, ${position.coords.longitude.toFixed(2)}`
+      };
+
+      els.locationBtn.textContent = "Location active";
+      renderConditions();
+    },
+    () => {
+      els.locationBtn.textContent = "Use my location";
+      els.conditionLocation.textContent = "Location permission denied";
+    },
+    {
+      enableHighAccuracy: false,
+      timeout: 8000,
+      maximumAge: 3600000
+    }
+  );
 }
 
 function isOnAir(item) {
@@ -418,9 +552,9 @@ function render() {
   renderActivityOverview();
   renderTargets();
   renderSnapshot();
+  renderConditions();
   renderTable();
 }
-
 async function loadSchedules() {
   const res = await fetch("data/schedules.json");
   const data = await res.json();
@@ -443,6 +577,7 @@ render();
 els.searchInput.addEventListener("input", render);
 els.bandSelect.addEventListener("change", render);
 els.onAirOnly.addEventListener("change", render);
+els.locationBtn.addEventListener("click", requestLocation);
 els.aboutBtn.addEventListener("click", showAbout);
 els.aboutClose.addEventListener("click", hideAbout);
 

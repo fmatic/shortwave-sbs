@@ -735,3 +735,80 @@ tr {
     gap: 4px;
   }
 }
+
+.conditions-card {
+  background: rgba(10,15,24,.72);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.conditions-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.conditions-top strong {
+  display: block;
+  color: var(--accent);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.conditions-top span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.condition-bands {
+  display: grid;
+  gap: 10px;
+}
+
+.condition-row {
+  display: grid;
+  grid-template-columns: 52px 1fr 92px;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.condition-name {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.condition-meter {
+  height: 10px;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.condition-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+.condition-label {
+  color: var(--muted);
+  text-align: right;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .conditions-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .condition-row {
+    grid-template-columns: 52px 1fr 78px;
+  }
+}
