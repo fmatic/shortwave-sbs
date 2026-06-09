@@ -904,3 +904,8 @@ tr {
   min-width: 1.6em;
   margin-right: 6px;
 }
+
+.flag-cla {
+  filter: saturate(1.4);
+  opacity: .95;
+}

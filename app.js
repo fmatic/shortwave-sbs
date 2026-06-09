@@ -282,6 +282,7 @@ const ituFlags = {
   CAN: "🇨🇦",
   CHL: "🇨🇱",
   CHN: "🇨🇳",
+  CLA: "📻",
   CLM: "🇨🇴",
   CME: "🇨🇲",
   COD: "🇨🇩",
@@ -293,6 +294,7 @@ const ituFlags = {
   D: "🇩🇪",
   DNK: "🇩🇰",
   E: "🇪🇸",
+  EQA: "🇪🇨",
   EGY: "🇪🇬",
   ERI: "🇪🇷",
   EST: "🇪🇪",
@@ -307,6 +309,7 @@ const ituFlags = {
   HRV: "🇭🇷",
   I: "🇮🇹",
   IND: "🇮🇳",
+  INS: "🇮🇩",
   IRL: "🇮🇪",
   IRN: "🇮🇷",
   IRQ: "🇮🇶",
@@ -325,11 +328,15 @@ const ituFlags = {
   LUX: "🇱🇺",
   LVA: "🇱🇻",
   MCO: "🇲🇨",
+  MDG: "🇲🇬",
   MDA: "🇲🇩",
   MEX: "🇲🇽",
   MKD: "🇲🇰",
+  MLA: "🇲🇾",
+  MLI: "🇲🇱",
   MNG: "🇲🇳",
   MRC: "🇲🇦",
+  MYA: "🇲🇲",
   MYS: "🇲🇾",
   NGR: "🇳🇬",
   NOR: "🇳🇴",
@@ -346,6 +353,7 @@ const ituFlags = {
   SDN: "🇸🇩",
   SEN: "🇸🇳",
   SNG: "🇸🇬",
+  SLM: "🇸🇧",
   SRB: "🇷🇸",
   SUI: "🇨🇭",
   SVK: "🇸🇰",
@@ -638,11 +646,12 @@ function renderTable() {
         <td>${escapeHtml(item.station)}</td>
         <td>${escapeHtml(item.language)}</td>
         <td>${escapeHtml(item.target)}</td>
-        <td>
-  <span class="flag">${getFlag(item.country)}</span>
+  <td>
+  <span class="flag ${item.country === 'CLA' ? 'flag-cla' : ''}">
+    ${getFlag(item.country)}
+  </span>
   ${escapeHtml(item.country)}
-</td>
-        <td>${escapeHtml(item.band)}</td>
+</td>td>${escapeHtml(item.band)}</td>
         <td>${escapeHtml(item.source)}</td>
       </tr>
     `;
