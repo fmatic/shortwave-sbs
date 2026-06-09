@@ -69,6 +69,33 @@ function parseSites(zip) {
   return sites;
 }
 
+function parseBroadcasters(zip) {
+  const entry = zip.getEntry("broadcas.txt");
+  if (!entry) return {};
+
+  const raw = entry.getData().toString("latin1");
+  const lines = raw.split(/\r?\n/);
+
+  const broadcasters = {};
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith(";")) continue;
+
+    const match = trimmed.match(/^([A-Z0-9]{2,6})\s+(.+)$/);
+    if (!match) continue;
+
+    const [, code, name] = match;
+
+    broadcasters[code] = name.trim();
+  }
+
+  console.log(`HFCC broadcasters: ${Object.keys(broadcasters).length}`);
+
+  return broadcasters;
+}
+
 function importHfcc() {
   if (!fs.existsSync(inputPath)) {
     console.warn("HFCC file missing:", inputPath);
@@ -77,7 +104,7 @@ function importHfcc() {
 
   const zip = new AdmZip(inputPath);
   const sites = parseSites(zip);
-
+const broadcasters = parseBroadcasters(zip);
   const entry = zip.getEntries().find(e =>
     e.entryName.toLowerCase().includes("all") &&
     e.entryName.toLowerCase().endsWith(".txt")
@@ -112,7 +139,8 @@ function importHfcc() {
       end,
       days: parts[9] || "",
       country: parts[15] || "",
-      station: parts[16] || "",
+      station: broadcasters[parts[16]] || parts[16] || "",
+	  stationCode: parts[16] || "",
       language: parts[13] || "",
       target: parts[3] || "",
       type: "",
