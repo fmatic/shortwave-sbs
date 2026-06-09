@@ -17,6 +17,16 @@ const bandRanges = {
   "11m": [25670, 26100]
 };
 
+const locationProfiles = {
+  "Northern Europe": { lat: 62.0, lon: 25.0, label: "Northern Europe profile" },
+  "Central Europe": { lat: 50.0, lon: 10.0, label: "Central Europe profile" },
+  "Southern Europe": { lat: 41.0, lon: 12.0, label: "Southern Europe profile" },
+  "North America": { lat: 40.0, lon: -95.0, label: "North America profile" },
+  "South America": { lat: -15.0, lon: -60.0, label: "South America profile" },
+  "East Asia": { lat: 35.0, lon: 135.0, label: "East Asia profile" },
+  "Oceania": { lat: -25.0, lon: 135.0, label: "Oceania profile" }
+};
+
 const bandOrder = Object.keys(bandRanges);
 
 const els = {
@@ -45,6 +55,7 @@ aboutBtn: document.getElementById("aboutBtn"),
 aboutModal: document.getElementById("aboutModal"),
 aboutClose: document.getElementById("aboutClose"),
 locationBtn: document.getElementById("locationBtn"),
+regionSelect: document.getElementById("regionSelect"),
 conditionLocation: document.getElementById("conditionLocation"),
 pathMode: document.getElementById("pathMode"),
 conditionBands: document.getElementById("conditionBands")
@@ -153,12 +164,10 @@ function conditionLabel(score) {
 }
 
 function renderConditions() {
-  const fallback = {
-  lat: 62.24,
-  lon: 25.75,
-  label: "Jyväskylä fallback / Nordic profile"
-};
-  const loc = userLocation || fallback;
+  const selectedRegion = els.regionSelect.value || "Northern Europe";
+const fallback = locationProfiles[selectedRegion] || locationProfiles["Northern Europe"];
+
+const loc = userLocation || fallback;
   const elevation = getSolarElevationApprox(loc.lat, loc.lon);
   const mode = getPathMode(elevation);
 
@@ -246,6 +255,137 @@ function isOnAir(item) {
 
 function fmtTime(start, end) {
   return `${start || "----"}–${end || "----"}`;
+}
+
+const ituFlags = {
+  A: "🇦🇹",
+  AFS: "🇿🇦",
+  AGL: "🇦🇴",
+  ALB: "🇦🇱",
+  ALG: "🇩🇿",
+  AND: "🇦🇩",
+  ARG: "🇦🇷",
+  ARM: "🇦🇲",
+  ARS: "🇸🇦",
+  AUS: "🇦🇺",
+  AZE: "🇦🇿",
+  B: "🇧🇷",
+  BEL: "🇧🇪",
+  BEN: "🇧🇯",
+  BFA: "🇧🇫",
+  BGD: "🇧🇩",
+  BHR: "🇧🇭",
+  BIH: "🇧🇦",
+  BLR: "🇧🇾",
+  BOL: "🇧🇴",
+  BUL: "🇧🇬",
+  CAN: "🇨🇦",
+  CHL: "🇨🇱",
+  CHN: "🇨🇳",
+  CLM: "🇨🇴",
+  CME: "🇨🇲",
+  COD: "🇨🇩",
+  COG: "🇨🇬",
+  CTR: "🇨🇷",
+  CUB: "🇨🇺",
+  CYP: "🇨🇾",
+  CZE: "🇨🇿",
+  D: "🇩🇪",
+  DNK: "🇩🇰",
+  E: "🇪🇸",
+  EGY: "🇪🇬",
+  ERI: "🇪🇷",
+  EST: "🇪🇪",
+  ETH: "🇪🇹",
+  F: "🇫🇷",
+  FIN: "🇫🇮",
+  G: "🇬🇧",
+  GEO: "🇬🇪",
+  GRC: "🇬🇷",
+  HNG: "🇭🇺",
+  HOL: "🇳🇱",
+  HRV: "🇭🇷",
+  I: "🇮🇹",
+  IND: "🇮🇳",
+  IRL: "🇮🇪",
+  IRN: "🇮🇷",
+  IRQ: "🇮🇶",
+  ISL: "🇮🇸",
+  ISR: "🇮🇱",
+  J: "🇯🇵",
+  KAZ: "🇰🇿",
+  KEN: "🇰🇪",
+  KGZ: "🇰🇬",
+  KOR: "🇰🇷",
+  KRE: "🇰🇵",
+  KWT: "🇰🇼",
+  LBY: "🇱🇾",
+  LKA: "🇱🇰",
+  LTU: "🇱🇹",
+  LUX: "🇱🇺",
+  LVA: "🇱🇻",
+  MCO: "🇲🇨",
+  MDA: "🇲🇩",
+  MEX: "🇲🇽",
+  MKD: "🇲🇰",
+  MNG: "🇲🇳",
+  MRC: "🇲🇦",
+  MYS: "🇲🇾",
+  NGR: "🇳🇬",
+  NOR: "🇳🇴",
+  NZL: "🇳🇿",
+  OMA: "🇴🇲",
+  PAK: "🇵🇰",
+  PHL: "🇵🇭",
+  POL: "🇵🇱",
+  POR: "🇵🇹",
+  PRU: "🇵🇪",
+  ROU: "🇷🇴",
+  RUS: "🇷🇺",
+  S: "🇸🇪",
+  SDN: "🇸🇩",
+  SEN: "🇸🇳",
+  SNG: "🇸🇬",
+  SRB: "🇷🇸",
+  SUI: "🇨🇭",
+  SVK: "🇸🇰",
+  SVN: "🇸🇮",
+  SYR: "🇸🇾",
+  THA: "🇹🇭",
+  TJK: "🇹🇯",
+  TUN: "🇹🇳",
+  TUR: "🇹🇷",
+  TWN: "🇹🇼",
+  UAE: "🇦🇪",
+  UKR: "🇺🇦",
+  URG: "🇺🇾",
+  USA: "🇺🇸",
+  UZB: "🇺🇿",
+  VTN: "🇻🇳",
+  YEM: "🇾🇪",
+
+  ASC: "🇦🇨",
+  CNR: "🇮🇨",
+  DGA: "🇮🇴",
+  GUM: "🇬🇺",
+  HWA: "🇺🇸",
+  OCE: "🌊",
+  ALS: "🇺🇸",
+  PTR: "🇵🇷",
+  GUF: "🇬🇫",
+  NCL: "🇳🇨",
+  REU: "🇷🇪",
+  MDR: "🇵🇹",
+  AZR: "🇵🇹",
+  FRO: "🇫🇴",
+  GRL: "🇬🇱",
+  HKG: "🇭🇰",
+  MAC: "🇲🇴"
+};
+
+function getFlag(code) {
+  const key = String(code || "").trim().toUpperCase();
+  return ituFlags[key] || "🌍";
 }
 
 function escapeHtml(value) {
@@ -498,7 +638,10 @@ function renderTable() {
         <td>${escapeHtml(item.station)}</td>
         <td>${escapeHtml(item.language)}</td>
         <td>${escapeHtml(item.target)}</td>
-        <td>${escapeHtml(item.country)}</td>
+        <td>
+  <span class="flag">${getFlag(item.country)}</span>
+  ${escapeHtml(item.country)}
+</td>
         <td>${escapeHtml(item.band)}</td>
         <td>${escapeHtml(item.source)}</td>
       </tr>
@@ -577,6 +720,11 @@ async function loadSchedules() {
   const res = await fetch("data/schedules.json");
   const data = await res.json();
 
+  const savedRegion = localStorage.getItem("swRegion");
+if (savedRegion && locationProfiles[savedRegion]) {
+  els.regionSelect.value = savedRegion;
+}
+
   allSchedules = data.schedules || [];
 
   const updated = new Date(data.generatedAt).toLocaleString("fi-FI", {
@@ -598,6 +746,13 @@ els.onAirOnly.addEventListener("change", render);
 els.locationBtn.addEventListener("click", requestLocation);
 els.aboutBtn.addEventListener("click", showAbout);
 els.aboutClose.addEventListener("click", hideAbout);
+
+els.regionSelect.addEventListener("change", () => {
+  userLocation = null;
+  localStorage.setItem("swRegion", els.regionSelect.value);
+  els.locationBtn.textContent = "Use my location";
+  renderConditions();
+});
 
 els.aboutModal.addEventListener("click", event => {
   if (event.target === els.aboutModal) hideAbout();

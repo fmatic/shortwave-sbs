@@ -893,3 +893,14 @@ tr {
 .about-btn:active {
   transform: translateY(1px);
 }
+
+.region-select {
+  width: auto;
+  min-width: 190px;
+}
+
+.flag {
+  display: inline-block;
+  min-width: 1.6em;
+  margin-right: 6px;
+}
