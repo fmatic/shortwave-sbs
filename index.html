@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>shortwave.sbs</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div>
+        <h1>shortwave.sbs</h1>
+        <p>Live HF broadcast monitor</p>
+      </div>
+      <div class="clock">
+  <div class="version">v0.1.0</div>
+  <span id="utcClock">--:-- UTC</span>
+  <small id="dataInfo">Loading schedules…</small>
+</div>
+	  
+    </header>
+
+    <section class="band-card">
+      <div>
+        <h2 id="bandTitle">31m Band Live</h2>
+        <p id="bandRange">9400–9900 kHz</p>
+		<p id="bandReason" class="band-reason">Auto Band ready</p>
+      </div>
+      <div class="meter">
+        <div id="bandFill"></div>
+      </div>
+      <div class="band-stats">
+        <strong id="bandActive">0</strong>
+        <span>active broadcasts now</span>
+      </div>
+    </section>
+
+<section class="activity-card">
+  <div class="section-head">
+    <h2>HF Activity Now</h2>
+    <span>Active broadcasts by band</span>
+  </div>
+  <div id="activityBands" class="activity-bands"></div>
+</section>
+
+<section class="insights-grid">
+  <section class="insight-card">
+    <div class="section-head">
+      <h2>Best DX Targets Now</h2>
+      <span>Based on active schedules</span>
+    </div>
+    <div id="targetList" class="target-list"></div>
+  </section>
+
+  <section class="insight-card">
+    <div class="section-head">
+      <h2>Live Snapshot</h2>
+      <span>Current activity</span>
+    </div>
+    <div class="snapshot">
+      <div>
+        <strong id="activeCountries">0</strong>
+        <span>active countries</span>
+      </div>
+      <div>
+        <strong id="activeStations">0</strong>
+        <span>active stations</span>
+      </div>
+    </div>
+  </section>
+</section>
+
+<section class="controls">
+  <input id="searchInput" type="search" placeholder="Search frequency, station, language, country…" />
+
+  <select id="bandSelect">
+    <option value="">All bands</option>
+    <option value="120m">120m</option>
+    <option value="90m">90m</option>
+    <option value="75m">75m</option>
+    <option value="60m">60m</option>
+    <option value="49m" selected>49m</option>
+    <option value="41m">41m</option>
+    <option value="31m">31m</option>
+    <option value="25m">25m</option>
+    <option value="22m">22m</option>
+    <option value="19m">19m</option>
+    <option value="16m">16m</option>
+    <option value="13m">13m</option>
+    <option value="11m">11m</option>
+  </select>
+
+<button id="autoBandBtn" class="auto-btn" type="button">Auto Band</button>
+
+  <label class="toggle">
+    <input id="onAirOnly" type="checkbox" checked />
+    <span>On air now</span>
+  </label>
+
+  <label class="toggle">
+    <input class="sourceToggle" type="checkbox" value="EiBi" checked />
+    <span>EiBi</span>
+  </label>
+
+  <label class="toggle muted-toggle">
+    <input class="sourceToggle" type="checkbox" value="HFCC" />
+    <span>HFCC</span>
+  </label>
+
+  <label class="toggle muted-toggle">
+    <input class="sourceToggle" type="checkbox" value="AOKI" />
+    <span>AOKI</span>
+  </label>
+</section>
+
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Freq</th>
+            <th>UTC</th>
+            <th>Station</th>
+            <th>Lang</th>
+            <th>Target</th>
+            <th>Country</th>
+            <th>Band</th>
+            <th>Src</th>
+          </tr>
+        </thead>
+        <tbody id="scheduleBody"></tbody>
+      </table>
+    </section>
+	<div id="detailModal" class="modal hidden">
+  <div class="modal-card">
+    <button id="modalClose" class="modal-close">×</button>
+    <h2 id="modalStation">Station</h2>
+    <div id="modalMeta" class="modal-meta"></div>
+  </div>
+</div>
+	<footer class="footer">
+  <span>Developed in Finland 🇫🇮 by Janne Heinikangas</span>
+  <span class="footer-links">
+    <a href="https://github.com/fmatic" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://fmatic.online" target="_blank" rel="noopener">Blog</a>
+  </span>
+</footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
