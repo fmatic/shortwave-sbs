@@ -3,7 +3,7 @@ const path = require("path");
 
 const { importEibi } = require("./import-eibi");
 const { importAoki } = require("./import-aoki");
-const { importHfcc } = require("./import-hfcc");
+// const { importHfcc } = require("./import-hfcc");
 
 const outputPath = path.join(__dirname, "..", "data", "schedules.json");
 
@@ -12,7 +12,7 @@ async function main() {
 
   schedules.push(...importEibi());
   schedules.push(...importAoki());
-  schedules.push(...importHfcc());
+  // schedules.push(...importHfcc());
 
 const merged = new Map();
 
