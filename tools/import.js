@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { importEibi } = require("./import-eibi");
+const { importAoki } = require("./import-aoki");
 
 const outputPath = path.join(__dirname, "..", "data", "schedules.json");
 
@@ -9,6 +10,7 @@ async function main() {
   const schedules = [];
 
   schedules.push(...importEibi());
+  schedules.push(...importAoki());
 
   schedules.sort((a, b) => {
     if (a.freq !== b.freq) return a.freq - b.freq;
