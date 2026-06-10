@@ -440,9 +440,11 @@ item.txCountry,
 
 function formatTxSite(item) {
   if (item.txSite) {
-    return item.txCode
-      ? `${item.txSite} (${item.txCode})`
-      : item.txSite;
+    return item.txSite;
+  }
+
+  if (item.txCode) {
+    return item.txCode;
   }
 
   return item.type || "—";

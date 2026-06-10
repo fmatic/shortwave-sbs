@@ -2,6 +2,19 @@ const fs = require("fs");
 const path = require("path");
 
 const readmePath = path.join(__dirname, "..", "sources", "README.TXT");
+const aliasMap = {
+  "BUL:s": "Sofia-Kostinbrod",
+  "D:we": "Weenermoor",
+  "USA:o": "Okeechobee, FL",
+  "USA:n": "Nashville, TN",
+  "TWN:d": "Danshui/Tamsui",
+  "ROU:s": "Saftica",
+  "F:i": "Issoudun",
+  "G:w": "Woofferton",
+  "G:r": "Rampisham",
+  "G:s": "Skelton"
+};
+
 
 function parseCoordPair(text) {
   const match = String(text || "").match(/(\d{2}[NS]\d{2}(?:'\d{2}")?)-(\d{2,3}[EW]\d{2}(?:'\d{2}")?)/);
@@ -128,6 +141,17 @@ function resolveEibiSite(txCode, homeCountry, eibiSites) {
   if (foreign) {
     const hostCountry = foreign[1];
     const code = foreign[2] || "";
+    const aliasKey = `${hostCountry}:${code}`;
+
+    if (aliasMap[aliasKey]) {
+      return {
+        code,
+        country: hostCountry,
+        name: aliasMap[aliasKey],
+        lat: null,
+        lon: null
+      };
+    }
 
     if (code) {
       return eibiSites[`${hostCountry}:${code}`] || {
@@ -143,6 +167,18 @@ function resolveEibiSite(txCode, homeCountry, eibiSites) {
       code: "",
       country: hostCountry,
       name: raw,
+      lat: null,
+      lon: null
+    };
+  }
+
+  const aliasKey = `${country}:${raw}`;
+
+  if (aliasMap[aliasKey]) {
+    return {
+      code: raw,
+      country,
+      name: aliasMap[aliasKey],
       lat: null,
       lon: null
     };
