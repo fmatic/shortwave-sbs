@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { loadHfccSites } = require("./hfcc-lookups");
+const { loadEibiSites, resolveEibiSite } = require("./eibi-lookups");
 
 const inputPath = path.join(__dirname, "..", "sources", "eibi.csv");
 
@@ -28,7 +28,7 @@ function importEibi() {
     return [];
   }
 
-  const hfccSites = loadHfccSites();
+	const eibiSites = loadEibiSites();
 
   const raw = fs.readFileSync(inputPath, "latin1");
   const lines = raw.split(/\r?\n/).filter(Boolean);
@@ -47,9 +47,8 @@ function importEibi() {
 
     if (!freqKHz || !start || !end) continue;
 
-    const txCode = cols[7] || "";
-    const site = hfccSites[txCode];
-
+	const txCode = cols[7] || "";
+	const site = resolveEibiSite(txCode, cols[3], eibiSites);
     const schedule = {
       freq: Math.round(freqKHz),
       start: start || "",
