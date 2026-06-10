@@ -96,6 +96,36 @@ function parseBroadcasters(zip) {
   return broadcasters;
 }
 
+function parseAdmins(zip) {
+  const entry = zip.getEntry("admin.txt");
+  if (!entry) return {};
+
+  const raw = entry.getData().toString("latin1");
+  const lines = raw.split(/\r?\n/);
+
+  const admins = {};
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith(";")) continue;
+
+    const match = trimmed.match(/^([A-Z0-9]{1,3})\s+(.+?)\s{2,}/);
+    if (!match) continue;
+
+    const [, code, name] = match;
+
+    admins[code] = {
+      code,
+      name: name.trim()
+    };
+  }
+
+  console.log(`HFCC admins: ${Object.keys(admins).length}`);
+
+  return admins;
+}
+
 function importHfcc() {
   if (!fs.existsSync(inputPath)) {
     console.warn("HFCC file missing:", inputPath);
@@ -103,8 +133,11 @@ function importHfcc() {
   }
 
   const zip = new AdmZip(inputPath);
+
   const sites = parseSites(zip);
-const broadcasters = parseBroadcasters(zip);
+  const broadcasters = parseBroadcasters(zip);
+  const admins = parseAdmins(zip);
+
   const entry = zip.getEntries().find(e =>
     e.entryName.toLowerCase().includes("all") &&
     e.entryName.toLowerCase().endsWith(".txt")
@@ -130,26 +163,40 @@ const broadcasters = parseBroadcasters(zip);
     const freq = Number(parts[0]);
     const start = parts[1];
     const end = parts[2];
+
+    const target = parts[3] || "";
     const txCode = parts[4] || "";
     const site = sites[txCode];
+
+    const adminCode = parts[15] || "";
+    const broadcasterCode = parts[16] || "";
 
     schedules.push({
       freq,
       start,
       end,
+
       days: parts[9] || "",
-      country: parts[15] || "",
-      station: broadcasters[parts[16]] || parts[16] || "",
-	  stationCode: parts[16] || "",
+
+      country: adminCode,
+      countryName: admins[adminCode]?.name || "",
+
+      adminCode,
+
+      station: broadcasters[broadcasterCode] || broadcasterCode || "",
+      stationCode: broadcasterCode,
+
       language: parts[13] || "",
-      target: parts[3] || "",
+      target,
       type: "",
       power: parts[5] || "",
+
       txCode,
       txSite: site?.name || txCode,
       txCountry: site?.country || "",
       txLat: site?.lat || null,
       txLon: site?.lon || null,
+
       remarks: trimmed,
       band: detectBand(freq),
       source: "HFCC"
