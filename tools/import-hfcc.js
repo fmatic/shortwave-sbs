@@ -168,11 +168,24 @@ function importHfcc() {
     const txCode = parts[4] || "";
     const site = sites[txCode];
 
-   const reqNo = parts.at(-1) || "";
-	const fmoCode = parts.at(-2) || "";
-	const broadcasterCode = parts.at(-3) || "";
-	const adminCode = parts.at(-4) || "";
-	const language = parts.at(-5) || "";
+  let adminIndex = -1;
+
+for (let i = parts.length - 1; i >= 0; i--) {
+  if (admins[parts[i]] && broadcasters[parts[i + 1]]) {
+    adminIndex = i;
+    break;
+  }
+}
+
+if (adminIndex === -1) {
+  continue;
+}
+
+const adminCode = parts[adminIndex];
+const broadcasterCode = parts[adminIndex + 1] || "";
+const fmoCode = parts[adminIndex + 2] || "";
+const reqNo = parts[adminIndex + 3] || "";
+const language = parts[adminIndex - 1] || "";
 
 		schedules.push({
 		  freq,
