@@ -168,25 +168,31 @@ function importHfcc() {
     const txCode = parts[4] || "";
     const site = sites[txCode];
 
-    const adminCode = parts[15] || "";
-    const broadcasterCode = parts[16] || "";
+   const reqNo = parts.at(-1) || "";
+	const fmoCode = parts.at(-2) || "";
+	const broadcasterCode = parts.at(-3) || "";
+	const adminCode = parts.at(-4) || "";
+	const language = parts.at(-5) || "";
 
-    schedules.push({
-      freq,
-      start,
-      end,
+		schedules.push({
+		  freq,
+		  start,
+		  end,
 
-      days: parts[9] || "",
+		  days: parts[9] || "",
 
-      country: adminCode,
-      countryName: admins[adminCode]?.name || "",
+		  country: adminCode,
+		  countryName: admins[adminCode]?.name || "",
 
-      adminCode,
+		  adminCode,
 
-      station: broadcasters[broadcasterCode] || broadcasterCode || "",
-      stationCode: broadcasterCode,
+		 station: broadcasters[broadcasterCode] || broadcasterCode || "",
+	stationCode: broadcasterCode,
 
-      language: parts[13] || "",
+	fmoCode,
+	reqNo,
+
+	language,
       target,
       type: "",
       power: parts[5] || "",
