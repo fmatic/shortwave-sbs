@@ -57,6 +57,11 @@ if (!existing.txCode && item.txCode) existing.txCode = item.txCode;
 if (!existing.txCountry && item.txCountry) existing.txCountry = item.txCountry;
 if (!existing.txLat && item.txLat) existing.txLat = item.txLat;
 if (!existing.txLon && item.txLon) existing.txLon = item.txLon;
+if (!existing.countryName && item.countryName) existing.countryName = item.countryName;
+if (!existing.adminCode && item.adminCode) existing.adminCode = item.adminCode;
+if (!existing.stationCode && item.stationCode) existing.stationCode = item.stationCode;
+if (!existing.type && item.type) existing.type = item.type;
+if (!existing.power && item.power) existing.power = item.power;
 }
 
 const finalSchedules = [...merged.values()];

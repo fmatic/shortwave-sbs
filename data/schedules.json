@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T00:09:34.482Z",
+  "generatedAt": "2026-06-10T00:15:51.255Z",
   "count": 17050,
   "sources": {
     "EiBi": 9004,
@@ -54613,7 +54613,11 @@
       "endDate": "[0426]",
       "remarks": "",
       "band": "49m",
-      "source": "EiBi+HFCC"
+      "source": "EiBi+HFCC",
+      "countryName": "Netherlands",
+      "adminCode": "HOL",
+      "stationCode": "HOR",
+      "power": "5"
     },
     {
       "freq": 5900,
@@ -66469,7 +66473,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "MDG",
       "txLat": -18.8,
-      "txLon": 47.6
+      "txLon": 47.6,
+      "countryName": "Madagascar",
+      "adminCode": "MDG",
+      "stationCode": "AWR",
+      "power": "125"
     },
     {
       "freq": 6065,
@@ -66569,7 +66577,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "MDG",
       "txLat": -18.8,
-      "txLon": 47.6
+      "txLon": 47.6,
+      "countryName": "Madagascar",
+      "adminCode": "MDG",
+      "stationCode": "AWR",
+      "power": "125"
     },
     {
       "freq": 6065,
@@ -68895,7 +68907,7 @@
       "end": "1100",
       "days": "1",
       "country": "MBR",
-      "countryName": "",
+      "countryName": "Germany",
       "adminCode": "MBR",
       "station": "Media Broadcast GmbH",
       "stationCode": "MBR",
@@ -69588,7 +69600,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "SWZ",
       "txLat": -26.5667,
-      "txLon": 31.9833
+      "txLon": 31.9833,
+      "countryName": "Swaziland",
+      "adminCode": "SWZ",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 6100,
@@ -90960,7 +90976,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "CHN",
       "txLat": 26.4167,
-      "txLon": 106.6
+      "txLon": 106.6,
+      "countryName": "China",
+      "adminCode": "CHN",
+      "stationCode": "CNR",
+      "power": "10"
     },
     {
       "freq": 7275,
@@ -100837,7 +100857,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "HOL",
       "txLat": 52.4833,
-      "txLon": 6.1
+      "txLon": 6.1,
+      "countryName": "Netherlands",
+      "adminCode": "HOL",
+      "stationCode": "PIE",
+      "power": "9"
     },
     {
       "freq": 7400,
@@ -100899,7 +100923,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "HOL",
       "txLat": 52.4833,
-      "txLon": 6.1
+      "txLon": 6.1,
+      "countryName": "Netherlands",
+      "adminCode": "HOL",
+      "stationCode": "PIE",
+      "power": "9"
     },
     {
       "freq": 7405,
@@ -104754,7 +104782,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 7480,
@@ -120128,7 +120159,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 9320,
@@ -132669,7 +132703,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 9540,
@@ -132723,7 +132761,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 9540,
@@ -132759,7 +132801,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 9540,
@@ -136206,7 +136252,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "SWZ",
       "txLat": -26.5667,
-      "txLon": 31.9833
+      "txLon": 31.9833,
+      "countryName": "Swaziland",
+      "adminCode": "SWZ",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 9585,
@@ -141166,7 +141216,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 9655,
@@ -147278,7 +147332,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 9720,
@@ -150362,7 +150420,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 9750,
@@ -161430,7 +161492,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 9895,
@@ -163683,7 +163749,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 9950,
@@ -166541,7 +166610,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 9975,
@@ -166577,7 +166649,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 9975,
@@ -173650,7 +173725,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 11530,
@@ -174429,7 +174507,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "PHL",
       "txLat": 15.3333,
-      "txLon": 119.9667
+      "txLon": 119.9667,
+      "countryName": "Philippines",
+      "adminCode": "PHL",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 11550,
@@ -174657,7 +174739,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 11560,
@@ -174693,7 +174778,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 11560,
@@ -177770,7 +177858,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 11630,
@@ -183589,7 +183681,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "D",
       "txLat": 52.6333,
-      "txLon": 12.9
+      "txLon": 12.9,
+      "countryName": "Germany",
+      "adminCode": "D",
+      "stationCode": "AWR",
+      "power": "250"
     },
     {
       "freq": 11700,
@@ -193637,7 +193733,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "HOL",
       "txLat": 52.4833,
-      "txLon": 6.1
+      "txLon": 6.1,
+      "countryName": "Netherlands",
+      "adminCode": "HOL",
+      "stationCode": "PIE",
+      "power": "2"
     },
     {
       "freq": 11840,
@@ -196573,7 +196673,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "SWZ",
       "txLat": -26.5667,
-      "txLon": 31.9833
+      "txLon": 31.9833,
+      "countryName": "Swaziland",
+      "adminCode": "SWZ",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 11880,
@@ -196609,7 +196713,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "SWZ",
       "txLat": -26.5667,
-      "txLon": 31.9833
+      "txLon": 31.9833,
+      "countryName": "Swaziland",
+      "adminCode": "SWZ",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 11880,
@@ -201873,7 +201981,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "CHN",
       "txLat": 34.8167,
-      "txLon": 113.3833
+      "txLon": 113.3833,
+      "countryName": "China",
+      "adminCode": "CHN",
+      "stationCode": "CNR",
+      "power": "100"
     },
     {
       "freq": 11950,
@@ -212174,7 +212286,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "PHL",
       "txLat": 14.8,
-      "txLon": 120.9167
+      "txLon": 120.9167,
+      "countryName": "Philippines",
+      "adminCode": "PHL",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 12160,
@@ -212210,7 +212326,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "PHL",
       "txLat": 14.8,
-      "txLon": 120.9167
+      "txLon": 120.9167,
+      "countryName": "Philippines",
+      "adminCode": "PHL",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 12160,
@@ -212246,7 +212366,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "PHL",
       "txLat": 14.8,
-      "txLon": 120.9167
+      "txLon": 120.9167,
+      "countryName": "Philippines",
+      "adminCode": "PHL",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 12160,
@@ -222178,7 +222302,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "SWZ",
       "txLat": -26.5667,
-      "txLon": 31.9833
+      "txLon": 31.9833,
+      "countryName": "Swaziland",
+      "adminCode": "SWZ",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 13580,
@@ -222367,7 +222495,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "HOL",
       "txLat": 52.4833,
-      "txLon": 6.1
+      "txLon": 6.1,
+      "countryName": "Netherlands",
+      "adminCode": "HOL",
+      "stationCode": "PIE",
+      "power": "2"
     },
     {
       "freq": 13590,
@@ -233765,7 +233897,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "SWZ",
       "txLat": -26.5667,
-      "txLon": 31.9833
+      "txLon": 31.9833,
+      "countryName": "Swaziland",
+      "adminCode": "SWZ",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 13800,
@@ -236265,7 +236401,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "HOL",
       "txLat": 52.4833,
-      "txLon": 6.1
+      "txLon": 6.1,
+      "countryName": "Netherlands",
+      "adminCode": "HOL",
+      "stationCode": "PIE",
+      "power": "2"
     },
     {
       "freq": 13870,
@@ -242957,7 +243097,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 15120,
@@ -242993,7 +243136,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 15120,
@@ -245112,7 +245258,7 @@
       "end": "1800",
       "days": "7",
       "country": "MBR",
-      "countryName": "",
+      "countryName": "France",
       "adminCode": "MBR",
       "station": "Media Broadcast GmbH",
       "stationCode": "MBR",
@@ -252565,7 +252711,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15310,
@@ -252586,7 +252735,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15310,
@@ -252607,7 +252759,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15310,
@@ -252628,7 +252783,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15310,
@@ -252649,7 +252807,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15310,
@@ -252670,7 +252831,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15310,
@@ -252691,7 +252855,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15310,
@@ -259787,7 +259954,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "D",
       "txLat": 52.6333,
-      "txLon": 12.9
+      "txLon": 12.9,
+      "countryName": "Germany",
+      "adminCode": "D",
+      "stationCode": "AWR",
+      "power": "250"
     },
     {
       "freq": 15440,
@@ -259823,7 +259994,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "D",
       "txLat": 52.6333,
-      "txLon": 12.9
+      "txLon": 12.9,
+      "countryName": "Germany",
+      "adminCode": "D",
+      "stationCode": "AWR",
+      "power": "250"
     },
     {
       "freq": 15440,
@@ -259859,7 +260034,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "D",
       "txLat": 52.6333,
-      "txLon": 12.9
+      "txLon": 12.9,
+      "countryName": "Germany",
+      "adminCode": "D",
+      "stationCode": "AWR",
+      "power": "250"
     },
     {
       "freq": 15440,
@@ -259895,7 +260074,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "D",
       "txLat": 52.6333,
-      "txLon": 12.9
+      "txLon": 12.9,
+      "countryName": "Germany",
+      "adminCode": "D",
+      "stationCode": "AWR",
+      "power": "250"
     },
     {
       "freq": 15440,
@@ -259931,7 +260114,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "D",
       "txLat": 52.6333,
-      "txLon": 12.9
+      "txLon": 12.9,
+      "countryName": "Germany",
+      "adminCode": "D",
+      "stationCode": "AWR",
+      "power": "250"
     },
     {
       "freq": 15440,
@@ -259967,7 +260154,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "D",
       "txLat": 52.6333,
-      "txLon": 12.9
+      "txLon": 12.9,
+      "countryName": "Germany",
+      "adminCode": "D",
+      "stationCode": "AWR",
+      "power": "250"
     },
     {
       "freq": 15440,
@@ -260490,7 +260681,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "MDG",
       "txLat": -18.8,
-      "txLon": 47.6
+      "txLon": 47.6,
+      "countryName": "Madagascar",
+      "adminCode": "MDG",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 15450,
@@ -268579,7 +268774,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "UZB",
       "txLat": 41.3167,
-      "txLon": 69.2833
+      "txLon": 69.2833,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "100"
     },
     {
       "freq": 15630,
@@ -270608,7 +270806,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "CHN",
       "txLat": 34.8167,
-      "txLon": 113.3833
+      "txLon": 113.3833,
+      "countryName": "China",
+      "adminCode": "CHN",
+      "stationCode": "CNR",
+      "power": "100"
     },
     {
       "freq": 15730,
@@ -271175,7 +271377,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "CHN",
       "txLat": 36.8667,
-      "txLon": 111.6667
+      "txLon": 111.6667,
+      "countryName": "China",
+      "adminCode": "CHN",
+      "stationCode": "CNR",
+      "power": "100"
     },
     {
       "freq": 15750,
@@ -281281,7 +281487,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "HOL",
       "txLat": 52.4833,
-      "txLon": 6.1
+      "txLon": 6.1,
+      "countryName": "Netherlands",
+      "adminCode": "HOL",
+      "stationCode": "PIE",
+      "power": "2"
     },
     {
       "freq": 17525,
@@ -283711,7 +283921,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 17590,
@@ -283747,7 +283960,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 17590,
@@ -283821,7 +284037,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 17590,
@@ -283857,7 +284076,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 17590,
@@ -283893,7 +284115,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 17590,
@@ -283914,7 +284139,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 17590,
@@ -283935,7 +284163,10 @@
       "source": "EiBi+HFCC",
       "txCountry": "TJK",
       "txLat": 38.6667,
-      "txLon": 68.8333
+      "txLon": 68.8333,
+      "adminCode": "TWR",
+      "stationCode": "TWR",
+      "power": "250"
     },
     {
       "freq": 17590,
@@ -297269,7 +297500,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 17865,
@@ -297305,7 +297540,11 @@
       "source": "EiBi+HFCC",
       "txCountry": "UAE",
       "txLat": 24.1833,
-      "txLon": 54.2333
+      "txLon": 54.2333,
+      "countryName": "United Arab Emirates",
+      "adminCode": "UAE",
+      "stationCode": "IBR",
+      "power": "250"
     },
     {
       "freq": 17870,
