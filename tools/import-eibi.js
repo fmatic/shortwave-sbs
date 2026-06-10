@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { loadHfccSites } = require("./hfcc-lookups");
 
 const inputPath = path.join(__dirname, "..", "sources", "eibi.csv");
 
@@ -27,6 +28,8 @@ function importEibi() {
     return [];
   }
 
+  const hfccSites = loadHfccSites();
+
   const raw = fs.readFileSync(inputPath, "latin1");
   const lines = raw.split(/\r?\n/).filter(Boolean);
 
@@ -44,24 +47,33 @@ function importEibi() {
 
     if (!freqKHz || !start || !end) continue;
 
-   const schedule = {
-  freq: Math.round(freqKHz),
-  start: start || "",
-  end: end || "",
-  days: cols[2] || "",
-  country: cols[3] || "",
-  station: cols[4] || "",
-  language: cols[5] || "",
-  target: cols[6] || "",
-  txCode: cols[7] || "",
-txSite: cols[7] || "",
-type: cols[8] || "",
-  startDate: cols[9] || "",
-  endDate: cols[10] || "",
-  remarks: cols[11] || "",
-  band: detectBand(Math.round(freqKHz)),
-  source: "EiBi"
-};
+    const txCode = cols[7] || "";
+    const site = hfccSites[txCode];
+
+    const schedule = {
+      freq: Math.round(freqKHz),
+      start: start || "",
+      end: end || "",
+      days: cols[2] || "",
+      country: cols[3] || "",
+      station: cols[4] || "",
+      language: cols[5] || "",
+      target: cols[6] || "",
+
+      txCode,
+      txSite: site?.name || txCode,
+      txCountry: site?.country || "",
+      txLat: site?.lat || null,
+      txLon: site?.lon || null,
+
+      type: cols[8] || "",
+      startDate: cols[9] || "",
+      endDate: cols[10] || "",
+      remarks: cols[11] || "",
+
+      band: detectBand(Math.round(freqKHz)),
+      source: "EiBi"
+    };
 
     schedules.push(schedule);
   }
