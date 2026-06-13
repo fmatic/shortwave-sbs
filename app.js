@@ -546,6 +546,53 @@ function showTxSiteDetails(item) {
     els.detailModal.classList.remove("hidden");
 }
 
+function showFrequencyDetails(item) {
+    if (!item)
+        return;
+
+    const freq = item.freq;
+    const matches = allSchedules
+        .filter(x => x.freq === freq && isOnAir(x))
+        .sort((a, b) => String(a.station).localeCompare(String(b.station)));
+
+    els.modalStation.textContent = `${freq} kHz active now`;
+
+    if (!matches.length) {
+        els.modalMeta.innerHTML = `
+      <div>
+        <span>Status</span>
+        <strong>No active broadcasts found</strong>
+      </div>
+    `;
+        els.detailModal.classList.remove("hidden");
+        return;
+    }
+
+    els.modalMeta.innerHTML = matches.map(x => {
+        const path = getTxPathInfo(x);
+        const tx = formatTxSite(x);
+
+        return `
+      <div>
+        <span>${escapeHtml(fmtTime(x.start, x.end))}</span>
+        <strong>
+          ${escapeHtml(x.station || "Unknown station")}
+          <br>
+          <small>
+            ${escapeHtml(x.language || "—")}
+            · ${escapeHtml(x.target || "—")}
+            · ${escapeHtml(tx)}
+            ${path.distance ? ` · ${path.distance.toLocaleString("fi-FI")} km ${path.bearing}° ${path.compass}` : ""}
+            · ${escapeHtml(x.source)}
+          </small>
+        </strong>
+      </div>
+    `;
+    }).join("");
+
+    els.detailModal.classList.remove("hidden");
+}
+
 function formatTxSite(item) {
     if (item.txSite) {
         return item.txSite;
@@ -767,7 +814,11 @@ function renderTable() {
 
         return `
   <tr class="${live ? "live-row" : ""}" data-index="${index}">
-    <td>${escapeHtml(item.freq)} kHz</td>
+    <td>
+  <button class="freq-btn" type="button" data-index="${index}">
+    ${escapeHtml(item.freq)} kHz
+  </button>
+</td>
     <td>${escapeHtml(fmtTime(item.start, item.end))}</td>
     <td>${escapeHtml(item.station)}</td>
     <td>${escapeHtml(item.language)}</td>
@@ -793,237 +844,247 @@ function renderTable() {
     [...els.scheduleBody.querySelectorAll("tr")].forEach((tr, index) => {
         tr.addEventListener("click", () => showDetails(rows[index]));
     });
+
     [...els.scheduleBody.querySelectorAll(".tx-site-btn")].forEach(btn => {
         btn.addEventListener("click", event => {
             event.stopPropagation();
+
             const index = Number(btn.dataset.index);
             showTxSiteDetails(rows[index]);
         });
     });
-}
 
-function getCurrentLocationForCalculations() {
-    if (userLocation)
-        return userLocation;
+    [...els.scheduleBody.querySelectorAll(".freq-btn")].forEach(btn => {
+        btn.addEventListener("click", event => {
+            event.stopPropagation();
 
-    const selectedRegion = els.regionSelect?.value || "Northern Europe";
-    return locationProfiles[selectedRegion] || locationProfiles["Northern Europe"];
-}
+            const index = Number(btn.dataset.index);
+            showFrequencyDetails(rows[index]);
+        });
+    });
 
-function toRad(value) {
-    return value * Math.PI / 180;
-}
+    function getCurrentLocationForCalculations() {
+        if (userLocation)
+            return userLocation;
 
-function toDeg(value) {
-    return value * 180 / Math.PI;
-}
+        const selectedRegion = els.regionSelect?.value || "Northern Europe";
+        return locationProfiles[selectedRegion] || locationProfiles["Northern Europe"];
+    }
 
-function calculateDistanceKm(lat1, lon1, lat2, lon2) {
-    const earthRadiusKm = 6371;
+    function toRad(value) {
+        return value * Math.PI / 180;
+    }
 
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
+    function toDeg(value) {
+        return value * 180 / Math.PI;
+    }
 
-    const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) ** 2;
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+        const earthRadiusKm = 6371;
 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
 
-    return Math.round(earthRadiusKm * c);
-}
+        const a =
+            Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRad(lat1)) *
+            Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
 
-function calculateBearing(lat1, lon1, lat2, lon2) {
-    const y = Math.sin(toRad(lon2 - lon1)) * Math.cos(toRad(lat2));
-    const x =
-        Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
-        Math.sin(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.cos(toRad(lon2 - lon1));
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return Math.round((toDeg(Math.atan2(y, x)) + 360) % 360);
-}
+        return Math.round(earthRadiusKm * c);
+    }
 
-function bearingToCompass(deg) {
-    const dirs = [
-        "N", "NNE", "NE", "ENE",
-        "E", "ESE", "SE", "SSE",
-        "S", "SSW", "SW", "WSW",
-        "W", "WNW", "NW", "NNW"
-    ];
+    function calculateBearing(lat1, lon1, lat2, lon2) {
+        const y = Math.sin(toRad(lon2 - lon1)) * Math.cos(toRad(lat2));
+        const x =
+            Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+            Math.sin(toRad(lat1)) *
+            Math.cos(toRad(lat2)) *
+            Math.cos(toRad(lon2 - lon1));
 
-    return dirs[Math.round(deg / 22.5) % 16];
-}
+        return Math.round((toDeg(Math.atan2(y, x)) + 360) % 360);
+    }
 
-function getTxPathInfo(item) {
-    if (!item.txLat || !item.txLon) {
+    function bearingToCompass(deg) {
+        const dirs = [
+            "N", "NNE", "NE", "ENE",
+            "E", "ESE", "SE", "SSE",
+            "S", "SSW", "SW", "WSW",
+            "W", "WNW", "NW", "NNW"
+        ];
+
+        return dirs[Math.round(deg / 22.5) % 16];
+    }
+
+    function getTxPathInfo(item) {
+        if (!item.txLat || !item.txLon) {
+            return {
+                distance: "",
+                bearing: "",
+                compass: ""
+            };
+        }
+
+        const loc = getCurrentLocationForCalculations();
+
+        const distance = calculateDistanceKm(
+                loc.lat,
+                loc.lon,
+                Number(item.txLat),
+                Number(item.txLon));
+
+        const bearing = calculateBearing(
+                loc.lat,
+                loc.lon,
+                Number(item.txLat),
+                Number(item.txLon));
+
         return {
-            distance: "",
-            bearing: "",
-            compass: ""
+            distance,
+            bearing,
+            compass: bearingToCompass(bearing)
         };
     }
 
-    const loc = getCurrentLocationForCalculations();
+    function renderBandLive() {
+        const band = els.bandSelect.value;
+        const range = bandRanges[band];
 
-    const distance = calculateDistanceKm(
-            loc.lat,
-            loc.lon,
-            Number(item.txLat),
-            Number(item.txLon));
+        els.bandTitle.textContent = band ? `${band} Band Live` : "All Bands Live";
+        els.bandRange.textContent = range ? `${range[0]}–${range[1]} kHz` : "All shortwave bands";
 
-    const bearing = calculateBearing(
-            loc.lat,
-            loc.lon,
-            Number(item.txLat),
-            Number(item.txLon));
+        const active = allSchedules.filter(item => {
+            if (band && item.band !== band)
+                return false;
+            return isOnAir(item);
+        });
 
-    return {
-        distance,
-        bearing,
-        compass: bearingToCompass(bearing)
-    };
-}
+        els.bandActive.textContent = active.length;
+        els.bandReason.textContent = band
+             ? getBandReason(band, active.length)
+             : `${active.length} active broadcasts across all shortwave bands`;
 
-function renderBandLive() {
-    const band = els.bandSelect.value;
-    const range = bandRanges[band];
+        const maxReasonable = 100;
+        const pct = Math.min(100, Math.round((active.length / maxReasonable) * 100));
+        els.bandFill.style.width = pct + "%";
+    }
 
-    els.bandTitle.textContent = band ? `${band} Band Live` : "All Bands Live";
-    els.bandRange.textContent = range ? `${range[0]}–${range[1]} kHz` : "All shortwave bands";
+    function showDetails(item) {
+        if (!item)
+            return;
 
-    const active = allSchedules.filter(item => {
-        if (band && item.band !== band)
-            return false;
-        return isOnAir(item);
-    });
+        els.modalStation.textContent = item.station || "Unknown station";
 
-    els.bandActive.textContent = active.length;
-    els.bandReason.textContent = band
-         ? getBandReason(band, active.length)
-         : `${active.length} active broadcasts across all shortwave bands`;
+        const rows = [
+            ["Frequency", `${item.freq} kHz`],
+            ["UTC", fmtTime(item.start, item.end)],
+            ["Language", item.language],
+            ["Target", item.target],
+            ["Country", item.country],
+            ["Band", item.band],
+            ["Type", item.type],
+            ["Tx Site", item.txSite],
+            ["Tx Code", item.txCode],
+            ["Tx Country", item.txCountry],
+            ["Tx Coordinates", item.txLat && item.txLon ? `${item.txLat}, ${item.txLon}` : ""],
+            ["Days", item.days],
+            ["Power", item.power],
+            ["Remarks", item.remarks],
+            ["Source", item.source],
+            ["Status", isOnAir(item) ? "ON AIR NOW" : "Off air"]
+        ];
 
-    const maxReasonable = 100;
-    const pct = Math.min(100, Math.round((active.length / maxReasonable) * 100));
-    els.bandFill.style.width = pct + "%";
-}
-
-function showDetails(item) {
-    if (!item)
-        return;
-
-    els.modalStation.textContent = item.station || "Unknown station";
-
-    const rows = [
-        ["Frequency", `${item.freq} kHz`],
-        ["UTC", fmtTime(item.start, item.end)],
-        ["Language", item.language],
-        ["Target", item.target],
-        ["Country", item.country],
-        ["Band", item.band],
-        ["Type", item.type],
-        ["Tx Site", item.txSite],
-        ["Tx Code", item.txCode],
-        ["Tx Country", item.txCountry],
-        ["Tx Coordinates", item.txLat && item.txLon ? `${item.txLat}, ${item.txLon}` : ""],
-        ["Days", item.days],
-        ["Power", item.power],
-        ["Remarks", item.remarks],
-        ["Source", item.source],
-        ["Status", isOnAir(item) ? "ON AIR NOW" : "Off air"]
-    ];
-
-    els.modalMeta.innerHTML = rows.map(([label, value]) => `
+        els.modalMeta.innerHTML = rows.map(([label, value]) => `
     <div>
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(value || "—")}</strong>
     </div>
   `).join("");
 
-    els.detailModal.classList.remove("hidden");
-}
-
-function hideDetails() {
-    els.detailModal.classList.add("hidden");
-}
-
-function render() {
-    renderBandLive();
-    renderActivityOverview();
-    renderTargets();
-    renderSnapshot();
-    renderConditions();
-    renderTable();
-}
-async function loadSchedules() {
-    const res = await fetch("data/schedules.json");
-    const data = await res.json();
-
-    const savedRegion = localStorage.getItem("swRegion");
-    if (savedRegion && locationProfiles[savedRegion]) {
-        els.regionSelect.value = savedRegion;
+        els.detailModal.classList.remove("hidden");
     }
 
-    allSchedules = data.schedules || [];
+    function hideDetails() {
+        els.detailModal.classList.add("hidden");
+    }
 
-    const updated = new Date(data.generatedAt).toLocaleString("fi-FI", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
+    function render() {
+        renderBandLive();
+        renderActivityOverview();
+        renderTargets();
+        renderSnapshot();
+        renderConditions();
+        renderTable();
+    }
+    async function loadSchedules() {
+        const res = await fetch("data/schedules.json");
+        const data = await res.json();
+
+        const savedRegion = localStorage.getItem("swRegion");
+        if (savedRegion && locationProfiles[savedRegion]) {
+            els.regionSelect.value = savedRegion;
+        }
+
+        allSchedules = data.schedules || [];
+
+        const updated = new Date(data.generatedAt).toLocaleString("fi-FI", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
+
+        els.dataInfo.textContent = `${data.count} schedules • lists updated ${updated}`;
+        render();
+    }
+
+    els.searchInput.addEventListener("input", render);
+    els.bandSelect.addEventListener("change", render);
+    els.onAirOnly.addEventListener("change", render);
+    els.locationBtn.addEventListener("click", requestLocation);
+    els.aboutBtn.addEventListener("click", showAbout);
+    els.aboutClose.addEventListener("click", hideAbout);
+
+    els.regionSelect.addEventListener("change", () => {
+        userLocation = null;
+        localStorage.setItem("swRegion", els.regionSelect.value);
+        els.locationBtn.textContent = "Use my location";
+        renderConditions();
     });
 
-    els.dataInfo.textContent = `${data.count} schedules • lists updated ${updated}`;
-    render();
-}
-
-els.searchInput.addEventListener("input", render);
-els.bandSelect.addEventListener("change", render);
-els.onAirOnly.addEventListener("change", render);
-els.locationBtn.addEventListener("click", requestLocation);
-els.aboutBtn.addEventListener("click", showAbout);
-els.aboutClose.addEventListener("click", hideAbout);
-
-els.regionSelect.addEventListener("change", () => {
-    userLocation = null;
-    localStorage.setItem("swRegion", els.regionSelect.value);
-    els.locationBtn.textContent = "Use my location";
-    renderConditions();
-});
-
-els.aboutModal.addEventListener("click", event => {
-    if (event.target === els.aboutModal)
-        hideAbout();
-});
-if (els.autoBandBtn) {
-    els.autoBandBtn.addEventListener("click", applyAutoBand);
-}
-els.sourceToggles.forEach(input => {
-    input.addEventListener("change", render);
-});
-
-els.modalClose.addEventListener("click", hideDetails);
-els.detailModal.addEventListener("click", event => {
-    if (event.target === els.detailModal)
-        hideDetails();
-});
-
-document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
-        hideDetails();
-        hideAbout();
+    els.aboutModal.addEventListener("click", event => {
+        if (event.target === els.aboutModal)
+            hideAbout();
+    });
+    if (els.autoBandBtn) {
+        els.autoBandBtn.addEventListener("click", applyAutoBand);
     }
-});
+    els.sourceToggles.forEach(input => {
+        input.addEventListener("change", render);
+    });
 
-updateClock();
-setInterval(updateClock, 1000);
-setInterval(render, 60_000);
+    els.modalClose.addEventListener("click", hideDetails);
+    els.detailModal.addEventListener("click", event => {
+        if (event.target === els.detailModal)
+            hideDetails();
+    });
 
-loadSchedules().catch(err => {
-    console.error(err);
-    els.dataInfo.textContent = "Could not load schedules.json";
-});
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            hideDetails();
+            hideAbout();
+        }
+    });
+
+    updateClock();
+    setInterval(updateClock, 1000);
+    setInterval(render, 60_000);
+
+    loadSchedules().catch(err => {
+        console.error(err);
+        els.dataInfo.textContent = "Could not load schedules.json";
+    });

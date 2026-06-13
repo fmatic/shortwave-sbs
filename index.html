@@ -167,72 +167,117 @@
 </div>
 <div id="aboutModal" class="modal hidden">
   <div class="modal-card about-card">
-    <button id="aboutClose" class="modal-close">×</button>
+  <button id="aboutClose" class="modal-close">×</button>
 
-    <h2>About shortwave.sbs</h2>
+  <h2>About shortwave.sbs</h2>
 
-    <div class="about-section">
-      <h3>What is this?</h3>
-      <p>
-        shortwave.sbs is a modern dark-themed HF broadcast monitor
-        built for shortwave listeners and DXers.
-      </p>
+  <div class="about-section">
+    <h3>What is this?</h3>
+    <p>
+      shortwave.sbs is a modern dark-themed HF broadcast monitor
+      built for shortwave listeners, DXers and radio enthusiasts.
+    </p>
+    <p>
+      It combines multiple shortwave schedule sources with live filtering,
+      transmitter-site data, distance and bearing calculations, and propagation-oriented
+      band insights.
+    </p>
+  </div>
+
+  <div class="about-section">
+    <h3>Features</h3>
+    <ul>
+      <li>Live UTC clock</li>
+      <li>On-air now filtering</li>
+      <li>HF band activity overview</li>
+      <li>Auto Band recommendation</li>
+      <li>Best DX targets</li>
+      <li>HF Conditions with regional fallback profiles</li>
+      <li>Clickable transmitter-site details</li>
+      <li>Distance and bearing to transmitter sites</li>
+      <li>Same-frequency active broadcast view</li>
+      <li>Country flags based on ITU country codes</li>
+      <li>Responsive dark UI for desktop and mobile</li>
+    </ul>
+  </div>
+
+  <div class="about-section">
+    <h3>Data sources</h3>
+    <ul>
+      <li>EiBi shortwave schedule database</li>
+      <li>AOKI shortwave schedules from XLSX source</li>
+      <li>HFCC public data with lookup tables</li>
+    </ul>
+    <p>
+      HFCC lookup tables are used for transmitter sites, broadcaster names,
+      administrations and site coordinates where available.
+    </p>
+  </div>
+
+  <div class="about-section">
+    <h3>Current data engine</h3>
+    <ul>
+      <li>EiBi CSV importer</li>
+      <li>AOKI XLSX importer</li>
+      <li>HFCC importer with site, broadcaster and admin resolvers</li>
+      <li>EiBi transmitter-site resolver with alias support</li>
+      <li>Unified JSON schedule output</li>
+      <li>Basic duplicate/source merge logic</li>
+    </ul>
+  </div>
+
+  <div class="about-section">
+    <h3>Changelog & source updates</h3>
+
+    <div class="log-row">
+      <span>13.06.2026</span>
+      <strong>[Changelog]</strong>
+      <p>Added clickable transmitter-site details with distance and bearing calculations.</p>
     </div>
 
-    <div class="about-section">
-      <h3>Features</h3>
-      <ul>
-        <li>Live UTC clock</li>
-        <li>HF band activity overview</li>
-        <li>Auto Band recommendation</li>
-        <li>Best DX targets</li>
-        <li>On-air filtering</li>
-        <li>EiBi and AOKI schedule support</li>
-      </ul>
+    <div class="log-row">
+      <span>13.06.2026</span>
+      <strong>[Changelog]</strong>
+      <p>Added same-frequency active broadcast view.</p>
     </div>
 
-    <div class="about-section">
-      <h3>Data sources</h3>
-      <ul>
-        <li>EiBi schedule database</li>
-        <li>AOKI shortwave schedules</li>
-        <li>HFCC support planned with lookup resolver</li>
-      </ul>
+    <div class="log-row">
+      <span>13.06.2026</span>
+      <strong>[Changelog]</strong>
+      <p>Added HFCC lookup resolvers for transmitter sites, broadcasters and administrations.</p>
     </div>
 
-    <div class="about-section">
-      <h3>Changelog & source updates</h3>
-
-      <div class="log-row">
-        <span>09.06.2026</span>
-        <strong>[Changelog]</strong>
-        <p>Added AOKI source support and source filters.</p>
-      </div>
-
-      <div class="log-row">
-        <span>09.06.2026</span>
-        <strong>[Changelog]</strong>
-        <p>Added Auto Band, HF Activity overview, Best DX Targets and Live Snapshot.</p>
-      </div>
-
-      <div class="log-row">
-        <span>09.06.2026</span>
-        <strong>[Update]</strong>
-        <p>EiBi and AOKI lists updated to latest locally available versions.</p>
-      </div>
+    <div class="log-row">
+      <span>13.06.2026</span>
+      <strong>[Changelog]</strong>
+      <p>Rebuilt AOKI importer using XLSX schedule data.</p>
     </div>
 
-    <div class="about-section">
-      <h3>Roadmap</h3>
-      <ul>
-        <li>HFCC lookup resolver</li>
-        <li>Geolocation-aware DX targets</li>
-        <li>Propagation-aware Auto Band</li>
-        <li>Greyline visualization</li>
-        <li>HF weather layer</li>
-      </ul>
+    <div class="log-row">
+      <span>13.06.2026</span>
+      <strong>[Update]</strong>
+      <p>EiBi, AOKI and HFCC sources updated to latest locally available versions.</p>
+    </div>
+
+    <div class="log-row">
+      <span>09.06.2026</span>
+      <strong>[Changelog]</strong>
+      <p>Added Auto Band, HF Activity overview, Best DX Targets and Live Snapshot.</p>
     </div>
   </div>
+
+  <div class="about-section">
+    <h3>Roadmap</h3>
+    <ul>
+      <li>Transmitter-site map view</li>
+      <li>More complete EiBi transmitter-site aliases</li>
+      <li>Greyline and day/night path analysis</li>
+      <li>Propagation-aware Auto Band</li>
+      <li>Solar and geomagnetic HF weather layer</li>
+      <li>More advanced DX recommendations by user region</li>
+    </ul>
+  </div>
+</div>
 </div>
 	<footer class="footer">
   <span>Developed in Finland 🇫🇮 by Janne Heinikangas</span>
