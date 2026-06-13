@@ -961,3 +961,8 @@ tr {
 .freq-btn:hover {
   text-decoration: underline;
 }
+
+td:nth-child(2) {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
