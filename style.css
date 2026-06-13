@@ -932,3 +932,41 @@ tr {
   outline-offset: 3px;
   border-radius: 4px;
 }
+
+.freq-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+}
+
+.freq-btn:hover {
+  text-decoration: underline;
+}
+
+.modal-meta small {
+  color: var(--muted);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.freq-btn,
+.tx-site-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.freq-btn:hover,
+.tx-site-btn:hover {
+  color: #7fffd4;
+}
