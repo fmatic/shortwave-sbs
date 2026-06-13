@@ -87,6 +87,7 @@ const els = {
     conditionLocation: document.getElementById("conditionLocation"),
     pathMode: document.getElementById("pathMode"),
     conditionBands: document.getElementById("conditionBands")
+    bestDxList: document.getElementById("bestDxList")
 };
 
 function updateClock() {
@@ -168,6 +169,90 @@ function getPathMode(elevation) {
 function getSolarModeForLocation(lat, lon) {
     const elevation = getSolarElevationApprox(lat, lon);
     return getPathMode(elevation);
+}
+
+function getDxScore(item, path, awareness) {
+    let score = 0;
+
+    if (path.distance) {
+        score += Math.min(50, path.distance / 200);
+    }
+
+    score += awareness.score || 0;
+
+    if (item.country && item.country !== "CLA") {
+        score += 5;
+    }
+
+    if (item.country === "CLA") {
+        score += 20;
+    }
+
+    if (item.band === "49m" || item.band === "41m" || item.band === "31m") {
+        score += 8;
+    }
+
+    return Math.round(score);
+}
+
+function renderBestDxNow() {
+    const active = getActiveBySources()
+        .map(item => {
+            const path = getTxPathInfo(item);
+            const awareness = getPathAwareness(item);
+            const score = getDxScore(item, path, awareness);
+
+            return {
+                item,
+                path,
+                awareness,
+                score
+            };
+        })
+        .filter(x => x.path.distance)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 6);
+
+    if (!active.length) {
+        els.bestDxList.innerHTML = `<div class="empty">No DX candidates found</div>`;
+        return;
+    }
+
+    els.bestDxList.innerHTML = active.map(({
+                item,
+                path,
+                awareness,
+                score
+            }, index) => `
+    <button class="best-dx-row" type="button" data-freq="${escapeHtml(item.freq)}">
+      <div class="best-dx-rank">#${index + 1}</div>
+      <div class="best-dx-main">
+        <strong>
+          <span class="flag ${item.country === "CLA" ? "flag-cla" : ""}">
+            ${getFlag(item.country)}
+          </span>
+          ${escapeHtml(item.station || "Unknown station")}
+        </strong>
+        <span>
+          ${escapeHtml(item.freq)}kHz · ${escapeHtml(formatTxSite(item))}
+        </span>
+      </div>
+      <div class="best-dx-meta">
+        <strong>${path.distance.toLocaleString("fi-FI")} km</strong>
+        <span>${path.bearing}° ${path.compass}</span>
+      </div>
+      <div class="best-dx-badges">
+        <span class="dx-badge">${score}</span>
+        <span class="path-badge">${escapeHtml(awareness.label)}</span>
+      </div>
+    </button>
+  `).join("");
+
+    [...els.bestDxList.querySelectorAll(".best-dx-row")].forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+            showFrequencyDetails(active[index].item);
+        });
+    });
 }
 
 function getPathAwareness(item) {
@@ -1217,6 +1302,7 @@ function render() {
     renderTargets();
     renderSnapshot();
     renderConditions();
+    renderBestDxNow();
     renderTable();
 }
 async function loadSchedules() {

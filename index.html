@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>shortwave.sbs</title>
-  <link rel="stylesheet" href="style.css?v=0.4.5" />
+  <link rel="stylesheet" href="style.css?v=0.4.6" />
 </head>
 <body>
   <main class="app">
@@ -14,7 +14,7 @@
         <p>Live HF broadcast monitor</p>
       </div>
       <div class="clock">
-  <div class="version">v0.4.5</div>
+  <div class="version">v0.4.6</div>
   <button id="aboutBtn" class="about-btn" type="button">About</button>
   <span id="utcClock">--:-- UTC</span>
   <small id="dataInfo">Loading schedules…</small>
@@ -77,6 +77,14 @@
     <h2>HF Conditions</h2>
     <span id="conditionLocation">Location not set</span>
   </div>
+
+<section class="best-dx-card">
+  <div class="section-head">
+    <h2>Best DX Now</h2>
+    <span>Distance, path and active schedules</span>
+  </div>
+  <div id="bestDxList" class="best-dx-list"></div>
+</section>
 
   <div class="conditions-top">
     <div>
@@ -288,6 +296,6 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.4.5"></script>
+<script src="app.js?v=0.4.6"></script>
 </body>
 </html>
