@@ -2,6 +2,7 @@ let allSchedules = [];
 let userLocation = null;
 let spaceWeather = null;
 
+
 const bandRanges = {
     "120m": [2300, 2495],
     "90m": [3200, 3400],
@@ -178,8 +179,19 @@ function getSolarModeForLocation(lat, lon) {
     return getPathMode(elevation);
 }
 
+function getSeason() {
+    const month = new Date().getUTCMonth() + 1;
+
+    if ([12, 1, 2].includes(month)) return "winter";
+    if ([6, 7, 8].includes(month)) return "summer";
+
+    return "transition";
+}
+
 function getDxScore(item, path, awareness) {
     let score = 0;
+
+    const season = getSeason();
 
     if (path.distance) {
         score += Math.min(50, path.distance / 200);
@@ -199,7 +211,75 @@ function getDxScore(item, path, awareness) {
         score += 8;
     }
 
-    return Math.round(score);
+    if (spaceWeather) {
+        const kp = Number(spaceWeather.kp || 0);
+        const sfi = Number(spaceWeather.sfi || 100);
+        const xray = String(spaceWeather.xray || "").toLowerCase();
+
+        const lowBands = ["120m", "90m", "75m", "60m", "49m"];
+        const midBands = ["41m", "31m"];
+        const highBands = ["25m", "22m", "19m", "16m", "13m", "11m"];
+
+        if (kp >= 5) {
+            score -= 18;
+        } else if (kp >= 4) {
+            score -= 8;
+        }
+
+        if (kp >= 5 && lowBands.includes(item.band)) {
+            score -= 18;
+        }
+
+        if (sfi >= 150 && highBands.includes(item.band)) {
+            score += 22;
+        } else if (sfi >= 120 && highBands.includes(item.band)) {
+            score += 12;
+        }
+
+        if (sfi < 90 && highBands.includes(item.band)) {
+            score -= 22;
+        }
+
+        if ((xray.includes("m-class") || xray.includes("x-class")) && highBands.includes(item.band)) {
+            score -= 25;
+        }
+
+        if (sfi >= 120 && midBands.includes(item.band)) {
+            score += 6;
+        }
+    }
+
+    if (season === "summer") {
+        if (["120m", "90m", "75m", "60m"].includes(item.band)) {
+            score -= 18;
+        }
+
+        if (item.band === "49m" && path.distance > 7000) {
+            score -= 12;
+        }
+
+        if (["19m", "16m", "13m"].includes(item.band)) {
+            score += 10;
+        }
+    }
+
+    if (season === "winter") {
+        if (["49m", "60m", "75m"].includes(item.band)) {
+            score += 15;
+        }
+
+        if (path.distance > 5000) {
+            score += 10;
+        }
+    }
+
+    if (season === "transition") {
+        if (awareness.label === "Greyline potential") {
+            score += 10;
+        }
+    }
+
+    return Math.max(0, Math.round(score));
 }
 
 function renderBestDxNow() {
