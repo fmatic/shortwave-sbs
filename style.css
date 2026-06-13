@@ -937,10 +937,6 @@ tr {
   appearance: none;
   -webkit-appearance: none;
 
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
   border: 0;
   background: transparent;
 
@@ -952,14 +948,14 @@ tr {
 
   cursor: pointer;
   text-align: left;
+
+  white-space: nowrap;
 }
 
 .freq-btn::before {
-  content: "•";
+  content: "• ";
   color: var(--accent);
-  font-size: 18px;
-  line-height: 1;
-  transform: translateY(-1px);
+  font-size: 16px;
 }
 
 .freq-btn:hover {
