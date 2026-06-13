@@ -966,3 +966,15 @@ td:nth-child(2) {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+
+.dx-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(94,234,212,.25);
+  color: var(--accent);
+  background: rgba(94,234,212,.08);
+  font-size: 11px;
+  font-weight: 700;
+}

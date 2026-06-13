@@ -622,7 +622,7 @@ function showFrequencyDetails(item) {
               · ${escapeHtml(x.target || "—")}
               · ${escapeHtml(tx)}
               ${path.distance ? ` · ${path.distance.toLocaleString("fi-FI")} km · ${path.bearing}° ${path.compass}` : ""}
-              · ${escapeHtml(dxLabel)}
+              <span class="dx-badge">${escapeHtml(dxLabel)}</span>
               · ${escapeHtml(x.source)}
             </small>
           </strong>
