@@ -4,42 +4,37 @@ on:
   push:
     branches:
       - main
-
   workflow_dispatch:
-
   schedule:
     - cron: "15 * * * *"
-   
-   permissions:
-  contents: write
 
+permissions:
+  contents: write
 
 jobs:
   update-space-weather:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run updater
+      - name: Update space weather data
         run: npm run update-space-weather
 
       - name: Commit updated data
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-
           git add data/space-weather.json
-
           git diff --cached --quiet || (
             git commit -m "Auto update space weather"
             git push
