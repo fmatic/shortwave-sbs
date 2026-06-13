@@ -561,7 +561,7 @@ const mapLink = getMapLink(item);
   ` : "");
 
 els.detailModal.classList.remove("hidden");
-
+}
 function getDxPotentialLabel(path) {
     if (!path.distance)
         return "Unknown";
