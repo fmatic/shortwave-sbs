@@ -518,7 +518,7 @@ function hasTxSite(item) {
 function showTxSiteDetails(item) {
     if (!item || !hasTxSite(item))
         return;
-
+const mapLink = getMapLink(item);
     els.modalStation.textContent = item.txSite || item.txCode || "Transmitter site";
     const path = getTxPathInfo(item);
 
@@ -536,15 +536,31 @@ function showTxSiteDetails(item) {
         ["Remarks", item.remarks]
     ];
 
-    els.modalMeta.innerHTML = rows.map(([label, value]) => `
+ els.modalMeta.innerHTML =
+  rows.map(([label, value]) => `
     <div>
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(value || "—")}</strong>
     </div>
-  `).join("");
+  `).join("")
 
-    els.detailModal.classList.remove("hidden");
-}
+  +
+
+  (mapLink ? `
+    <div>
+      <span>Map</span>
+      <strong>
+        <a class="map-link"
+           href="${escapeHtml(mapLink)}"
+           target="_blank"
+           rel="noopener">
+           Open in map
+        </a>
+      </strong>
+    </div>
+  ` : "");
+
+els.detailModal.classList.remove("hidden");
 
 function getDxPotentialLabel(path) {
     if (!path.distance)
@@ -688,6 +704,12 @@ function getSelectedSources() {
     return [...els.sourceToggles]
     .filter(input => input.checked)
     .map(input => input.value);
+}
+
+function getMapLink(item) {
+  if (!item.txLat || !item.txLon) return "";
+
+  return `https://www.openstreetmap.org/?mlat=${item.txLat}&mlon=${item.txLon}#map=8/${item.txLat}/${item.txLon}`;
 }
 
 function getBandReason(band, count) {
