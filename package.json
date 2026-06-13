@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "scripts": {
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "update-space-weather": "node tools/update-space-weather.js"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fmatic/shortwave-sbs.git"
@@ -22,4 +26,6 @@
     "adm-zip": "^0.5.17",
     "xlsx": "^0.18.5"
   }
+  
 }
+

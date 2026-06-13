@@ -1,5 +1,6 @@
 let allSchedules = [];
 let userLocation = null;
+let spaceWeather = null;
 
 const bandRanges = {
     "120m": [2300, 2495],
@@ -87,7 +88,13 @@ const els = {
     conditionLocation: document.getElementById("conditionLocation"),
     pathMode: document.getElementById("pathMode"),
     conditionBands: document.getElementById("conditionBands"),
-    bestDxList: document.getElementById("bestDxList")
+    bestDxList: document.getElementById("bestDxList"),
+    spaceWeatherUpdated: document.getElementById("spaceWeatherUpdated"),
+    swKp: document.getElementById("swKp"),
+    swSfi: document.getElementById("swSfi"),
+    swXray: document.getElementById("swXray"),
+    swAurora: document.getElementById("swAurora"),
+    swBandSummary: document.getElementById("swBandSummary")
 };
 
 function updateClock() {
@@ -1302,11 +1309,66 @@ function render() {
     renderTargets();
     renderSnapshot();
     renderConditions();
+	renderSpaceWeather();
     renderBestDxNow();
     renderTable();
 }
+
+async function loadSpaceWeather() {
+  try {
+    const res = await fetch("data/space-weather.json");
+    spaceWeather = await res.json();
+  } catch (err) {
+    console.warn("Could not load space weather", err);
+    spaceWeather = null;
+  }
+}
+
+function renderSpaceWeather() {
+  if (!spaceWeather) {
+    els.spaceWeatherUpdated.textContent = "NOAA data unavailable";
+    return;
+  }
+
+  const updated = spaceWeather.updated
+    ? new Date(spaceWeather.updated).toLocaleString("fi-FI", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      })
+    : "unknown";
+
+  els.spaceWeatherUpdated.textContent = `NOAA updated ${updated}`;
+
+  els.swKp.textContent = spaceWeather.kp ?? "—";
+  els.swSfi.textContent = spaceWeather.sfi ?? "—";
+  els.swXray.textContent = spaceWeather.xray || "—";
+  els.swAurora.textContent = spaceWeather.aurora ? "Active" : "Quiet";
+
+  const hf = spaceWeather.hf || {};
+
+  els.swBandSummary.innerHTML = `
+    <div>
+      <span>Low bands</span>
+      <strong>${escapeHtml(hf.lowBands || "unknown")}</strong>
+    </div>
+    <div>
+      <span>Mid bands</span>
+      <strong>${escapeHtml(hf.midBands || "unknown")}</strong>
+    </div>
+    <div>
+      <span>High bands</span>
+      <strong>${escapeHtml(hf.highBands || "unknown")}</strong>
+    </div>
+  `;
+}
+
 async function loadSchedules() {
-    const res = await fetch("data/schedules.json");
+  await loadSpaceWeather();
+
+  const res = await fetch("data/schedules.json");
     const data = await res.json();
 
     const savedRegion = localStorage.getItem("swRegion");

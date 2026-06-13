@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>shortwave.sbs</title>
-  <link rel="stylesheet" href="style.css?v=0.4.6" />
+  <link rel="stylesheet" href="style.css?v=0.4.7" />
 </head>
 <body>
   <main class="app">
@@ -14,7 +14,7 @@
         <p>Live HF broadcast monitor</p>
       </div>
       <div class="clock">
-  <div class="version">v0.4.6</div>
+  <div class="version">v0.4.7</div>
   <button id="aboutBtn" class="about-btn" type="button">About</button>
   <span id="utcClock">--:-- UTC</span>
   <small id="dataInfo">Loading schedules…</small>
@@ -70,6 +70,34 @@
       </div>
     </div>
   </section>
+</section>
+
+<section class="space-weather-card">
+  <div class="section-head">
+    <h2>HF Weather</h2>
+    <span id="spaceWeatherUpdated">Loading NOAA data…</span>
+  </div>
+
+  <div class="space-weather-grid">
+    <div>
+      <strong id="swKp">—</strong>
+      <span>Kp index</span>
+    </div>
+    <div>
+      <strong id="swSfi">—</strong>
+      <span>SFI</span>
+    </div>
+    <div>
+      <strong id="swXray">—</strong>
+      <span>X-ray</span>
+    </div>
+    <div>
+      <strong id="swAurora">—</strong>
+      <span>Aurora</span>
+    </div>
+  </div>
+
+  <div id="swBandSummary" class="sw-band-summary"></div>
 </section>
 
 <section class="conditions-card">
@@ -296,6 +324,6 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.4.6"></script>
+<script src="app.js?v=0.4.7"></script>
 </body>
 </html>

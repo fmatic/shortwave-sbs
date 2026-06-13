@@ -1095,3 +1095,64 @@ td:nth-child(2) {
     text-align: left;
   }
 }
+
+.space-weather-card {
+  background: rgba(10,15,24,.72);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.space-weather-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.space-weather-grid div,
+.sw-band-summary div {
+  background: rgba(255,255,255,.035);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.space-weather-grid strong {
+  display: block;
+  color: var(--accent);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.space-weather-grid span,
+.sw-band-summary span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sw-band-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.sw-band-summary strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--text);
+  text-transform: capitalize;
+}
+
+@media (max-width: 760px) {
+  .space-weather-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sw-band-summary {
+    grid-template-columns: 1fr;
+  }
+}
