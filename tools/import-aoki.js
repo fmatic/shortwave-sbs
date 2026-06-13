@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const AdmZip = require("adm-zip");
+const XLSX = require("xlsx");
 
-const inputPath = path.join(__dirname, "..", "sources", "aoki.zip");
+const inputPath = path.join(__dirname, "..", "sources", "xta26.xlsx");
 
 function detectBand(freqKHz) {
   if (freqKHz >= 2300 && freqKHz <= 2495) return "120m";
@@ -21,63 +21,84 @@ function detectBand(freqKHz) {
   return "";
 }
 
+function parseAokiLatLon(value) {
+  const v = String(value || "").trim();
+  const match = v.match(/^(\d{2})(\d{2})(\d{2})([NS])(\d{3})(\d{2})(\d{2})([EW])$/);
+
+  if (!match) return { lat: null, lon: null };
+
+  let lat =
+    Number(match[1]) +
+    Number(match[2]) / 60 +
+    Number(match[3]) / 3600;
+
+  let lon =
+    Number(match[5]) +
+    Number(match[6]) / 60 +
+    Number(match[7]) / 3600;
+
+  if (match[4] === "S") lat *= -1;
+  if (match[8] === "W") lon *= -1;
+
+  return {
+    lat: Number(lat.toFixed(4)),
+    lon: Number(lon.toFixed(4))
+  };
+}
+
 function importAoki() {
   if (!fs.existsSync(inputPath)) {
     console.warn("AOKI file missing:", inputPath);
     return [];
   }
 
-  const zip = new AdmZip(inputPath);
-  const entry = zip.getEntries().find(e =>
-    !e.isDirectory &&
-    /\.(txt|csv|dat)$/i.test(e.entryName)
-  );
+  const workbook = XLSX.readFile(inputPath);
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-  if (!entry) {
-    console.warn("AOKI zip contains no txt/csv/dat file");
-    return [];
-  }
-
-  const raw = entry.getData().toString("latin1");
-  const lines = raw.split(/\r?\n/).filter(Boolean);
+  const rows = XLSX.utils.sheet_to_json(sheet, {
+    header: 1,
+    defval: ""
+  });
 
   const schedules = [];
 
-  for (const line of lines) {
-    const trimmed = line.trim();
+  for (const row of rows.slice(2)) {
+    const freq = Number(row[0]);
+    if (!freq) continue;
 
-    if (!trimmed) continue;
-    if (!/^\d/.test(trimmed)) continue;
+    const utc = String(row[3] || "");
+    const [start, end] = utc.split("-");
 
-    const parts = trimmed.split(/\s+/);
-
-    const freq = Number(parts[0]);
-    const time = parts[1] || "";
-
-    if (!freq || !time.includes("-")) continue;
-
-    const [start, end] = time.split("-");
-
-    const station = parts.slice(2).join(" ");
+    const coords = parseAokiLatLon(row[10]);
 
     schedules.push({
       freq,
-      start,
-      end,
-      days: "",
-      country: "",
-      station,
-      language: "",
+      start: start || "",
+      end: end || "",
+      days: row[4] || "",
+      country: row[9] || "",
+      countryName: "",
+      station: row[2] || "",
+      language: row[5] || "",
       target: "",
-	  type: "",
-      remarks: trimmed,
-      power: "",
+      type: "",
+      power: row[6] || "",
+      azimuth: row[7] || "",
+
+      txCode: "",
+      txSite: row[8] || "",
+      txCountry: row[9] || "",
+      txLat: coords.lat,
+      txLon: coords.lon,
+
+      remarks: row[11] || "",
       band: detectBand(freq),
       source: "AOKI"
     });
   }
 
   console.log(`AOKI: ${schedules.length} rows`);
+
   return schedules;
 }
 
