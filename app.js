@@ -86,7 +86,7 @@ const els = {
     regionSelect: document.getElementById("regionSelect"),
     conditionLocation: document.getElementById("conditionLocation"),
     pathMode: document.getElementById("pathMode"),
-    conditionBands: document.getElementById("conditionBands")
+    conditionBands: document.getElementById("conditionBands"),
     bestDxList: document.getElementById("bestDxList")
 };
 
