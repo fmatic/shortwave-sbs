@@ -862,6 +862,7 @@ function renderTable() {
             showFrequencyDetails(rows[index]);
         });
     });
+}
 
     function getCurrentLocationForCalculations() {
         if (userLocation)
