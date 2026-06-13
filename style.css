@@ -334,13 +334,6 @@ tr.live-row td:first-child {
   position: relative;
 }
 
-tr.live-row td:first-child::before {
-  content: "●";
-  color: var(--accent);
-  margin-right: 7px;
-  font-size: 10px;
-}
-
 tr {
   cursor: pointer;
 }
@@ -956,17 +949,35 @@ tr {
   line-height: 1.6;
 }
 
-.freq-btn,
-.tx-site-btn {
+.freq-btn {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  border: 0;
   background: transparent;
-  border: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
+
+  color: var(--accent);
+
   padding: 0;
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+  text-align: left;
 }
 
-.freq-btn:hover,
-.tx-site-btn:hover {
-  color: #7fffd4;
+.freq-btn::before {
+  content: "•";
+  color: var(--accent);
+  font-size: 18px;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.freq-btn:hover {
+  text-decoration: underline;
 }
