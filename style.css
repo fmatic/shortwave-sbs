@@ -909,3 +909,26 @@ tr {
   filter: saturate(1.4);
   opacity: .95;
 }
+
+.tx-site-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tx-site-btn:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.tx-site-btn:focus-visible {
+  outline: 2px solid rgba(94,234,212,.45);
+  outline-offset: 3px;
+  border-radius: 4px;
+}

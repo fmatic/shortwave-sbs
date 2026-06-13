@@ -438,6 +438,37 @@ item.txCountry,
   });
 }
 
+function hasTxSite(item) {
+  return item.txSite || item.txCode || item.txLat || item.txLon;
+}
+
+function showTxSiteDetails(item) {
+  if (!item || !hasTxSite(item)) return;
+
+  els.modalStation.textContent = item.txSite || item.txCode || "Transmitter site";
+
+  const rows = [
+    ["Transmitter site", item.txSite],
+    ["Site code", item.txCode],
+    ["Site country", item.txCountry],
+    ["Coordinates", item.txLat && item.txLon ? `${item.txLat}, ${item.txLon}` : ""],
+    ["Station", item.station],
+    ["Frequency", `${item.freq} kHz`],
+    ["UTC", fmtTime(item.start, item.end)],
+    ["Source", item.source],
+    ["Remarks", item.remarks]
+  ];
+
+  els.modalMeta.innerHTML = rows.map(([label, value]) => `
+    <div>
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value || "—")}</strong>
+    </div>
+  `).join("");
+
+  els.detailModal.classList.remove("hidden");
+}
+
 function formatTxSite(item) {
   if (item.txSite) {
     return item.txSite;
@@ -670,7 +701,11 @@ return `
       ${escapeHtml(item.country)}
     </td>
 
-   <td>${escapeHtml(formatTxSite(item))}</td>
+   <td>
+  <button class="tx-site-btn" type="button" data-index="${index}">
+    ${escapeHtml(formatTxSite(item))}
+  </button>
+</td>
     <td>${escapeHtml(item.source)}</td>
   </tr>
 `;
@@ -679,6 +714,13 @@ return `
   [...els.scheduleBody.querySelectorAll("tr")].forEach((tr, index) => {
     tr.addEventListener("click", () => showDetails(rows[index]));
   });
+[...els.scheduleBody.querySelectorAll(".tx-site-btn")].forEach(btn => {
+  btn.addEventListener("click", event => {
+    event.stopPropagation();
+    const index = Number(btn.dataset.index);
+    showTxSiteDetails(rows[index]);
+  });
+});
 }
 
 function renderBandLive() {
