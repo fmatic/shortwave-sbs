@@ -165,6 +165,138 @@ function getPathMode(elevation) {
     return "Night";
 }
 
+function getSolarModeForLocation(lat, lon) {
+    const elevation = getSolarElevationApprox(lat, lon);
+    return getPathMode(elevation);
+}
+
+function getPathAwareness(item) {
+    const rx = getCurrentLocationForCalculations();
+
+    if (!item.txLat || !item.txLon) {
+        return {
+            label: "Unknown path",
+            detail: "No transmitter coordinates",
+            score: 0
+        };
+    }
+
+    const band = item.band || "";
+    const rxMode = getSolarModeForLocation(rx.lat, rx.lon);
+    const txMode = getSolarModeForLocation(Number(item.txLat), Number(item.txLon));
+
+    const isGreyline = rxMode === "Twilight" || txMode === "Twilight";
+    const isNightNight = rxMode === "Night" && txMode === "Night";
+    const isDayDay = rxMode === "Day" && txMode === "Day";
+    const isMixed = !isGreyline && !isNightNight && !isDayDay;
+
+    const lowerBands = ["120m", "90m", "75m", "60m", "49m"];
+    const midBands = ["41m", "31m"];
+    const higherBands = ["25m", "22m", "19m", "16m", "13m", "11m"];
+
+    if (isGreyline) {
+        return {
+            label: "Greyline potential",
+            detail: `${txMode} → ${rxMode} on ${band || "HF"}`,
+            score: lowerBands.includes(band) ? 95 : 85
+        };
+    }
+
+    if (lowerBands.includes(band)) {
+        if (isNightNight) {
+            return {
+                label: "Strong low-band path",
+                detail: `${txMode} → ${rxMode}`,
+                score: 90
+            };
+        }
+
+        if (isDayDay) {
+            return {
+                label: "Daylight absorption likely",
+                detail: `${txMode} → ${rxMode}`,
+                score: 25
+            };
+        }
+
+        return {
+            label: "Transition low-band path",
+            detail: `${txMode} → ${rxMode}`,
+            score: 65
+        };
+    }
+
+    if (midBands.includes(band)) {
+        if (isNightNight) {
+            return {
+                label: "Good night path",
+                detail: `${txMode} → ${rxMode}`,
+                score: 78
+            };
+        }
+
+        if (isDayDay) {
+            return {
+                label: "Usable daytime path",
+                detail: `${txMode} → ${rxMode}`,
+                score: 62
+            };
+        }
+
+        return {
+            label: "Mixed mid-band path",
+            detail: `${txMode} → ${rxMode}`,
+            score: 70
+        };
+    }
+
+    if (higherBands.includes(band)) {
+        if (isDayDay) {
+            return {
+                label: "Good high-band daylight path",
+                detail: `${txMode} → ${rxMode}`,
+                score: 82
+            };
+        }
+
+        if (isNightNight) {
+            return {
+                label: "High-band night risk",
+                detail: `${txMode} → ${rxMode}`,
+                score: 35
+            };
+        }
+
+        return {
+            label: "Transition high-band path",
+            detail: `${txMode} → ${rxMode}`,
+            score: 58
+        };
+    }
+
+    if (isNightNight) {
+        return {
+            label: "Night path",
+            detail: `${txMode} → ${rxMode}`,
+            score: 80
+        };
+    }
+
+    if (isDayDay) {
+        return {
+            label: "Daylight path",
+            detail: `${txMode} → ${rxMode}`,
+            score: 50
+        };
+    }
+
+    return {
+        label: "Mixed path",
+        detail: `${txMode} → ${rxMode}`,
+        score: 60
+    };
+}
+
 function getConditionScore(band, mode) {
     const scores = {
         Day: {
@@ -518,9 +650,10 @@ function hasTxSite(item) {
 function showTxSiteDetails(item) {
     if (!item || !hasTxSite(item))
         return;
-const mapLink = getMapLink(item);
+    const mapLink = getMapLink(item);
     els.modalStation.textContent = item.txSite || item.txCode || "Transmitter site";
     const path = getTxPathInfo(item);
+    const awareness = getPathAwareness(item);
 
     const rows = [
         ["Transmitter site", item.txSite],
@@ -529,6 +662,7 @@ const mapLink = getMapLink(item);
         ["Coordinates", item.txLat && item.txLon ? `${item.txLat}, ${item.txLon}` : ""],
         ["Distance", path.distance ? `${path.distance.toLocaleString("fi-FI")} km` : ""],
         ["Bearing", path.bearing ? `${path.bearing}° ${path.compass}` : ""],
+        ["Path", `${awareness.label} (${awareness.detail})`],
         ["Station", item.station],
         ["Frequency", `${item.freq} kHz`],
         ["UTC", fmtTime(item.start, item.end)],
@@ -536,17 +670,17 @@ const mapLink = getMapLink(item);
         ["Remarks", item.remarks]
     ];
 
- els.modalMeta.innerHTML =
-  rows.map(([label, value]) => `
+    els.modalMeta.innerHTML =
+        rows.map(([label, value]) => `
     <div>
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(value || "—")}</strong>
     </div>
   `).join("")
 
-  +
+         +
 
-  (mapLink ? `
+        (mapLink ? `
     <div>
       <span>Map</span>
       <strong>
@@ -560,7 +694,7 @@ const mapLink = getMapLink(item);
     </div>
   ` : "");
 
-els.detailModal.classList.remove("hidden");
+    els.detailModal.classList.remove("hidden");
 }
 function getDxPotentialLabel(path) {
     if (!path.distance)
@@ -623,6 +757,7 @@ function showFrequencyDetails(item) {
             }) => {
             const tx = formatTxSite(x);
             const dxLabel = getDxPotentialLabel(path);
+            const awareness = getPathAwareness(x);
 
             return `
         <div>
@@ -639,6 +774,7 @@ function showFrequencyDetails(item) {
               · ${escapeHtml(tx)}
               ${path.distance ? ` · ${path.distance.toLocaleString("fi-FI")} km · ${path.bearing}° ${path.compass}` : ""}
               <span class="dx-badge">${escapeHtml(dxLabel)}</span>
+			  <span class="path-badge">${escapeHtml(awareness.label)}</span>
               · ${escapeHtml(x.source)}
             </small>
           </strong>
@@ -707,9 +843,10 @@ function getSelectedSources() {
 }
 
 function getMapLink(item) {
-  if (!item.txLat || !item.txLon) return "";
+    if (!item.txLat || !item.txLon)
+        return "";
 
-  return `https://www.openstreetmap.org/?mlat=${item.txLat}&mlon=${item.txLon}#map=8/${item.txLat}/${item.txLon}`;
+    return `https://www.openstreetmap.org/?mlat=${item.txLat}&mlon=${item.txLon}#map=8/${item.txLat}/${item.txLon}`;
 }
 
 function getBandReason(band, count) {
