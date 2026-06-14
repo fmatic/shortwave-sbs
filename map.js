@@ -4,9 +4,10 @@ const map = L.map("txMap", {
   worldCopyJump: true
 }).setView([35, 20], 2);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 12,
-  attribution: "&copy; OpenStreetMap contributors"
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap &copy; CARTO',
+  subdomains: 'abcd',
+  maxZoom: 19
 }).addTo(map);
 
 function utcMinutesNow() {
