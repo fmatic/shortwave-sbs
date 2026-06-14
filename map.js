@@ -1,3 +1,4 @@
+console.log("map.js loaded v0.5.3.4");
 const mapInfo = document.getElementById("mapInfo");
 const mapTitle = document.getElementById("mapTitle");
 const mapBandSwitcher = document.getElementById("mapBandSwitcher");
@@ -46,6 +47,7 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 19
 }).addTo(map);
 
+console.log("Before terminator check:", typeof L.terminator);
 if (typeof L.terminator === "function") {
     terminatorLayer = L.terminator({
         color: "#ff0000",
