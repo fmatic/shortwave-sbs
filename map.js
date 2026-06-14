@@ -103,17 +103,33 @@ function getNightPolygon() {
     ];
 }
 
+function getGreylinePoints() {
+    const sun = getSubsolarPoint();
+    const points = [];
+
+    for (let lon = -180; lon <= 180; lon += 2) {
+        const hourAngle = (lon - sun.lon) * Math.PI / 180;
+        const sunLatRad = sun.lat * Math.PI / 180;
+
+        const lat = Math.atan(
+            -Math.cos(hourAngle) / Math.tan(sunLatRad)
+        ) * 180 / Math.PI;
+
+        points.push([lat, lon]);
+    }
+
+    return points;
+}
+
 function renderGreyline() {
     if (greylineLayer) {
         greylineLayer.remove();
     }
 
-    greylineLayer = L.polygon(getNightPolygon(), {
+    greylineLayer = L.polyline(getGreylinePoints(), {
         color: "#93c5fd",
         weight: 2,
-        opacity: 0.75,
-        fillColor: "#000000",
-        fillOpacity: 0.22,
+        opacity: 0.85,
         interactive: false
     }).addTo(map);
 }
