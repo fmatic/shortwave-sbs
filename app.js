@@ -329,7 +329,7 @@ function renderBestDxNow() {
         <span>${path.bearing}° ${path.compass}</span>
       </div>
       <div class="best-dx-badges">
-        <span class="dx-badge">${score}</span>
+        <span class="dx-badge">${score} · ${escapeHtml(getScoreLabel(score))}</span>
         <span class="path-badge">${escapeHtml(awareness.label)}</span>
       </div>
     </button>
@@ -560,6 +560,14 @@ function renderConditions() {
       </div>
     `;
     }).join("");
+}
+
+function getScoreLabel(score) {
+    if (score >= 140) return "Excellent DX";
+    if (score >= 115) return "Strong DX";
+    if (score >= 90) return "Good DX";
+    if (score >= 65) return "Possible";
+    return "Low chance";
 }
 
 function requestLocation() {
