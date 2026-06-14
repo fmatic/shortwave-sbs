@@ -184,6 +184,32 @@ function getFilteredSchedules() {
     });
 }
 
+const regionTargetMap = {
+  "Northern Europe": ["Eu", "NEu", "WEu", "EEu"],
+  "Central Europe": ["Eu", "WEu", "CEu", "EEu"],
+
+  "North America": ["NAm", "USA", "CAN"],
+  "South America": ["SAm", "BRA", "ARG"],
+
+  "East Asia": ["EAs", "FE", "CHN", "J", "KOR"],
+  "Oceania": ["Oc", "AUS", "NZL"]
+};
+
+function getCurrentRegion() {
+  return localStorage.getItem("swRegion") || "Northern Europe";
+}
+
+function isTargetingCurrentRegion(item) {
+  const region = getCurrentRegion();
+
+  const targets = regionTargetMap[region] || [];
+  const targetText = String(item.target || "");
+
+  return targets.some(code =>
+    targetText.includes(code)
+  );
+}
+
 function buildSites(items) {
     const sites = new Map();
 
@@ -236,14 +262,20 @@ function renderMap() {
     const sites = buildSites(filtered);
 
     for (const site of sites.values()) {
-        const activeCount = site.items.filter(isOnAir).length;
+		const activeItems = site.items.filter(isOnAir);
+
+const activeCount = activeItems.length;
+
+const targetingRegion = activeItems.some(isTargetingCurrentRegion);
 
         const marker = L.circleMarker([site.lat, site.lon], {
             radius: Math.min(10, 4 + activeCount * 0.7),
+			weight: targetingRegion ? 2 : 1,
             weight: 1,
             color: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
             fillColor: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
             fillOpacity: 0.72
+			dashArray: targetingRegion ? null : "2 6",
         });
 
         marker.bindPopup(buildPopup(site), {
