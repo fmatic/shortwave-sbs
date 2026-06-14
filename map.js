@@ -79,6 +79,8 @@ function formatSiteName(item) {
 }
 
 function buildBandSwitcher() {
+  if (!mapBandSwitcher) return;
+
   const bands = ["all", ...bandOrder];
 
   mapBandSwitcher.innerHTML = bands.map(band => `
@@ -104,7 +106,7 @@ function buildBandSwitcher() {
       renderMap();
     });
   });
-}
+
 
 function buildPopup(site) {
   const active = site.items.filter(isOnAir);
