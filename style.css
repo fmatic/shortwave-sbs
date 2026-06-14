@@ -1238,3 +1238,39 @@ td:nth-child(7) {
     display: none !important;
   }
 }
+
+@media screen and (max-width: 700px) {
+  .modal {
+    align-items: start;
+    place-items: start center;
+    padding: 18px 10px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-card {
+    width: min(100%, 92vw);
+    max-height: calc(100dvh - 36px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 22px;
+  }
+
+  .modal-meta div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .modal-meta strong {
+    word-break: break-word;
+  }
+
+  .modal-close {
+    position: sticky;
+    top: 0;
+    float: right;
+    z-index: 2;
+    background: #0d1420;
+    border-radius: 999px;
+  }
+}
