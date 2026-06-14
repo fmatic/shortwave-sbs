@@ -48,15 +48,13 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
 
 if (typeof L.terminator === "function") {
     terminatorLayer = L.terminator({
-    color: "#60a5fa",
-    weight: 3,
-    opacity: 0.95,
-
-    fillColor: "#0f172a",
-    fillOpacity: 0.42
-}).addTo(map);
-
-terminatorLayer.bringToBack();
+        color: "#93c5fd",
+        weight: 2,
+        opacity: 0.85,
+        fillColor: "#000000",
+        fillOpacity: 0.18,
+        interactive: false
+    }).addTo(map);
 } else {
     console.warn("Leaflet terminator plugin not loaded");
 }
@@ -270,8 +268,6 @@ function renderMap() {
     if (markerLayer) {
         markerLayer.remove();
     }
-	markerLayer = L.layerGroup().addTo(map);
-markerLayer.bringToFront();
 
     markerLayer = L.layerGroup().addTo(map);
 
@@ -280,14 +276,11 @@ markerLayer.bringToFront();
 
     for (const site of sites.values()) {
         const activeItems = site.items.filter(isOnAir);
-
         const activeCount = activeItems.length;
-
         const targetingRegion = activeItems.some(isTargetingCurrentRegion);
 
         const marker = L.circleMarker([site.lat, site.lon], {
             radius: Math.min(10, 4 + activeCount * 0.7),
-
             weight: targetingRegion ? 2 : 1,
 
             color: getBandColor(
@@ -301,7 +294,6 @@ markerLayer.bringToFront();
                  : selectedBand),
 
             fillOpacity: 0.72,
-
             dashArray: targetingRegion ? null : "2 6"
         });
 
@@ -311,6 +303,12 @@ markerLayer.bringToFront();
 
         marker.addTo(markerLayer);
     }
+
+    markerLayer.eachLayer(layer => {
+        if (layer.bringToFront) {
+            layer.bringToFront();
+        }
+    });
 
     const label = selectedBand === "all" ? "All active bands" : `${selectedBand} band`;
 
