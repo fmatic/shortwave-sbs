@@ -1,12 +1,26 @@
 const mapInfo = document.getElementById("mapInfo");
+const mapTitle = document.getElementById("mapTitle");
+const mapBandSwitcher = document.getElementById("mapBandSwitcher");
+
+const bandOrder = [
+  "120m", "90m", "75m", "60m",
+  "49m", "41m", "31m", "25m",
+  "22m", "19m", "16m", "13m", "11m"
+];
+
+const params = new URLSearchParams(location.search);
+let selectedBand = params.get("band") || "all";
+
+let allSchedules = [];
+let markerLayer = null;
 
 const map = L.map("txMap", {
   worldCopyJump: true
 }).setView([35, 20], 2);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO',
-  subdomains: 'abcd',
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+  attribution: "&copy; OpenStreetMap &copy; CARTO",
+  subdomains: "abcd",
   maxZoom: 19
 }).addTo(map);
 
@@ -64,6 +78,34 @@ function formatSiteName(item) {
   return item.txSite || item.txCode || "Unknown transmitter site";
 }
 
+function buildBandSwitcher() {
+  const bands = ["all", ...bandOrder];
+
+  mapBandSwitcher.innerHTML = bands.map(band => `
+    <button
+      class="map-band-btn ${band === selectedBand ? "active" : ""}"
+      type="button"
+      data-band="${escapeHtml(band)}">
+      ${band === "all" ? "Show all" : escapeHtml(band)}
+    </button>
+  `).join("");
+
+  [...mapBandSwitcher.querySelectorAll(".map-band-btn")].forEach(btn => {
+    btn.addEventListener("click", () => {
+      selectedBand = btn.dataset.band || "all";
+
+      const url = selectedBand === "all"
+        ? "map.html"
+        : `map.html?band=${encodeURIComponent(selectedBand)}`;
+
+      history.replaceState(null, "", url);
+
+      buildBandSwitcher();
+      renderMap();
+    });
+  });
+}
+
 function buildPopup(site) {
   const active = site.items.filter(isOnAir);
   const shown = active.length ? active : site.items.slice(0, 8);
@@ -84,7 +126,11 @@ function buildPopup(site) {
           <li>
             <b>${escapeHtml(item.freq)} kHz</b>
             ${escapeHtml(item.station || "Unknown")}
-            <small>${escapeHtml(item.start || "----")}–${escapeHtml(item.end || "----")} · ${escapeHtml(item.source)}</small>
+            <small>
+              ${escapeHtml(item.start || "----")}–${escapeHtml(item.end || "----")}
+              · ${escapeHtml(item.band || "—")}
+              · ${escapeHtml(item.source)}
+            </small>
           </li>
         `).join("")}
       </ul>
@@ -92,15 +138,23 @@ function buildPopup(site) {
   `;
 }
 
-async function loadMap() {
-  const res = await fetch("data/schedules.json");
-  const data = await res.json();
+function getFilteredSchedules() {
+  return allSchedules.filter(item => {
+    if (!item.txLat || !item.txLon) return false;
+    if (!isOnAir(item)) return false;
 
+    if (selectedBand !== "all" && item.band !== selectedBand) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function buildSites(items) {
   const sites = new Map();
 
-  for (const item of data.schedules || []) {
-    if (!item.txLat || !item.txLon) continue;
-
+  for (const item of items) {
     const lat = Number(item.txLat);
     const lon = Number(item.txLon);
 
@@ -121,28 +175,54 @@ async function loadMap() {
     sites.get(key).items.push(item);
   }
 
-  let activeSites = 0;
+  return sites;
+}
+
+function renderMap() {
+  if (markerLayer) {
+    markerLayer.remove();
+  }
+
+  markerLayer = L.layerGroup().addTo(map);
+
+  const filtered = getFilteredSchedules();
+  const sites = buildSites(filtered);
 
   for (const site of sites.values()) {
     const activeCount = site.items.filter(isOnAir).length;
-    if (activeCount) activeSites++;
 
     const marker = L.circleMarker([site.lat, site.lon], {
-      radius: activeCount ? 6 : 4,
+      radius: Math.min(10, 4 + activeCount * 0.7),
       weight: 1,
-      color: activeCount ? "#5eead4" : "#7d8da8",
-      fillColor: activeCount ? "#5eead4" : "#7d8da8",
-      fillOpacity: activeCount ? 0.75 : 0.35
+      color: "#5eead4",
+      fillColor: "#5eead4",
+      fillOpacity: 0.72
     });
 
     marker.bindPopup(buildPopup(site), {
       maxWidth: 360
     });
 
-    marker.addTo(map);
+    marker.addTo(markerLayer);
   }
 
-  mapInfo.textContent = `${sites.size} transmitter sites · ${activeSites} active now`;
+  const label = selectedBand === "all" ? "All active bands" : `${selectedBand} band`;
+
+  mapTitle.textContent = selectedBand === "all"
+    ? "shortwave.sbs TX Map"
+    : `shortwave.sbs ${selectedBand} TX Map`;
+
+  mapInfo.textContent = `${label} · ${sites.size} transmitter sites · ${filtered.length} active broadcasts`;
+}
+
+async function loadMap() {
+  const res = await fetch("data/schedules.json");
+  const data = await res.json();
+
+  allSchedules = data.schedules || [];
+
+  buildBandSwitcher();
+  renderMap();
 }
 
 loadMap().catch(err => {

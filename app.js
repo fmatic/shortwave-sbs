@@ -96,6 +96,7 @@ const els = {
     swXray: document.getElementById("swXray"),
     swAurora: document.getElementById("swAurora"),
     swBandSummary: document.getElementById("swBandSummary")
+	mapLink: document.getElementById("mapLink"),
 };
 
 function updateClock() {
@@ -106,6 +107,14 @@ function updateClock() {
 function utcMinutesNow() {
     const now = new Date();
     return now.getUTCHours() * 60 + now.getUTCMinutes();
+}
+
+function updateMapLink() {
+    const band = els.bandSelect.value;
+
+    els.mapLink.href = band
+        ? `map.html?band=${encodeURIComponent(band)}`
+        : "map.html";
 }
 
 function timeToMinutes(value) {
@@ -1530,6 +1539,7 @@ function hideDetails() {
 }
 
 function render() {
+	updateMapLink();
     renderBandLive();
     renderActivityOverview();
     renderTargets();

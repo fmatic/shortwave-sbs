@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>shortwave.sbs TX Map</title>
+				<title>shortwave.sbs TX Map</title>
 
-  <link rel="stylesheet" href="style.css?v=0.4.9">
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  >
+				<link rel="stylesheet" href="style.css?v=0.4.9">
+					<link
+ rel="stylesheet"
+					      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
 
-  <style>
+						<style>
     body {
       overflow: hidden;
     }
@@ -106,26 +106,69 @@
     .tx-popup li {
       margin: 3px 0;
     }
-  </style>
-</head>
+	
+	.map-band-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
 
-<body>
-  <div class="map-page">
-    <header class="map-topbar">
-      <div class="map-title">
-        <strong>shortwave.sbs TX Map</strong>
-        <span id="mapInfo">Loading transmitter sites…</span>
-      </div>
+.map-band-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(94,234,212,.22);
+  border-radius: 999px;
+  background: rgba(94,234,212,.055);
+  color: var(--muted);
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-      <div class="map-actions">
-        <a class="map-button" href="index.html">← Schedule</a>
-      </div>
-    </header>
+.map-band-btn.active {
+  color: var(--accent);
+  border-color: rgba(94,234,212,.55);
+  background: rgba(94,234,212,.13);
+}
 
-    <div id="txMap"></div>
-  </div>
+@media (max-width: 760px) {
+  .map-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="map.js?v=0.4.9"></script>
-</body>
-</html>
+  .map-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .map-band-switcher {
+    justify-content: flex-start;
+  }
+}
+						</style>
+					</head>
+
+					<body>
+						<div class="map-page">
+							<header class="map-topbar">
+								<div class="map-title">
+									<strong id="mapTitle">shortwave.sbs TX Map</strong>
+									<span id="mapInfo">Loading transmitter sites…</span>
+								</div>
+
+								<div class="map-actions">
+									<div id="mapBandSwitcher" class="map-band-switcher"/>
+									<a class="map-button" href="index.html">← Schedule</a>
+								</div>
+							</header>
+							<div id="txMap"/>
+						</div>
+
+						<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"/>
+						<script src="map.js?v=0.4.9"/>
+					</body>
+				</html>
