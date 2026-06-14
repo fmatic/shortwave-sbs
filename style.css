@@ -1231,3 +1231,10 @@ td:nth-child(7) {
     white-space: nowrap !important;
   }
 }
+
+@media screen and (max-width: 700px) {
+  table th:nth-child(n+4),
+  table td:nth-child(n+4) {
+    display: none !important;
+  }
+}
