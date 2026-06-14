@@ -95,8 +95,8 @@ const els = {
     swSfi: document.getElementById("swSfi"),
     swXray: document.getElementById("swXray"),
     swAurora: document.getElementById("swAurora"),
-    swBandSummary: document.getElementById("swBandSummary")
-	mapLink: document.getElementById("mapLink"),
+    swBandSummary: document.getElementById("swBandSummary"),
+	mapLink: document.getElementById("mapLink")
 };
 
 function updateClock() {
