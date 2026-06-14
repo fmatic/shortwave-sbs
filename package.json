@@ -8,7 +8,8 @@
   },
   "scripts": {
   "test": "echo \"Error: no test specified\" && exit 1",
-  "update-space-weather": "node tools/update-space-weather.js"
+  "update-space-weather": "node tools/update-space-weather.js",
+  "import:hfbc": "node tools/import-hfbc.js"
 },
   "repository": {
     "type": "git",
