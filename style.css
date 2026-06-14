@@ -1274,3 +1274,10 @@ td:nth-child(7) {
     border-radius: 999px;
   }
 }
+
+.top-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
