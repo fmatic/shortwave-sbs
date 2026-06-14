@@ -188,6 +188,112 @@ function getSeason() {
     return "transition";
 }
 
+function getSeasonalRegion(item) {
+    const country = String(item.country || "").toUpperCase();
+    const target = String(item.target || "").toUpperCase();
+    const txCountry = String(item.txCountry || "").toUpperCase();
+
+    const text = `${country} ${target} ${txCountry}`;
+
+    if (/(B|ARG|BOL|CHL|CLM|EQA|PRU|URG|VEN|SAm|BRA)/i.test(text)) {
+        return "south-america";
+    }
+
+    if (/(INS|MLA|MYS|PHL|THA|VTN|MYA|J|KOR|CHN|TWN|FE|SEA|EAs)/i.test(text)) {
+        return "asia";
+    }
+
+    if (/(AFS|AGL|BEN|BFA|CME|COD|COG|EGY|ETH|KEN|MLI|MRC|NGR|SDN|SEN|TUN|WAf|EAf|CAf|SAf)/i.test(text)) {
+        return "africa";
+    }
+
+    if (/(USA|CAN|MEX|CAm|NAm)/i.test(text)) {
+        return "north-america";
+    }
+
+    if (/(F|G|D|E|I|HOL|BEL|SUI|AUT|POL|CZE|SVK|HNG|ROU|BUL|GRC|Eu|EEu|WEu|SEu|NEu)/i.test(text)) {
+        return "europe";
+    }
+
+    return "unknown";
+}
+
+function applySeasonalPropagationScore(score, item, path, awareness) {
+    const season = getSeason();
+    const region = getSeasonalRegion(item);
+    const band = item.band || "";
+    const distance = path.distance || 0;
+
+    const lowerBands = ["120m", "90m", "75m", "60m"];
+    const lowerMidBands = ["49m", "41m"];
+    const midDayBands = ["31m", "25m"];
+    const highBands = ["22m", "19m", "16m", "13m", "11m"];
+
+    if (season === "summer") {
+        if (region === "south-america" && distance > 8000) {
+            score -= 18;
+        }
+
+        if (region === "south-america" && ["60m", "49m", "41m"].includes(band)) {
+            score -= 12;
+        }
+
+        if (region === "asia" && ["49m", "41m", "31m"].includes(band)) {
+            score += 8;
+        }
+
+        if (region === "europe" && ["49m", "41m", "31m"].includes(band)) {
+            score += 6;
+        }
+
+        if (lowerBands.includes(band)) {
+            score -= 14;
+        }
+
+        if (highBands.includes(band)) {
+            score += 8;
+        }
+    }
+
+    if (season === "winter") {
+        if (region === "south-america" && distance > 8000) {
+            score += 18;
+        }
+
+        if (region === "south-america" && ["49m", "41m", "31m"].includes(band)) {
+            score += 10;
+        }
+
+        if (region === "africa" && ["49m", "41m", "31m"].includes(band)) {
+            score += 8;
+        }
+
+        if (lowerBands.includes(band) || lowerMidBands.includes(band)) {
+            score += 12;
+        }
+
+        if (highBands.includes(band) && awareness.label.includes("night")) {
+            score -= 10;
+        }
+    }
+
+    if (season === "transition") {
+        if (awareness.label === "Greyline potential") {
+            score += 14;
+        }
+
+        if (region === "south-america" && ["49m", "41m", "31m"].includes(band)) {
+            score += 8;
+        }
+
+        if (midDayBands.includes(band)) {
+            score += 5;
+        }
+    }
+
+    return score;
+}
+
 function getDxScore(item, path, awareness) {
     let score = 0;
 
@@ -309,7 +415,7 @@ function getDxScore(item, path, awareness) {
             score += 10;
         }
     }
-
+	score = applySeasonalPropagationScore(score, item, path, awareness);
     return Math.max(0, Math.round(score));
 }
 

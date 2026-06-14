@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>shortwave.sbs</title>
-  <link rel="stylesheet" href="style.css?v=0.4.8" />
+  <link rel="stylesheet" href="style.css?v=0.4.8.1" />
 </head>
 <body>
   <main class="app">
@@ -14,7 +14,7 @@
         <p>Live HF broadcast monitor</p>
       </div>
       <div class="clock">
-  <div class="version">v0.4.8</div>
+  <div class="version">v0.4.8.1</div>
   <button id="aboutBtn" class="about-btn" type="button">About</button>
   <span id="utcClock">--:-- UTC</span>
   <small id="dataInfo">Loading schedules…</small>
@@ -275,6 +275,12 @@
     <div class="about-section">
       <h3>Changelog & source updates</h3>
 
+		<div class="log-row">
+		<span>14.06.2026</span>
+		<strong>[Changelog]</strong>
+		<p>Added seasonal HF propagation model for more realistic DX scoring by region and band.</p>
+		</div>
+
       <div class="log-row">
         <span>14.06.2026</span>
         <strong>[Changelog]</strong>
@@ -352,6 +358,6 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.4.8"></script>
+<script src="app.js?v=0.4.8.1"></script>
 </body>
 </html>
