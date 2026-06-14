@@ -55,10 +55,18 @@ if (typeof L.terminator === "function") {
         fillOpacity: 0.35,
         interactive: false
     }).addTo(map);
+
+    console.log("L.terminator =", L.terminator);
+    console.log("terminatorLayer =", terminatorLayer);
+
+    if (terminatorLayer && typeof terminatorLayer.toGeoJSON === "function") {
+        console.log("terminator GeoJSON =", terminatorLayer.toGeoJSON());
+    } else {
+        console.warn("terminatorLayer has no toGeoJSON()");
+    }
 } else {
     console.warn("Leaflet terminator plugin not loaded");
 }
-
 function utcMinutesNow() {
     const now = new Date();
     return now.getUTCHours() * 60 + now.getUTCMinutes();
