@@ -34,6 +34,7 @@ let selectedBand = params.get("band") || "all";
 
 let allSchedules = [];
 let markerLayer = null;
+let terminatorLayer = null;
 
 const map = L.map("txMap", {
     worldCopyJump: true
@@ -43,6 +44,13 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     attribution: "&copy; OpenStreetMap &copy; CARTO",
     subdomains: "abcd",
     maxZoom: 19
+}).addTo(map);
+
+terminatorLayer = L.terminator({
+    fillOpacity: 0.22,
+    color: "#60a5fa",
+    weight: 1,
+    opacity: 0.45
 }).addTo(map);
 
 function utcMinutesNow() {
@@ -185,29 +193,28 @@ function getFilteredSchedules() {
 }
 
 const regionTargetMap = {
-  "Northern Europe": ["Eu", "NEu", "WEu", "EEu"],
-  "Central Europe": ["Eu", "WEu", "CEu", "EEu"],
+    "Northern Europe": ["Eu", "NEu", "WEu", "EEu"],
+    "Central Europe": ["Eu", "WEu", "CEu", "EEu"],
 
-  "North America": ["NAm", "USA", "CAN"],
-  "South America": ["SAm", "BRA", "ARG"],
+    "North America": ["NAm", "USA", "CAN"],
+    "South America": ["SAm", "BRA", "ARG"],
 
-  "East Asia": ["EAs", "FE", "CHN", "J", "KOR"],
-  "Oceania": ["Oc", "AUS", "NZL"]
+    "East Asia": ["EAs", "FE", "CHN", "J", "KOR"],
+    "Oceania": ["Oc", "AUS", "NZL"]
 };
 
 function getCurrentRegion() {
-  return localStorage.getItem("swRegion") || "Northern Europe";
+    return localStorage.getItem("swRegion") || "Northern Europe";
 }
 
 function isTargetingCurrentRegion(item) {
-  const region = getCurrentRegion();
+    const region = getCurrentRegion();
 
-  const targets = regionTargetMap[region] || [];
-  const targetText = String(item.target || "");
+    const targets = regionTargetMap[region] || [];
+    const targetText = String(item.target || "");
 
-  return targets.some(code =>
-    targetText.includes(code)
-  );
+    return targets.some(code =>
+        targetText.includes(code));
 }
 
 function buildSites(items) {
@@ -262,20 +269,20 @@ function renderMap() {
     const sites = buildSites(filtered);
 
     for (const site of sites.values()) {
-		const activeItems = site.items.filter(isOnAir);
+        const activeItems = site.items.filter(isOnAir);
 
-const activeCount = activeItems.length;
+        const activeCount = activeItems.length;
 
-const targetingRegion = activeItems.some(isTargetingCurrentRegion);
+        const targetingRegion = activeItems.some(isTargetingCurrentRegion);
 
         const marker = L.circleMarker([site.lat, site.lon], {
             radius: Math.min(10, 4 + activeCount * 0.7),
-			weight: targetingRegion ? 2 : 1,
+            weight: targetingRegion ? 2 : 1,
             weight: 1,
             color: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
             fillColor: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
             fillOpacity: 0.72
-			dashArray: targetingRegion ? null : "2 6",
+            dashArray: targetingRegion ? null : "2 6",
         });
 
         marker.bindPopup(buildPopup(site), {
@@ -307,4 +314,14 @@ async function loadMap() {
 loadMap().catch(err => {
     console.error(err);
     mapInfo.textContent = "Could not load transmitter map";
-});
+}
+
+    setInterval(() => {
+
+        if (terminatorLayer) {
+
+            terminatorLayer.setTime();
+
+        }
+
+    }, 60_000); );
