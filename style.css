@@ -1157,26 +1157,34 @@ td:nth-child(2) {
   }
 }
 
-.schedule-table td:nth-child(3) {
+table {
+  table-layout: fixed;
+}
+
+td:nth-child(3),
+th:nth-child(3) {
+  width: 320px;
   white-space: nowrap;
+}
+
+td:nth-child(3) {
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: 500;
 }
 
-.schedule-table td:nth-child(7) {
+td:nth-child(7),
+th:nth-child(7) {
+  width: 260px;
+}
+
+td:nth-child(7) {
   white-space: normal;
-  max-width: 220px;
   line-height: 1.25;
   opacity: 0.9;
 }
 
-.schedule-table {
-  table-layout: fixed;
-}
-
-.schedule-table td:nth-child(3) {
-  width: 260px;
-}
-
-.schedule-table td:nth-child(7) {
-  width: 180px;
+.tx-site-btn {
+  white-space: normal;
+  line-height: 1.25;
 }
