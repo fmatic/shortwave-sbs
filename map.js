@@ -46,12 +46,16 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 19
 }).addTo(map);
 
-terminatorLayer = L.terminator({
-    fillOpacity: 0.35,
-    color: "#93c5fd",
-    weight: 2,
-    opacity: 0.9
-}).addTo(map);
+if (typeof L.terminator === "function") {
+    terminatorLayer = L.terminator({
+        fillOpacity: 0.35,
+        color: "#93c5fd",
+        weight: 2,
+        opacity: 0.9
+    }).addTo(map);
+} else {
+    console.warn("Leaflet terminator plugin not loaded");
+}
 
 function utcMinutesNow() {
     const now = new Date();
