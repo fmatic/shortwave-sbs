@@ -47,92 +47,7 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 19
 }).addTo(map);
 
-let greylineLayer = null;
 
-function getSubsolarPoint(date = new Date()) {
-    const dayMs = 86400000;
-    const daysSinceJ2000 = (date.getTime() - Date.UTC(2000, 0, 1, 12)) / dayMs;
-
-    const meanLongitude = (280.46 + 0.9856474 * daysSinceJ2000) % 360;
-    const meanAnomaly = (357.528 + 0.9856003 * daysSinceJ2000) % 360;
-
-    const lambda =
-        meanLongitude +
-        1.915 * Math.sin(meanAnomaly * Math.PI / 180) +
-        0.020 * Math.sin(2 * meanAnomaly * Math.PI / 180);
-
-    const obliquity = 23.439 - 0.0000004 * daysSinceJ2000;
-
-    const declination = Math.asin(
-        Math.sin(obliquity * Math.PI / 180) *
-        Math.sin(lambda * Math.PI / 180)
-    ) * 180 / Math.PI;
-
-    const utcHours =
-        date.getUTCHours() +
-        date.getUTCMinutes() / 60 +
-        date.getUTCSeconds() / 3600;
-
-    const subsolarLon = ((12 - utcHours) * 15 + 180) % 360 - 180;
-
-    return {
-        lat: declination,
-        lon: subsolarLon
-    };
-}
-
-function getNightPolygon() {
-    const sun = getSubsolarPoint();
-    const points = [];
-
-    for (let lon = -180; lon <= 180; lon += 2) {
-        const hourAngle = (lon - sun.lon) * Math.PI / 180;
-        const sunLatRad = sun.lat * Math.PI / 180;
-
-        const lat = Math.atan(
-            -Math.cos(hourAngle) / Math.tan(sunLatRad)
-        ) * 180 / Math.PI;
-
-        points.push([lat, lon]);
-    }
-
-    return [
-        [-90, -180],
-        ...points,
-        [-90, 180]
-    ];
-}
-
-function getGreylinePoints() {
-    const sun = getSubsolarPoint();
-    const points = [];
-
-    for (let lon = -180; lon <= 180; lon += 2) {
-        const hourAngle = (lon - sun.lon) * Math.PI / 180;
-        const sunLatRad = sun.lat * Math.PI / 180;
-
-        const lat = Math.atan(
-            -Math.cos(hourAngle) / Math.tan(sunLatRad)
-        ) * 180 / Math.PI;
-
-        points.push([lat, lon]);
-    }
-
-    return points;
-}
-
-function renderGreyline() {
-    if (greylineLayer) {
-        greylineLayer.remove();
-    }
-
-    greylineLayer = L.polyline(getGreylinePoints(), {
-        color: "#93c5fd",
-        weight: 2,
-        opacity: 0.85,
-        interactive: false
-    }).addTo(map);
-}
 
 function utcMinutesNow() {
     const now = new Date();
@@ -409,8 +324,3 @@ loadMap().catch(err => {
     mapInfo.textContent = "Could not load transmitter map";
 });
 
-renderGreyline();
-
-setInterval(() => {
-    renderGreyline();
-}, 60000);
