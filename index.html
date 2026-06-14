@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>shortwave.sbs</title>
-  <link rel="stylesheet" href="style.css?v=0.4.8.3" />
+  <link rel="stylesheet" href="style.css?v=0.4.9" />
 </head>
 <body>
   <main class="app">
@@ -15,12 +15,19 @@
         <p>Live HF broadcast monitor</p>
       </div>
       <div class="clock">
-  <div class="version">v0.4.8.3</div>
-  <button id="aboutBtn" class="about-btn" type="button">About</button><a class="about-btn" href="map.html">Map</a>
-  <span id="utcClock">--:-- UTC</span>
-  <small id="dataInfo">Loading schedules…</small>
+  <div class="version">v0.4.9</div>
+ <div class="top-actions">
+  <button id="aboutBtn" class="about-btn" type="button">
+    About
+  </button>
+
+  <a class="about-btn" href="map.html">
+    Map
+  </a>
 </div>
-	  
+
+<span id="utcClock">--:-- UTC</span>
+<small id="dataInfo">Loading schedules…</small>
     </header>
 
     <section class="band-card">
@@ -359,6 +366,6 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.4.8.3"></script>
+<script src="app.js?v=0.4.9"></script>
 </body>
 </html>
