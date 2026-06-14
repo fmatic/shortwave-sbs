@@ -101,63 +101,115 @@
       margin: 3px 0;
     }
 	
-	.map-band-switcher {
+.map-actions {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.map-band-switcher {
+  display: flex;
+  flex-wrap: nowrap;
   gap: 6px;
-  justify-content: flex-end;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  max-width: min(72vw, 760px);
+
+  padding-bottom: 2px;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+.map-band-switcher::-webkit-scrollbar {
+  display: none;
 }
 
 .map-band-btn {
   appearance: none;
   -webkit-appearance: none;
+
+  flex: 0 0 auto;
+
   border: 1px solid rgba(94,234,212,.22);
   border-radius: 999px;
+
   background: rgba(94,234,212,.055);
   color: var(--muted);
+
   padding: 7px 10px;
+
   font-size: 12px;
   font-weight: 700;
+
   cursor: pointer;
+
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    color .18s ease;
+}
+
+.map-band-btn:hover {
+  border-color: rgba(94,234,212,.45);
+  color: var(--text);
 }
 
 .map-band-btn.active {
   color: var(--accent);
   border-color: rgba(94,234,212,.55);
   background: rgba(94,234,212,.13);
+
+  box-shadow:
+    0 0 14px rgba(94,234,212,.08);
 }
 
 @media (max-width: 760px) {
   .map-topbar {
-    align-items: flex-start;
     flex-direction: column;
+    align-items: stretch;
   }
 
   .map-actions {
     width: 100%;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 
   .map-band-switcher {
-    justify-content: flex-start;
+    max-width: 100%;
+  }
+
+  .map-button {
+    align-self: flex-start;
   }
 }
 						</style>
 					</head>
 					<body>
-						<div class="map-page">
-							<header class="map-topbar">
-								<div class="map-title">
-									<strong id="mapTitle">shortwave.sbs TX Map</strong>
-									<span id="mapInfo">Loading transmitter sites…</span>
-								</div>
-								<div class="map-actions">
-								<div id="mapBandSwitcher" class="map-band-switcher"></div>
+  <div class="map-page">
+    <header class="map-topbar">
+      <div class="map-title">
+        <strong id="mapTitle">shortwave.sbs TX Map</strong>
+        <span id="mapInfo">Loading transmitter sites…</span>
+      </div>
 
-								<div id="txMap"></div>
+      <div class="map-actions">
+        <div id="mapBandSwitcher" class="map-band-switcher"></div>
+        <a class="map-button" href="index.html">← Schedule</a>
+      </div>
+    </header>
 
-								<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-								<script src="map.js?v=0.4.9.1"></script>
-					</body>
+    <div id="txMap"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="map.js?v=0.4.9.2"></script>
+</body>
 				</html>
