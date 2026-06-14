@@ -47,28 +47,77 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 19
 }).addTo(map);
 
-console.log("Before terminator check:", typeof L.terminator);
-if (typeof L.terminator === "function") {
-    terminatorLayer = L.terminator({
-        color: "#ff0000",
-        weight: 5,
-        opacity: 1,
-        fillColor: "#ff0000",
-        fillOpacity: 0.35,
+let greylineLayer = null;
+
+function getSubsolarPoint(date = new Date()) {
+    const dayMs = 86400000;
+    const daysSinceJ2000 = (date.getTime() - Date.UTC(2000, 0, 1, 12)) / dayMs;
+
+    const meanLongitude = (280.46 + 0.9856474 * daysSinceJ2000) % 360;
+    const meanAnomaly = (357.528 + 0.9856003 * daysSinceJ2000) % 360;
+
+    const lambda =
+        meanLongitude +
+        1.915 * Math.sin(meanAnomaly * Math.PI / 180) +
+        0.020 * Math.sin(2 * meanAnomaly * Math.PI / 180);
+
+    const obliquity = 23.439 - 0.0000004 * daysSinceJ2000;
+
+    const declination = Math.asin(
+        Math.sin(obliquity * Math.PI / 180) *
+        Math.sin(lambda * Math.PI / 180)
+    ) * 180 / Math.PI;
+
+    const utcHours =
+        date.getUTCHours() +
+        date.getUTCMinutes() / 60 +
+        date.getUTCSeconds() / 3600;
+
+    const subsolarLon = ((12 - utcHours) * 15 + 180) % 360 - 180;
+
+    return {
+        lat: declination,
+        lon: subsolarLon
+    };
+}
+
+function getNightPolygon() {
+    const sun = getSubsolarPoint();
+    const points = [];
+
+    for (let lon = -180; lon <= 180; lon += 2) {
+        const hourAngle = (lon - sun.lon) * Math.PI / 180;
+        const sunLatRad = sun.lat * Math.PI / 180;
+
+        const lat = Math.atan(
+            -Math.cos(hourAngle) / Math.tan(sunLatRad)
+        ) * 180 / Math.PI;
+
+        points.push([lat, lon]);
+    }
+
+    return [
+        [-90, -180],
+        ...points,
+        [-90, 180]
+    ];
+}
+
+function renderGreyline() {
+    if (greylineLayer) {
+        greylineLayer.remove();
+    }
+
+    greylineLayer = L.polygon(getNightPolygon(), {
+        color: "#93c5fd",
+        weight: 2,
+        opacity: 0.75,
+        fillColor: "#000000",
+        fillOpacity: 0.22,
         interactive: false
     }).addTo(map);
-
-    console.log("L.terminator =", L.terminator);
-    console.log("terminatorLayer =", terminatorLayer);
-
-    if (terminatorLayer && typeof terminatorLayer.toGeoJSON === "function") {
-        console.log("terminator GeoJSON =", terminatorLayer.toGeoJSON());
-    } else {
-        console.warn("terminatorLayer has no toGeoJSON()");
-    }
-} else {
-    console.warn("Leaflet terminator plugin not loaded");
 }
+
 function utcMinutesNow() {
     const now = new Date();
     return now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -344,8 +393,8 @@ loadMap().catch(err => {
     mapInfo.textContent = "Could not load transmitter map";
 });
 
+renderGreyline();
+
 setInterval(() => {
-    if (terminatorLayer) {
-        terminatorLayer.setTime();
-    }
+    renderGreyline();
 }, 60000);
