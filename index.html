@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>shortwave.sbs</title>
-  <link rel="stylesheet" href="style.css?v=0.4.7" />
+  <link rel="stylesheet" href="style.css?v=0.4.8" />
 </head>
 <body>
   <main class="app">
@@ -14,7 +14,7 @@
         <p>Live HF broadcast monitor</p>
       </div>
       <div class="clock">
-  <div class="version">v0.4.7</div>
+  <div class="version">v0.4.8</div>
   <button id="aboutBtn" class="about-btn" type="button">About</button>
   <span id="utcClock">--:-- UTC</span>
   <small id="dataInfo">Loading schedules…</small>
@@ -203,117 +203,145 @@
 </div>
 <div id="aboutModal" class="modal hidden">
   <div class="modal-card about-card">
-  <button id="aboutClose" class="modal-close">×</button>
+    <button id="aboutClose" class="modal-close">×</button>
 
-  <h2>About shortwave.sbs</h2>
+    <h2>About shortwave.sbs</h2>
 
-  <div class="about-section">
-    <h3>What is this?</h3>
-    <p>
-      shortwave.sbs is a modern dark-themed HF broadcast monitor
-      built for shortwave listeners, DXers and radio enthusiasts.
-    </p>
-    <p>
-      It combines multiple shortwave schedule sources with live filtering,
-      transmitter-site data, distance and bearing calculations, and propagation-oriented
-      band insights.
-    </p>
-  </div>
-
-  <div class="about-section">
-    <h3>Features</h3>
-    <ul>
-      <li>Live UTC clock</li>
-      <li>On-air now filtering</li>
-      <li>HF band activity overview</li>
-      <li>Auto Band recommendation</li>
-      <li>Best DX targets</li>
-      <li>HF Conditions with regional fallback profiles</li>
-      <li>Clickable transmitter-site details</li>
-      <li>Distance and bearing to transmitter sites</li>
-      <li>Same-frequency active broadcast view</li>
-      <li>Country flags based on ITU country codes</li>
-      <li>Responsive dark UI for desktop and mobile</li>
-    </ul>
-  </div>
-
-  <div class="about-section">
-    <h3>Data sources</h3>
-    <ul>
-      <li>EiBi shortwave schedule database</li>
-      <li>AOKI shortwave schedules from XLSX source</li>
-      <li>HFCC public data with lookup tables</li>
-    </ul>
-    <p>
-      HFCC lookup tables are used for transmitter sites, broadcaster names,
-      administrations and site coordinates where available.
-    </p>
-  </div>
-
-  <div class="about-section">
-    <h3>Current data engine</h3>
-    <ul>
-      <li>EiBi CSV importer</li>
-      <li>AOKI XLSX importer</li>
-      <li>HFCC importer with site, broadcaster and admin resolvers</li>
-      <li>EiBi transmitter-site resolver with alias support</li>
-      <li>Unified JSON schedule output</li>
-      <li>Basic duplicate/source merge logic</li>
-    </ul>
-  </div>
-
-  <div class="about-section">
-    <h3>Changelog & source updates</h3>
-
-    <div class="log-row">
-      <span>13.06.2026</span>
-      <strong>[Changelog]</strong>
-      <p>Added clickable transmitter-site details with distance and bearing calculations.</p>
+    <div class="about-section">
+      <h3>What is this?</h3>
+      <p>
+        shortwave.sbs is a modern dark-themed HF broadcast monitor
+        built for shortwave listeners, DXers and radio enthusiasts.
+      </p>
+      <p>
+        It combines multiple shortwave schedule sources with live filtering,
+        transmitter-site data, distance and bearing calculations, NOAA space weather,
+        greyline awareness and propagation-oriented DX ranking.
+      </p>
     </div>
 
-    <div class="log-row">
-      <span>13.06.2026</span>
-      <strong>[Changelog]</strong>
-      <p>Added same-frequency active broadcast view.</p>
+    <div class="about-section">
+      <h3>Features</h3>
+      <ul>
+        <li>Live UTC clock</li>
+        <li>On-air now filtering</li>
+        <li>HF band activity overview</li>
+        <li>Auto Band recommendation</li>
+        <li>Best DX Now with propagation-aware scoring</li>
+        <li>HF Conditions with regional fallback profiles</li>
+        <li>NOAA-based HF Weather widget</li>
+        <li>Kp, A-index, SFI and X-ray awareness</li>
+        <li>Greyline and day/night path awareness</li>
+        <li>Season-aware DX scoring</li>
+        <li>Clickable transmitter-site details</li>
+        <li>Distance and bearing to transmitter sites</li>
+        <li>Open transmitter site in map</li>
+        <li>Same-frequency active broadcast view</li>
+        <li>Country flags based on ITU country codes</li>
+        <li>Responsive dark UI for desktop and mobile</li>
+      </ul>
     </div>
 
-    <div class="log-row">
-      <span>13.06.2026</span>
-      <strong>[Changelog]</strong>
-      <p>Added HFCC lookup resolvers for transmitter sites, broadcasters and administrations.</p>
+    <div class="about-section">
+      <h3>Data sources</h3>
+      <ul>
+        <li>EiBi shortwave schedule database</li>
+        <li>AOKI shortwave schedules from XLSX source</li>
+        <li>HFCC public data with lookup tables</li>
+        <li>NOAA SWPC space weather data</li>
+      </ul>
+      <p>
+        HFCC lookup tables are used for transmitter sites, broadcaster names,
+        administrations and site coordinates where available. NOAA SWPC data is
+        used for Kp, A-index, solar flux, X-ray status and HF band condition estimates.
+      </p>
     </div>
 
-    <div class="log-row">
-      <span>13.06.2026</span>
-      <strong>[Changelog]</strong>
-      <p>Rebuilt AOKI importer using XLSX schedule data.</p>
+    <div class="about-section">
+      <h3>Current data engine</h3>
+      <ul>
+        <li>EiBi CSV importer</li>
+        <li>AOKI XLSX importer</li>
+        <li>HFCC importer with site, broadcaster and admin resolvers</li>
+        <li>EiBi transmitter-site resolver with alias support</li>
+        <li>NOAA space weather updater via GitHub Actions</li>
+        <li>Unified JSON schedule output</li>
+        <li>Unified space-weather JSON output</li>
+        <li>Basic duplicate/source merge logic</li>
+        <li>Propagation-aware Best DX scoring</li>
+      </ul>
     </div>
 
-    <div class="log-row">
-      <span>13.06.2026</span>
-      <strong>[Update]</strong>
-      <p>EiBi, AOKI and HFCC sources updated to latest locally available versions.</p>
+    <div class="about-section">
+      <h3>Changelog & source updates</h3>
+
+      <div class="log-row">
+        <span>14.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added NOAA-based HF Weather widget with Kp, SFI, X-ray and aurora status.</p>
+      </div>
+
+      <div class="log-row">
+        <span>14.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added propagation-aware Best DX scoring using space weather, greyline and seasonal weighting.</p>
+      </div>
+
+      <div class="log-row">
+        <span>14.06.2026</span>
+        <strong>[Automation]</strong>
+        <p>Added GitHub Actions workflow for automatic space-weather data updates.</p>
+      </div>
+
+      <div class="log-row">
+        <span>13.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added clickable transmitter-site details with distance, bearing and map links.</p>
+      </div>
+
+      <div class="log-row">
+        <span>13.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added same-frequency active broadcast view with co-channel awareness.</p>
+      </div>
+
+      <div class="log-row">
+        <span>13.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added HFCC lookup resolvers for transmitter sites, broadcasters and administrations.</p>
+      </div>
+
+      <div class="log-row">
+        <span>13.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Rebuilt AOKI importer using XLSX schedule data.</p>
+      </div>
+
+      <div class="log-row">
+        <span>13.06.2026</span>
+        <strong>[Update]</strong>
+        <p>EiBi, AOKI and HFCC sources updated to latest locally available versions.</p>
+      </div>
+
+      <div class="log-row">
+        <span>09.06.2026</span>
+        <strong>[Changelog]</strong>
+        <p>Added Auto Band, HF Activity overview, Best DX Targets and Live Snapshot.</p>
+      </div>
     </div>
 
-    <div class="log-row">
-      <span>09.06.2026</span>
-      <strong>[Changelog]</strong>
-      <p>Added Auto Band, HF Activity overview, Best DX Targets and Live Snapshot.</p>
+    <div class="about-section">
+      <h3>Roadmap</h3>
+      <ul>
+        <li>Live DX Map with active transmitter sites</li>
+        <li>More complete EiBi transmitter-site aliases</li>
+        <li>Bandmap / waterfall-style frequency view</li>
+        <li>More advanced propagation-aware Auto Band</li>
+        <li>More advanced DX recommendations by user region</li>
+        <li>Utility and non-broadcast HF support later</li>
+      </ul>
     </div>
   </div>
-
-  <div class="about-section">
-    <h3>Roadmap</h3>
-    <ul>
-      <li>Transmitter-site map view</li>
-      <li>More complete EiBi transmitter-site aliases</li>
-      <li>Greyline and day/night path analysis</li>
-      <li>Propagation-aware Auto Band</li>
-      <li>Solar and geomagnetic HF weather layer</li>
-      <li>More advanced DX recommendations by user region</li>
-    </ul>
-  </div>
-</div>
 </div>
 	<footer class="footer">
   <span>Developed in Finland 🇫🇮 by Janne Heinikangas</span>
@@ -324,6 +352,6 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.4.7"></script>
+<script src="app.js?v=0.4.8"></script>
 </body>
 </html>

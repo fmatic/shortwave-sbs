@@ -279,8 +279,40 @@ function getDxScore(item, path, awareness) {
         }
     }
 
+	    if (spaceWeather) {
+        const kp = Number(spaceWeather.kp || 0);
+        const sfi = Number(spaceWeather.sfi || 100);
+
+        const lowBands = ["120m", "90m", "75m", "60m", "49m"];
+        const highBands = ["25m", "22m", "19m", "16m", "13m", "11m"];
+
+        // Geomagnetic storm hurts polar + high band paths
+        if (kp >= 5) {
+            score -= 20;
+
+            if (highBands.includes(item.band)) {
+                score -= 15;
+            }
+        }
+
+        // Strong solar flux boosts higher HF
+        if (sfi >= 140 && highBands.includes(item.band)) {
+            score += 25;
+        }
+
+        if (sfi >= 110 && item.band === "31m") {
+            score += 10;
+        }
+
+        // Low solar flux favors lower bands
+        if (sfi < 90 && lowBands.includes(item.band)) {
+            score += 10;
+        }
+    }
+
     return Math.max(0, Math.round(score));
 }
+
 
 function renderBestDxNow() {
     const active = getActiveBySources()
