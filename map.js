@@ -47,10 +47,10 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
 }).addTo(map);
 
 terminatorLayer = L.terminator({
-    fillOpacity: 0.22,
-    color: "#60a5fa",
-    weight: 1,
-    opacity: 0.45
+    fillOpacity: 0.35,
+    color: "#93c5fd",
+    weight: 2,
+    opacity: 0.9
 }).addTo(map);
 
 function utcMinutesNow() {
@@ -277,12 +277,22 @@ function renderMap() {
 
         const marker = L.circleMarker([site.lat, site.lon], {
             radius: Math.min(10, 4 + activeCount * 0.7),
+
             weight: targetingRegion ? 2 : 1,
-            weight: 1,
-            color: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
-            fillColor: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
-            fillOpacity: 0.72
-            dashArray: targetingRegion ? null : "2 6",
+
+            color: getBandColor(
+                selectedBand === "all"
+                 ? site.mainBand
+                 : selectedBand),
+
+            fillColor: getBandColor(
+                selectedBand === "all"
+                 ? site.mainBand
+                 : selectedBand),
+
+            fillOpacity: 0.72,
+
+            dashArray: targetingRegion ? null : "2 6"
         });
 
         marker.bindPopup(buildPopup(site), {
@@ -314,14 +324,10 @@ async function loadMap() {
 loadMap().catch(err => {
     console.error(err);
     mapInfo.textContent = "Could not load transmitter map";
-}
+});
 
-    setInterval(() => {
-
-        if (terminatorLayer) {
-
-            terminatorLayer.setTime();
-
-        }
-
-    }, 60_000); );
+setInterval(() => {
+    if (terminatorLayer) {
+        terminatorLayer.setTime();
+    }
+}, 60000);
