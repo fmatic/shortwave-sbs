@@ -48,11 +48,15 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
 
 if (typeof L.terminator === "function") {
     terminatorLayer = L.terminator({
-        fillOpacity: 0.35,
-        color: "#93c5fd",
-        weight: 2,
-        opacity: 0.9
-    }).addTo(map);
+    color: "#60a5fa",
+    weight: 3,
+    opacity: 0.95,
+
+    fillColor: "#0f172a",
+    fillOpacity: 0.42
+}).addTo(map);
+
+terminatorLayer.bringToBack();
 } else {
     console.warn("Leaflet terminator plugin not loaded");
 }
@@ -266,6 +270,8 @@ function renderMap() {
     if (markerLayer) {
         markerLayer.remove();
     }
+	markerLayer = L.layerGroup().addTo(map);
+markerLayer.bringToFront();
 
     markerLayer = L.layerGroup().addTo(map);
 
