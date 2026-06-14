@@ -106,7 +106,7 @@ function buildBandSwitcher() {
       renderMap();
     });
   });
-
+}
 
 function buildPopup(site) {
   const active = site.items.filter(isOnAir);
