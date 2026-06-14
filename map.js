@@ -48,11 +48,11 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
 
 if (typeof L.terminator === "function") {
     terminatorLayer = L.terminator({
-        color: "#93c5fd",
-        weight: 2,
-        opacity: 0.85,
-        fillColor: "#000000",
-        fillOpacity: 0.18,
+        color: "#ff0000",
+        weight: 5,
+        opacity: 1,
+        fillColor: "#ff0000",
+        fillOpacity: 0.35,
         interactive: false
     }).addTo(map);
 } else {
