@@ -1188,3 +1188,27 @@ td:nth-child(7) {
   white-space: normal;
   line-height: 1.25;
 }
+
+@media (max-width: 700px) {
+
+  .schedule-table {
+    table-layout: auto;
+    min-width: 720px;
+  }
+
+  .schedule-table td,
+  .schedule-table th {
+    white-space: nowrap;
+  }
+
+  .schedule-table td:nth-child(3) {
+    width: auto;
+    min-width: 220px;
+  }
+
+  .schedule-table td:nth-child(7) {
+    width: auto;
+    min-width: 180px;
+    white-space: normal;
+  }
+}
