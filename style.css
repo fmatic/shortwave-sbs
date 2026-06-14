@@ -1288,31 +1288,3 @@ td:nth-child(7) {
   margin: 0 0 6px;
 }
 
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 18px;
-}
-
-.footer-links a {
-  color: var(--muted);
-  opacity: 0.7;
-
-  transition:
-    color .18s ease,
-    opacity .18s ease,
-    transform .18s ease;
-}
-
-.footer-links a:hover {
-  color: var(--accent);
-  opacity: 1;
-  transform: translateY(-1px);
-}
-
-.footer-links svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-}
