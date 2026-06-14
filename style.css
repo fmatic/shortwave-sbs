@@ -1156,3 +1156,27 @@ td:nth-child(2) {
     grid-template-columns: 1fr;
   }
 }
+
+.schedule-table td:nth-child(3) {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.schedule-table td:nth-child(7) {
+  white-space: normal;
+  max-width: 220px;
+  line-height: 1.25;
+  opacity: 0.9;
+}
+
+.schedule-table {
+  table-layout: fixed;
+}
+
+.schedule-table td:nth-child(3) {
+  width: 260px;
+}
+
+.schedule-table td:nth-child(7) {
+  width: 180px;
+}
