@@ -651,16 +651,21 @@ tr {
 }
 
 .about-btn {
-  display: inline-block;
-  margin-left: 8px;
-  margin-bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+
   padding: 4px 9px;
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--accent);
   font-size: 12px;
+  line-height: 1;
   background: rgba(10,15,24,.72);
   cursor: pointer;
+  text-decoration: none;
 }
 
 .about-btn:hover {
@@ -1279,5 +1284,6 @@ td:nth-child(7) {
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 6px;
+  justify-content: flex-end;
+  margin: 0 0 6px;
 }
