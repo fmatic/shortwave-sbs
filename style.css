@@ -1304,14 +1304,16 @@ th:nth-child(6) {
 .controls {
   display: grid;
   grid-template-columns:
-    minmax(240px, 1fr)
-    130px
+    minmax(200px, 1fr)
+    110px
     auto
     auto
     auto
     auto
     auto
     auto;
+  gap: 12px;
+  margin-bottom: 18px;
   align-items: stretch;
 }
 
@@ -1326,13 +1328,17 @@ th:nth-child(6) {
   min-height: 48px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 760px) {
   .controls {
-    grid-template-columns: minmax(220px, 1fr) 120px auto auto;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .controls input[type="search"] {
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 520px) {
   .controls {
     grid-template-columns: 1fr;
   }
