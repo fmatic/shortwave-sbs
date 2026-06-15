@@ -1302,44 +1302,45 @@ th:nth-child(6) {
 }
 
 .controls {
-  display: grid;
-  grid-template-columns:
-    minmax(200px, 1fr)
-    110px
-    auto
-    auto
-    auto
-    auto
-    auto
-    auto;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
   gap: 12px;
-  margin-bottom: 18px;
-  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
 }
 
-.controls input[type="search"],
+.controls input[type="search"] {
+  flex: 0 0 300px !important;
+  min-width: 300px !important;
+}
+
 .controls select {
-  width: 100%;
-  min-width: 0;
+  flex: 0 0 120px !important;
+  min-width: 120px !important;
+  width: 120px !important;
 }
 
-.controls .toggle,
-.controls .auto-btn {
+.controls .auto-btn,
+.controls .toggle {
+  flex: 0 0 auto !important;
   min-height: 48px;
 }
 
-@media (max-width: 760px) {
-  .controls {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .controls input[type="search"] {
-    grid-column: 1 / -1;
-  }
+.controls::-webkit-scrollbar {
+  height: 6px;
 }
 
-@media (max-width: 520px) {
-  .controls {
-    grid-template-columns: 1fr;
+.controls::-webkit-scrollbar-thumb {
+  background: rgba(94,234,212,.22);
+  border-radius: 999px;
+}
+
+@media (max-width: 700px) {
+  .controls input[type="search"] {
+    flex-basis: 260px !important;
+    min-width: 260px !important;
   }
 }
