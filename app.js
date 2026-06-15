@@ -2,7 +2,6 @@ let allSchedules = [];
 let userLocation = null;
 let spaceWeather = null;
 
-
 const bandRanges = {
     "120m": [2300, 2495],
     "90m": [3200, 3400],
@@ -96,7 +95,7 @@ const els = {
     swXray: document.getElementById("swXray"),
     swAurora: document.getElementById("swAurora"),
     swBandSummary: document.getElementById("swBandSummary"),
-	mapLink: document.getElementById("mapLink")
+    mapLink: document.getElementById("mapLink")
 };
 
 function updateClock() {
@@ -113,8 +112,8 @@ function updateMapLink() {
     const band = els.bandSelect.value;
 
     els.mapLink.href = band
-        ? `map.html?band=${encodeURIComponent(band)}`
-        : "map.html";
+         ? `map.html?band=${encodeURIComponent(band)}`
+         : "map.html";
 }
 
 function timeToMinutes(value) {
@@ -191,8 +190,10 @@ function getSolarModeForLocation(lat, lon) {
 function getSeason() {
     const month = new Date().getUTCMonth() + 1;
 
-    if ([12, 1, 2].includes(month)) return "winter";
-    if ([6, 7, 8].includes(month)) return "summer";
+    if ([12, 1, 2].includes(month))
+        return "winter";
+    if ([6, 7, 8].includes(month))
+        return "summer";
 
     return "transition";
 }
@@ -303,6 +304,13 @@ function applySeasonalPropagationScore(score, item, path, awareness) {
     return score;
 }
 
+function itemHasSelectedSource(item, selectedSources) {
+    return String(item.source || "")
+    .split("+")
+    .map(x => x.trim())
+    .some(src => selectedSources.includes(src));
+}
+
 function getDxScore(item, path, awareness) {
     let score = 0;
 
@@ -394,7 +402,7 @@ function getDxScore(item, path, awareness) {
         }
     }
 
-	    if (spaceWeather) {
+    if (spaceWeather) {
         const kp = Number(spaceWeather.kp || 0);
         const sfi = Number(spaceWeather.sfi || 100);
 
@@ -424,10 +432,9 @@ function getDxScore(item, path, awareness) {
             score += 10;
         }
     }
-	score = applySeasonalPropagationScore(score, item, path, awareness);
+    score = applySeasonalPropagationScore(score, item, path, awareness);
     return Math.max(0, Math.round(score));
 }
-
 
 function renderBestDxNow() {
     const active = getActiveBySources()
@@ -710,10 +717,14 @@ function renderConditions() {
 }
 
 function getScoreLabel(score) {
-    if (score >= 140) return "Excellent DX";
-    if (score >= 115) return "Strong DX";
-    if (score >= 90) return "Good DX";
-    if (score >= 65) return "Possible";
+    if (score >= 140)
+        return "Excellent DX";
+    if (score >= 115)
+        return "Strong DX";
+    if (score >= 90)
+        return "Good DX";
+    if (score >= 65)
+        return "Possible";
     return "Low chance";
 }
 
@@ -939,7 +950,7 @@ function getFiltered() {
     const selectedSources = getSelectedSources();
 
     return allSchedules.filter(item => {
-        if (!selectedSources.includes(item.source))
+        if (!itemHasSelectedSource(item, selectedSources))
             return false;
         if (band && item.band !== band)
             return false;
@@ -1210,7 +1221,7 @@ function getActiveBySources() {
     const selectedSources = getSelectedSources();
 
     return allSchedules.filter(item => {
-        if (!selectedSources.includes(item.source))
+        if (!itemHasSelectedSource(item, selectedSources))
             return false;
         return isOnAir(item);
     });
@@ -1539,53 +1550,53 @@ function hideDetails() {
 }
 
 function render() {
-	updateMapLink();
+    updateMapLink();
     renderBandLive();
     renderActivityOverview();
     renderTargets();
     renderSnapshot();
     renderConditions();
-	renderSpaceWeather();
+    renderSpaceWeather();
     renderBestDxNow();
     renderTable();
 }
 
 async function loadSpaceWeather() {
-  try {
-    const res = await fetch("data/space-weather.json");
-    spaceWeather = await res.json();
-  } catch (err) {
-    console.warn("Could not load space weather", err);
-    spaceWeather = null;
-  }
+    try {
+        const res = await fetch("data/space-weather.json");
+        spaceWeather = await res.json();
+    } catch (err) {
+        console.warn("Could not load space weather", err);
+        spaceWeather = null;
+    }
 }
 
 function renderSpaceWeather() {
-  if (!spaceWeather) {
-    els.spaceWeatherUpdated.textContent = "NOAA data unavailable";
-    return;
-  }
+    if (!spaceWeather) {
+        els.spaceWeatherUpdated.textContent = "NOAA data unavailable";
+        return;
+    }
 
-  const updated = spaceWeather.updated
-    ? new Date(spaceWeather.updated).toLocaleString("fi-FI", {
-        day: "2-digit",
-        month: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      })
-    : "unknown";
+    const updated = spaceWeather.updated
+         ? new Date(spaceWeather.updated).toLocaleString("fi-FI", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        })
+         : "unknown";
 
-  els.spaceWeatherUpdated.textContent = `NOAA updated ${updated}`;
+    els.spaceWeatherUpdated.textContent = `NOAA updated ${updated}`;
 
-  els.swKp.textContent = spaceWeather.kp ?? "—";
-  els.swSfi.textContent = spaceWeather.sfi ?? "—";
-  els.swXray.textContent = spaceWeather.xray || "—";
-  els.swAurora.textContent = spaceWeather.aurora ? "Active" : "Quiet";
+    els.swKp.textContent = spaceWeather.kp ?? "—";
+    els.swSfi.textContent = spaceWeather.sfi ?? "—";
+    els.swXray.textContent = spaceWeather.xray || "—";
+    els.swAurora.textContent = spaceWeather.aurora ? "Active" : "Quiet";
 
-  const hf = spaceWeather.hf || {};
+    const hf = spaceWeather.hf || {};
 
-  els.swBandSummary.innerHTML = `
+    els.swBandSummary.innerHTML = `
     <div>
       <span>Low bands</span>
       <strong>${escapeHtml(hf.lowBands || "unknown")}</strong>
@@ -1602,9 +1613,9 @@ function renderSpaceWeather() {
 }
 
 async function loadSchedules() {
-  await loadSpaceWeather();
+    await loadSpaceWeather();
 
-  const res = await fetch("data/schedules.json");
+    const res = await fetch("data/schedules.json");
     const data = await res.json();
 
     const savedRegion = localStorage.getItem("swRegion");

@@ -1,0 +1,30 @@
+;         15-Jan-2009 RNGFREQ.TXT REFERENCE TABLE
+;
+;15-Jan-2009: Additional band (WRC-03) 7350-7450 Khz
+;15-Jan-2009: Deleted band (WRC-03) 7100 -7200 Khz
+;01-Apr-2007: Additional band (WARC-92) 5900-5950 Khz
+;01-Apr-2007: Additional band (WARC-92) 7300-7350 Khz
+;01-Apr-2007: Additional band (WARC-92) 9400-9500 Khz
+;01-Apr-2007: Additional band (WARC-92) 11600-11650 Khz
+;01-Apr-2007: Additional band (WARC-92) 12050-12100 Khz
+;01-Apr-2007: Additional band (WARC-92) 13570-13600 Khz
+;01-Apr-2007: Additional band (WARC-92) 13800-13870 Khz
+;01-Apr-2007: Additional band (WARC-92) 15600-15800 Khz
+;01-Apr-2007: Additional band (WARC-92) 17480-17550 Khz
+;01-Apr-2007: Additional band (WARC-92) 18900-19020 Khz;
+;
+;
+;---- ----- -- --- ----------
+;LOW  HIGH  BA MET NOTE
+;FREQ FREQ  NB ERS
+;---- ----- -- --- ----------+
+5900  6200  6      
+7200  7450  7      
+9400  9900  9      
+11600 12100 11     
+13570 13870 13     
+15100 15800 15     
+17480 17900 17     
+18900 19020 18     
+21450 21850 21     
+25670 26100 25     

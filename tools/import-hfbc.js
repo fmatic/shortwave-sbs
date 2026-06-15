@@ -1,104 +1,304 @@
 const fs = require("fs/promises");
+const fsSync = require("fs");
 
 const INPUT = "sources/hfbc.txt";
 const OUTPUT = "data/hfbc.json";
+const SITE_INPUT = "sources/hfbc-site.txt";
+const BROADCASTER_INPUT = "sources/hfbc-broadcas.txt";
+const CIRAF_INPUT = "sources/hfbc-ciraf.txt";
 
 const bandRanges = {
-  "120m": [2300, 2495],
-  "90m": [3200, 3400],
-  "75m": [3900, 4000],
-  "60m": [4750, 5060],
-  "49m": [5900, 6200],
-  "41m": [7200, 7600],
-  "31m": [9400, 9900],
-  "25m": [11600, 12100],
-  "22m": [13570, 13870],
-  "19m": [15100, 15800],
-  "16m": [17480, 17900],
-  "13m": [21450, 21850],
-  "11m": [25670, 26100]
+    "120m": [2300, 2495],
+    "90m": [3200, 3400],
+    "75m": [3900, 4000],
+    "60m": [4750, 5060],
+    "49m": [5900, 6200],
+    "41m": [7200, 7600],
+    "31m": [9400, 9900],
+    "25m": [11600, 12100],
+    "22m": [13570, 13870],
+    "19m": [15100, 15800],
+    "16m": [17480, 17900],
+    "13m": [21450, 21850],
+    "11m": [25670, 26100]
 };
 
 function getBand(freq) {
-  for (const [band, [min, max]] of Object.entries(bandRanges)) {
-    if (freq >= min && freq <= max) return band;
-  }
+    for (const [band, [min, max]] of Object.entries(bandRanges)) {
+        if (freq >= min && freq <= max)
+            return band;
+    }
 
-  return "";
+    return "";
 }
 
-function parseHfbcLine(line) {
-  if (!line.trim()) return null;
-  if (line.startsWith(";")) return null;
+function parseCoord(value) {
+    const match = String(value || "").match(/^(\d{2,3})([NSWE])(\d{2})$/i);
+    if (!match)
+        return "";
 
-  const parts = line.trim().split(/\s+/);
+    const deg = Number(match[1]);
+    const hemi = match[2].toUpperCase();
+    const min = Number(match[3]);
 
-  if (parts.length < 18) return null;
-  if (!/^\d+$/.test(parts[0])) return null;
+    let decimal = deg + min / 60;
 
-  const freq = Number(parts[0]);
+    if (hemi === "S" || hemi === "W") {
+        decimal *= -1;
+    }
 
-  return {
-    freq,
-    start: parts[1],
-    end: parts[2],
-    target: parts[3],
-    txCode: parts[4],
-    txSite: "",
-    txCountry: parts[15] || "",
-    txLat: "",
-    txLon: "",
-    power: parts[5],
-    azimuth: parts[6],
-    slew: parts[7],
-    antenna: parts[8],
-    days: parts[9],
-    fromDate: parts[10],
-    toDate: parts[11],
-    modulation: parts[12],
-    altFreq: parts[13],
-    language: parts[14],
-    country: parts[15],
-    broadcaster: parts[16],
-    org: parts[17],
-    requestId: parts[18] || "",
-    station: parts[16] || parts[17] || parts[15] || "HFBC",
-    type: "Broadcast",
-    band: getBand(freq),
-    remarks: parts.slice(22).join(" "),
-    source: "HFBC"
-  };
+    return Number(decimal.toFixed(4));
+}
+
+function parseCirafCoord(value) {
+    const match = String(value || "").match(/^(\d{1,3})([NSEW])$/i);
+    if (!match)
+        return "";
+
+    let decimal = Number(match[1]);
+    const hemi = match[2].toUpperCase();
+
+    if (hemi === "S" || hemi === "W") {
+        decimal *= -1;
+    }
+
+    return decimal;
+}
+
+function parseCirafLine(line) {
+    if (!line.trim() || line.startsWith(";"))
+        return null;
+
+    const parts = line.trim().split(/\s+/);
+    if (parts.length < 5)
+        return null;
+    if (!/^\d+$/.test(parts[0]))
+        return null;
+
+    return {
+        point: parts[0],
+        zone: parts[1],
+        quadrant: parts.length === 6 ? parts[2] : "",
+        subPoint: parts.length === 6 ? parts[3] : parts[2],
+        lat: parseCirafCoord(parts[parts.length - 2]),
+        lon: parseCirafCoord(parts[parts.length - 1])
+    };
+}
+
+async function loadCirafLookup() {
+    const text = await fs.readFile(CIRAF_INPUT, "utf8");
+    const map = new Map();
+
+    for (const line of text.split(/\r?\n/)) {
+        const item = parseCirafLine(line);
+
+        if (!item)
+            continue;
+
+        if (!map.has(item.zone)) {
+            map.set(item.zone, []);
+        }
+
+        map.get(item.zone).push(item);
+    }
+
+    return map;
+}
+
+function resolveCirafTarget(target, cirafLookup) {
+    return String(target || "")
+    .split(",")
+    .map(x => x.trim())
+    .filter(Boolean)
+    .map(zone => ({
+            zone,
+            points: cirafLookup.get(zone) || []
+        }));
+}
+
+function parseSiteLine(line) {
+    if (!line.trim() || line.startsWith(";"))
+        return null;
+
+    const parts = line.trim().split(/\s+/);
+    if (parts.length < 5)
+        return null;
+
+    const code = parts[0];
+
+    const latIndex = parts.findIndex(part => /^\d{2}[NS]\d{2}$/i.test(part));
+    const lonIndex = parts.findIndex(part => /^\d{3}[EW]\d{2}$/i.test(part));
+
+    if (latIndex === -1 || lonIndex === -1)
+        return null;
+
+    const country = parts[latIndex - 1] || "";
+    const name = parts.slice(1, latIndex - 1).join(" ");
+
+    return {
+        code,
+        name,
+        country,
+        lat: parseCoord(parts[latIndex]),
+        lon: parseCoord(parts[lonIndex])
+    };
+}
+
+function parseBroadcasterLine(line) {
+    if (!line.trim() || line.startsWith(";"))
+        return null;
+
+    const parts = line.trim().split(/\s+/);
+    if (parts.length < 2)
+        return null;
+
+    const code = parts[0];
+
+    if (!/^[A-Z0-9]{2,4}$/.test(code))
+        return null;
+
+    return {
+        code,
+        name: parts.slice(1).join(" ").trim()
+    };
+}
+
+async function loadBroadcasterLookup() {
+    const text = await fs.readFile(BROADCASTER_INPUT, "utf8");
+    const map = new Map();
+
+    for (const line of text.split(/\r?\n/)) {
+        const item = parseBroadcasterLine(line);
+
+        if (item) {
+            map.set(item.code, item);
+        }
+    }
+
+    return map;
+}
+
+async function loadSiteLookup() {
+    const text = await fs.readFile(SITE_INPUT, "utf8");
+    const map = new Map();
+
+    for (const line of text.split(/\r?\n/)) {
+        const site = parseSiteLine(line);
+
+        if (site) {
+            map.set(site.code, site);
+        }
+    }
+
+    return map;
+}
+
+function parseHfbcLine(line, siteLookup, broadcasterLookup, cirafLookup) {
+    if (!line.trim())
+        return null;
+    if (line.startsWith(";"))
+        return null;
+
+    const parts = line.trim().split(/\s+/);
+
+    if (parts.length < 18)
+        return null;
+    if (!/^\d+$/.test(parts[0]))
+        return null;
+
+    const freq = Number(parts[0]);
+    const txCode = parts[4];
+    const site = siteLookup.get(txCode);
+
+    const broadcasterCode = parts[16];
+    const orgCode = parts[17];
+
+    const broadcaster =
+        broadcasterLookup.get(broadcasterCode) ||
+        broadcasterLookup.get(orgCode);
+    const cirafZones = resolveCirafTarget(parts[3], cirafLookup);
+
+    return {
+        freq,
+        start: parts[1],
+        end: parts[2],
+        target: parts[3],
+        cirafZones,
+
+        txCode,
+        txSite: site?.name || "",
+        txCountry: site?.country || parts[15] || "",
+        txLat: site?.lat || "",
+        txLon: site?.lon || "",
+
+        power: parts[5],
+        azimuth: parts[6],
+        slew: parts[7],
+        antenna: parts[8],
+        days: parts[9],
+        fromDate: parts[10],
+        toDate: parts[11],
+        modulation: parts[12],
+        altFreq: parts[13],
+        language: parts[14],
+        country: parts[15],
+        broadcaster: broadcasterCode,
+        org: orgCode,
+        broadcasterName: broadcaster?.name || "",
+        station: broadcaster?.name || broadcasterCode || orgCode || parts[15] || "HFBC",
+        requestId: parts[18] || "",
+        type: "Broadcast",
+        band: getBand(freq),
+        remarks: parts.slice(19).join(" "),
+        source: "HFBC"
+    };
 }
 
 async function main() {
-  const text = await fs.readFile(INPUT, "utf8");
+    const siteLookup = await loadSiteLookup();
+    const broadcasterLookup = await loadBroadcasterLookup();
+    const cirafLookup = await loadCirafLookup();
+    const text = await fs.readFile(INPUT, "utf8");
 
-  const schedules = text
-    .split(/\r?\n/)
-    .map(parseHfbcLine)
-    .filter(Boolean)
-    .filter(item => item.band);
+    const schedules = text
+        .split(/\r?\n/)
+        .map(line => parseHfbcLine(line, siteLookup, broadcasterLookup, cirafLookup))
+        .filter(Boolean)
+        .filter(item => item.band);
 
-  await fs.writeFile(
-    OUTPUT,
-    JSON.stringify(
-      {
-        generatedAt: new Date().toISOString(),
-        source: "HFBC",
-        count: schedules.length,
-        schedules
-      },
-      null,
-      2
-    ),
-    "utf8"
-  );
+    await fs.writeFile(
+        OUTPUT,
+        JSON.stringify({
+            generatedAt: new Date().toISOString(),
+            source: "HFBC",
+            count: schedules.length,
+            schedules
+        },
+            null,
+            2),
+        "utf8");
 
-  console.log(`HFBC imported: ${schedules.length} schedules`);
-  console.log(`Written: ${OUTPUT}`);
+    console.log(`HFBC imported: ${schedules.length} schedules`);
+    console.log(`HFBC sites loaded: ${siteLookup.size}`);
+    console.log(`HFBC broadcasters loaded: ${broadcasterLookup.size}`);
+    console.log(`HFBC CIRAF zones loaded: ${cirafLookup.size}`);
+    console.log(`Written: ${OUTPUT}`);
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+function importHfbc() {
+    const raw = fsSync.readFileSync(OUTPUT, "utf8");
+    const data = JSON.parse(raw);
+
+    return data.schedules || [];
+}
+
+module.exports = {
+    importHfbc
+};
+
+if (require.main === module) {
+    main().catch(err => {
+        console.error(err);
+        process.exit(1);
+    });
+}
