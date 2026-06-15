@@ -1320,3 +1320,40 @@ th:nth-child(6) {
   width: 96px;
   white-space: nowrap;
 }
+
+.controls {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 1fr)
+    130px
+    auto
+    auto
+    auto
+    auto
+    auto
+    auto;
+  align-items: stretch;
+}
+
+.controls input[type="search"],
+.controls select {
+  width: 100%;
+  min-width: 0;
+}
+
+.controls .toggle,
+.controls .auto-btn {
+  min-height: 48px;
+}
+
+@media (max-width: 1050px) {
+  .controls {
+    grid-template-columns: minmax(240px, 1fr) 130px auto auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+}
