@@ -1288,3 +1288,35 @@ td:nth-child(7) {
   margin: 0 0 6px;
 }
 
+.controls {
+  align-items: stretch;
+}
+
+.controls input[type="search"] {
+  flex: 1 1 260px;
+  min-width: 240px;
+}
+
+.controls > * {
+  flex-shrink: 0;
+}
+
+td:nth-child(1),
+th:nth-child(1) {
+  width: 118px;
+  white-space: nowrap;
+}
+
+td:nth-child(5),
+th:nth-child(5) {
+  width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+td:nth-child(6),
+th:nth-child(6) {
+  width: 96px;
+  white-space: nowrap;
+}

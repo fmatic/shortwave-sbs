@@ -210,8 +210,20 @@ function parseHfbcLine(line, siteLookup, broadcasterLookup, cirafLookup) {
     const txCode = parts[4];
     const site = siteLookup.get(txCode);
 
-    const broadcasterCode = parts[16];
-    const orgCode = parts[17];
+    let language = parts[14] || "";
+    let admin = parts[15] || "";
+    let broadcasterCode = parts[16] || "";
+    let orgCode = parts[17] || "";
+
+    if (
+        /^[A-Z]{3}$/.test(language) &&
+        /^[A-Z0-9]{2,4}$/.test(admin) &&
+        !broadcasterLookup.has(broadcasterCode)) {
+        admin = language;
+        broadcasterCode = parts[15] || "";
+        orgCode = parts[16] || "";
+        language = "";
+    }
 
     const broadcaster =
         broadcasterLookup.get(broadcasterCode) ||
@@ -227,7 +239,7 @@ function parseHfbcLine(line, siteLookup, broadcasterLookup, cirafLookup) {
 
         txCode,
         txSite: site?.name || "",
-        txCountry: site?.country || parts[15] || "",
+        txCountry: site?.country || admin || "",
         txLat: site?.lat || "",
         txLon: site?.lon || "",
 
@@ -240,8 +252,8 @@ function parseHfbcLine(line, siteLookup, broadcasterLookup, cirafLookup) {
         toDate: parts[11],
         modulation: parts[12],
         altFreq: parts[13],
-        language: parts[14],
-        country: parts[15],
+        language,
+        country: admin,
         broadcaster: broadcasterCode,
         org: orgCode,
         broadcasterName: broadcaster?.name || "",
