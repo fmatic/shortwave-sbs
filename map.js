@@ -1,4 +1,4 @@
-console.log("map.js loaded v0.5.5");
+console.log("map.js loaded v0.5.6");
 const mapInfo = document.getElementById("mapInfo");
 const mapTitle = document.getElementById("mapTitle");
 const mapBandSwitcher = document.getElementById("mapBandSwitcher");
