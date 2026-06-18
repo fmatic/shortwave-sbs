@@ -206,23 +206,7 @@
   animation: txPulse 3.8s ease-in-out infinite;
 }
 
-@keyframes txPulse {
-  0%, 100% {
-    opacity: .92;
-    filter: drop-shadow(0 0 2px rgba(94,234,212,.18));
-  }
-
-  50% {
-    opacity: .58;
-    filter: drop-shadow(0 0 10px rgba(94,234,212,.32));
-  }
-}
-
-  .map-button {
-    align-self: flex-start;
-  }
-  
-  .leaflet-popup-content-wrapper,
+.leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   background: rgba(13,20,32,.96);
   color: var(--text);
@@ -247,6 +231,22 @@
 .tx-popup b {
   color: var(--accent);
 }
+
+@keyframes txPulse {
+  0%, 100% {
+    opacity: .92;
+    filter: drop-shadow(0 0 2px rgba(94,234,212,.18));
+  }
+
+  50% {
+    opacity: .58;
+    filter: drop-shadow(0 0 10px rgba(94,234,212,.32));
+  }
+}
+
+  .map-button {
+    align-self: flex-start;
+  }
 }
 						</style>
 					</head>
