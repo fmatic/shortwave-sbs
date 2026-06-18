@@ -47,6 +47,54 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 19
 }).addTo(map);
 
+let greylineLayer = null;
+
+function getSunAltitude(lat, lon, date) {
+    const pos = SunCalc.getPosition(date, lat, lon);
+    return pos.altitude * 180 / Math.PI;
+}
+
+function buildGreylinePoints(date) {
+    const points = [];
+
+    for (let lon = -180; lon <= 180; lon += 2) {
+        let bestLat = 0;
+        let bestDiff = Infinity;
+
+        for (let lat = -90; lat <= 90; lat += 1) {
+            const alt = getSunAltitude(lat, lon, date);
+            const diff = Math.abs(alt);
+
+            if (diff < bestDiff) {
+                bestDiff = diff;
+                bestLat = lat;
+            }
+        }
+
+        points.push([bestLat, lon]);
+    }
+
+    return points;
+}
+
+function renderGreyline() {
+    const date = new Date();
+    const points = buildGreylinePoints(date);
+
+    if (greylineLayer) {
+        greylineLayer.remove();
+    }
+
+    greylineLayer = L.polyline(points, {
+        color: "#5eead4",
+        weight: 1.5,
+        opacity: 0.65,
+        interactive: false,
+        dashArray: "4 8"
+    }).addTo(map);
+
+    greylineLayer.bringToBack();
+}
 
 
 function utcMinutesNow() {
@@ -319,8 +367,16 @@ async function loadMap() {
     renderMap();
 }
 
-loadMap().catch(err => {
-    console.error(err);
-    mapInfo.textContent = "Could not load transmitter map";
-});
+loadMap()
+  .then(() => {
+      renderGreyline();
+
+      setInterval(() => {
+          renderGreyline();
+      }, 60000);
+  })
+  .catch(err => {
+      console.error(err);
+      mapInfo.textContent = "Could not load transmitter map";
+  });
 
