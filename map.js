@@ -47,14 +47,14 @@ L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
     maxZoom: 19
 }).addTo(map);
 
-let greylineLayer = null;
+let greylineLayers = [];
 
 function getSunAltitude(lat, lon, date) {
     const pos = SunCalc.getPosition(date, lat, lon);
     return pos.altitude * 180 / Math.PI;
 }
 
-function buildGreylinePoints(date) {
+function buildTerminatorPoints(date, targetAltitude) {
     const points = [];
 
     for (let lon = -180; lon <= 180; lon += 2) {
@@ -63,7 +63,7 @@ function buildGreylinePoints(date) {
 
         for (let lat = -90; lat <= 90; lat += 1) {
             const alt = getSunAltitude(lat, lon, date);
-            const diff = Math.abs(alt);
+            const diff = Math.abs(alt - targetAltitude);
 
             if (diff < bestDiff) {
                 bestDiff = diff;
@@ -78,22 +78,40 @@ function buildGreylinePoints(date) {
 }
 
 function renderGreyline() {
+    if (typeof SunCalc === "undefined") return;
+
+    greylineLayers.forEach(layer => layer.remove());
+    greylineLayers = [];
+
     const date = new Date();
-    const points = buildGreylinePoints(date);
 
-    if (greylineLayer) {
-        greylineLayer.remove();
-    }
-
-    greylineLayer = L.polyline(points, {
-        color: "#5eead4",
-        weight: 1.5,
-        opacity: 0.65,
-        interactive: false,
-        dashArray: "4 8"
+    const terminatorLine = L.polyline(buildTerminatorPoints(date, 0), {
+        color: "#8ef7ea",
+        weight: 1.25,
+        opacity: 0.50,
+        dashArray: "5 10",
+        interactive: false
     }).addTo(map);
 
-    greylineLayer.bringToBack();
+    const civilTwilightLine = L.polyline(buildTerminatorPoints(date, -6), {
+        color: "#ffffff",
+        weight: 0.85,
+        opacity: 0.20,
+        dashArray: "2 9",
+        interactive: false
+    }).addTo(map);
+
+    greylineLayers.push(terminatorLine, civilTwilightLine);
+
+    greylineLayers.forEach(layer => {
+        if (layer.bringToBack) layer.bringToBack();
+    });
+
+    if (markerLayer) {
+        markerLayer.eachLayer(layer => {
+            if (layer.bringToFront) layer.bringToFront();
+        });
+    }
 }
 
 function utcMinutesNow() {
