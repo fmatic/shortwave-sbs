@@ -349,6 +349,24 @@ function renderMap() {
         marker.addTo(markerLayer);
     }
 
+	marker.on("mouseover", () => {
+    marker.setStyle({
+        radius: Math.min(12, marker.options.radius + 2),
+        weight: 2,
+        fillOpacity: 0.95,
+        opacity: 1
+    });
+});
+
+marker.on("mouseout", () => {
+    marker.setStyle({
+        radius: Math.min(9, 4.5 + activeCount * 0.55),
+        weight: targetingRegion ? 2 : 1,
+        fillOpacity: 0.82,
+        opacity: 0.78
+    });
+});
+
     markerLayer.eachLayer(layer => {
         if (layer.bringToFront) layer.bringToFront();
     });
