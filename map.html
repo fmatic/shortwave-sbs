@@ -206,6 +206,32 @@
   animation: txPulse 3.8s ease-in-out infinite;
 }
 
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: rgba(13,20,32,.96);
+  color: var(--text);
+  border: 1px solid rgba(94,234,212,.18);
+  box-shadow:
+    0 18px 50px rgba(0,0,0,.45),
+    0 0 18px rgba(94,234,212,.08);
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px;
+}
+
+.tx-popup strong {
+  color: var(--accent);
+}
+
+.tx-popup small {
+  color: var(--muted);
+}
+
+.tx-popup b {
+  color: var(--accent);
+}
+
 @keyframes txPulse {
   0%, 100% {
     opacity: .92;

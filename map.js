@@ -78,7 +78,8 @@ function buildTerminatorPoints(date, targetAltitude) {
 }
 
 function renderGreyline() {
-    if (typeof SunCalc === "undefined") return;
+    if (typeof SunCalc === "undefined")
+        return;
 
     greylineLayers.forEach(layer => layer.remove());
     greylineLayers = [];
@@ -104,12 +105,14 @@ function renderGreyline() {
     greylineLayers.push(terminatorLine, civilTwilightLine);
 
     greylineLayers.forEach(layer => {
-        if (layer.bringToBack) layer.bringToBack();
+        if (layer.bringToBack)
+            layer.bringToBack();
     });
 
     if (markerLayer) {
         markerLayer.eachLayer(layer => {
-            if (layer.bringToFront) layer.bringToFront();
+            if (layer.bringToFront)
+                layer.bringToFront();
         });
     }
 }
@@ -345,37 +348,44 @@ function renderMap() {
             className: targetingRegion ? "tx-marker tx-marker-target" : "tx-marker"
         });
 
-        marker.bindPopup(buildPopup(site), { maxWidth: 360 });
+        marker.bindPopup(buildPopup(site), {
+            maxWidth: 360
+        });
+        marker.bindPopup(buildPopup(site), {
+            maxWidth: 360
+        });
+
+        marker.on("mouseover", () => {
+            marker.setStyle({
+                radius: Math.min(12, marker.options.radius + 2),
+                weight: 2,
+                fillOpacity: 0.95,
+                opacity: 1
+            });
+        });
+
+        marker.on("mouseout", () => {
+            marker.setStyle({
+                radius: Math.min(9, 4.5 + activeCount * 0.55),
+                weight: targetingRegion ? 2 : 1,
+                fillOpacity: 0.82,
+                opacity: 0.78
+            });
+        });
+
         marker.addTo(markerLayer);
     }
 
-	marker.on("mouseover", () => {
-    marker.setStyle({
-        radius: Math.min(12, marker.options.radius + 2),
-        weight: 2,
-        fillOpacity: 0.95,
-        opacity: 1
-    });
-});
-
-marker.on("mouseout", () => {
-    marker.setStyle({
-        radius: Math.min(9, 4.5 + activeCount * 0.55),
-        weight: targetingRegion ? 2 : 1,
-        fillOpacity: 0.82,
-        opacity: 0.78
-    });
-});
-
     markerLayer.eachLayer(layer => {
-        if (layer.bringToFront) layer.bringToFront();
+        if (layer.bringToFront)
+            layer.bringToFront();
     });
 
     const label = selectedBand === "all" ? "All active bands" : `${selectedBand} band`;
 
     mapTitle.textContent = selectedBand === "all"
-        ? "shortwave.sbs TX Map"
-        : `shortwave.sbs ${selectedBand} TX Map`;
+         ? "shortwave.sbs TX Map"
+         : `shortwave.sbs ${selectedBand} TX Map`;
 
     mapInfo.textContent = `${label} · ${sites.size} transmitter sites · ${filtered.length} active broadcasts`;
 }
@@ -391,14 +401,14 @@ async function loadMap() {
 }
 
 loadMap()
-    .then(() => {
-        renderGreyline();
+.then(() => {
+    renderGreyline();
 
-        setInterval(() => {
-            renderGreyline();
-        }, 60000);
-    })
-    .catch(err => {
-        console.error(err);
-        mapInfo.textContent = "Could not load transmitter map";
-    });
+    setInterval(() => {
+        renderGreyline();
+    }, 60000);
+})
+.catch(err => {
+    console.error(err);
+    mapInfo.textContent = "Could not load transmitter map";
+});
