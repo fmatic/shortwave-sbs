@@ -319,55 +319,42 @@ function renderMap() {
         const marker = L.circleMarker([site.lat, site.lon], {
             radius: Math.min(9, 4.5 + activeCount * 0.55),
             weight: targetingRegion ? 2 : 1,
-
-            color: getBandColor(
-                selectedBand === "all"
-                 ? site.mainBand
-                 : selectedBand),
-
-            fillColor: getBandColor(
-                selectedBand === "all"
-                 ? site.mainBand
-                 : selectedBand),
-
+            color: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
+            fillColor: getBandColor(selectedBand === "all" ? site.mainBand : selectedBand),
             opacity: 0.78,
             fillOpacity: 0.82,
             dashArray: targetingRegion ? null : "2 6",
             className: targetingRegion ? "tx-marker tx-marker-target" : "tx-marker"
         });
 
-        marker.bindPopup(buildPopup(site), {
-            maxWidth: 360
-        });
-
+        marker.bindPopup(buildPopup(site), { maxWidth: 360 });
         marker.addTo(markerLayer);
-
-        markerLayer.eachLayer(layer => {
-            if (layer.bringToFront) {
-                layer.bringToFront();
-            }
-        });
-
-        const label = selectedBand === "all" ? "All active bands" : `${selectedBand} band`;
-
-        mapTitle.textContent = selectedBand === "all"
-             ? "shortwave.sbs TX Map"
-             : `shortwave.sbs ${selectedBand} TX Map`;
-
-        mapInfo.textContent = `${label} · ${sites.size} transmitter sites · ${filtered.length} active broadcasts`;
     }
 
-    async function loadMap() {
-        const res = await fetch("data/schedules.json");
-        const data = await res.json();
+    markerLayer.eachLayer(layer => {
+        if (layer.bringToFront) layer.bringToFront();
+    });
 
-        allSchedules = data.schedules || [];
+    const label = selectedBand === "all" ? "All active bands" : `${selectedBand} band`;
 
-        buildBandSwitcher();
-        renderMap();
-    }
+    mapTitle.textContent = selectedBand === "all"
+        ? "shortwave.sbs TX Map"
+        : `shortwave.sbs ${selectedBand} TX Map`;
 
-    loadMap()
+    mapInfo.textContent = `${label} · ${sites.size} transmitter sites · ${filtered.length} active broadcasts`;
+}
+
+async function loadMap() {
+    const res = await fetch("data/schedules.json");
+    const data = await res.json();
+
+    allSchedules = data.schedules || [];
+
+    buildBandSwitcher();
+    renderMap();
+}
+
+loadMap()
     .then(() => {
         renderGreyline();
 
