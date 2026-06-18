@@ -96,7 +96,6 @@ function renderGreyline() {
     greylineLayer.bringToBack();
 }
 
-
 function utcMinutesNow() {
     const now = new Date();
     return now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -318,7 +317,7 @@ function renderMap() {
         const targetingRegion = activeItems.some(isTargetingCurrentRegion);
 
         const marker = L.circleMarker([site.lat, site.lon], {
-            radius: Math.min(10, 4 + activeCount * 0.7),
+            radius: Math.min(9, 4.5 + activeCount * 0.55),
             weight: targetingRegion ? 2 : 1,
 
             color: getBandColor(
@@ -331,8 +330,10 @@ function renderMap() {
                  ? site.mainBand
                  : selectedBand),
 
-            fillOpacity: 0.72,
-            dashArray: targetingRegion ? null : "2 6"
+            opacity: 0.78,
+            fillOpacity: 0.82,
+            dashArray: targetingRegion ? null : "2 6",
+            className: targetingRegion ? "tx-marker tx-marker-target" : "tx-marker"
         });
 
         marker.bindPopup(buildPopup(site), {
@@ -340,43 +341,41 @@ function renderMap() {
         });
 
         marker.addTo(markerLayer);
+
+        markerLayer.eachLayer(layer => {
+            if (layer.bringToFront) {
+                layer.bringToFront();
+            }
+        });
+
+        const label = selectedBand === "all" ? "All active bands" : `${selectedBand} band`;
+
+        mapTitle.textContent = selectedBand === "all"
+             ? "shortwave.sbs TX Map"
+             : `shortwave.sbs ${selectedBand} TX Map`;
+
+        mapInfo.textContent = `${label} · ${sites.size} transmitter sites · ${filtered.length} active broadcasts`;
     }
 
-    markerLayer.eachLayer(layer => {
-        if (layer.bringToFront) {
-            layer.bringToFront();
-        }
+    async function loadMap() {
+        const res = await fetch("data/schedules.json");
+        const data = await res.json();
+
+        allSchedules = data.schedules || [];
+
+        buildBandSwitcher();
+        renderMap();
+    }
+
+    loadMap()
+    .then(() => {
+        renderGreyline();
+
+        setInterval(() => {
+            renderGreyline();
+        }, 60000);
+    })
+    .catch(err => {
+        console.error(err);
+        mapInfo.textContent = "Could not load transmitter map";
     });
-
-    const label = selectedBand === "all" ? "All active bands" : `${selectedBand} band`;
-
-    mapTitle.textContent = selectedBand === "all"
-         ? "shortwave.sbs TX Map"
-         : `shortwave.sbs ${selectedBand} TX Map`;
-
-    mapInfo.textContent = `${label} · ${sites.size} transmitter sites · ${filtered.length} active broadcasts`;
-}
-
-async function loadMap() {
-    const res = await fetch("data/schedules.json");
-    const data = await res.json();
-
-    allSchedules = data.schedules || [];
-
-    buildBandSwitcher();
-    renderMap();
-}
-
-loadMap()
-  .then(() => {
-      renderGreyline();
-
-      setInterval(() => {
-          renderGreyline();
-      }, 60000);
-  })
-  .catch(err => {
-      console.error(err);
-      mapInfo.textContent = "Could not load transmitter map";
-  });
-
