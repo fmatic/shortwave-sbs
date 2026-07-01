@@ -1,10 +1,10 @@
 {
-  "updated": "2026-07-01T05:53:45.562Z",
-  "kp": 4.67,
+  "updated": "2026-07-01T10:11:20.896Z",
+  "kp": 1.67,
   "sfi": 204,
-  "aIndex": 39,
-  "xray": "C-class flare",
-  "xrayFlux": 0.0000022123872440715786,
+  "aIndex": 6,
+  "xray": "M-class flare",
+  "xrayFlux": 0.000013734785170527175,
   "aurora": false,
   "hf": {
     "lowBands": "fair",
