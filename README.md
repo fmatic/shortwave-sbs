@@ -107,3 +107,5 @@ Developed in Finland 🇫🇮 by Janne Heinikangas
 GitHub: https://github.com/fmatic
 
 Blog: https://fmatic.online
+
+![VadelmaDZ](/docs/vadelmadx.png)
