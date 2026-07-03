@@ -108,4 +108,4 @@ GitHub: https://github.com/fmatic
 
 Blog: https://fmatic.online
 
-![VadelmaDZ](/docs/vadelmadx.png)
+![VadelmaDZ](/logo/vadelmadx.png)
