@@ -56,6 +56,8 @@ async function main() {
     if (!existing.type && item.type) existing.type = item.type;
     if (!existing.power && item.power) existing.power = item.power;
     if (!existing.azimuth && item.azimuth) existing.azimuth = item.azimuth;
+	if (!existing.days && item.days) existing.days = item.days;
+	if (!existing.daysLabel && item.daysLabel) existing.daysLabel = item.daysLabel;
     if (!existing.cirafZones && item.cirafZones) existing.cirafZones = item.cirafZones;
     if (!existing.broadcasterName && item.broadcasterName) existing.broadcasterName = item.broadcasterName;
   }
