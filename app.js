@@ -56,6 +56,17 @@ const locationProfiles = {
     }
 };
 
+const sectionConfig = {
+    bandLive: "Band Live",
+    activity: "HF Activity Now",
+    insights: "Best DX Targets / Snapshot",
+    spaceWeather: "HF Propagation Info",
+    bestDx: "Best DX Now",
+    conditions: "HF Conditions",
+    controls: "Search and filters",
+    table: "Schedule table"
+};
+
 const sectionLayouts = {
 
   minimal: [
@@ -95,7 +106,7 @@ const sectionLayouts = {
 const bandOrder = Object.keys(bandRanges);
 
 const els = {
-    utcClock: document.getElementById("utcClock"),
+    utcClock: document.querySelectorAll(".layout-btn").forEach(btn => {.getElementById("utcClock"),
     dataInfo: document.getElementById("dataInfo"),
     searchInput: document.getElementById("searchInput"),
     bandSelect: document.getElementById("bandSelect"),
@@ -136,7 +147,8 @@ const els = {
     sectionsModal: document.getElementById("sectionsModal"),
     sectionsClose: document.getElementById("sectionsClose"),
     sectionsList: document.getElementById("sectionsList"),
-    sectionsReset: document.getElementById("sectionsReset")
+    sectionsReset: document.getElementById("sectionsReset"),
+	currentLayoutName: document.getElementById("currentLayoutName"),
 };
 
 function applyLayout(name) {
@@ -159,13 +171,16 @@ function applyLayout(name) {
 }
 
 function updateCurrentLayout() {
+    if (!els.currentLayoutName) return;
 
-    const current =
-        localStorage.getItem("swLayout") || "Custom";
+    const current = localStorage.getItem("swLayout") || "custom";
 
     els.currentLayoutName.textContent =
-        current.charAt(0).toUpperCase() +
-        current.slice(1);
+        current.charAt(0).toUpperCase() + current.slice(1);
+
+    document.querySelectorAll(".layout-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.layout === current);
+    });
 }
 
 function updateClock() {
@@ -564,6 +579,7 @@ function renderBestDxNow() {
             showFrequencyDetails(active[index].item);
         });
     });
+	
 }
 
 function getPathAwareness(item) {
@@ -1731,6 +1747,12 @@ els.sectionsBtn.addEventListener("click", showSections);
 els.sectionsClose.addEventListener("click", hideSections);
 els.sectionsReset.addEventListener("click", resetSections);
 
+document.querySelectorAll(".layout-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        applyLayout(btn.dataset.layout);
+    });
+});
+
 els.sectionsModal.addEventListener("click", event => {
     if (event.target === els.sectionsModal) {
         hideSections();
@@ -1768,16 +1790,7 @@ document.addEventListener("keydown", event => {
     }
 });
 
-const sectionConfig = {
-    bandLive: "Band Live",
-    activity: "HF Activity Now",
-    insights: "Best DX Targets / Snapshot",
-    spaceWeather: "HF Propagation Info",
-    bestDx: "Best DX Now",
-    conditions: "HF Conditions",
-    controls: "Search and filters",
-    table: "Schedule table"
-};
+
 
 function getSectionState() {
     try {
@@ -1843,8 +1856,10 @@ function hideSections() {
 
 function resetSections() {
     localStorage.removeItem("swSections");
+    localStorage.removeItem("swLayout");
     renderSectionSettings();
     applySectionVisibility();
+    updateCurrentLayout();
 }
 
 updateClock();
@@ -1852,6 +1867,7 @@ setInterval(updateClock, 1000);
 setInterval(render, 60_000);
 
 applySectionVisibility();
+updateCurrentLayout();
 
 loadSchedules().catch(err => {
     console.error(err);
