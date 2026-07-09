@@ -1469,3 +1469,10 @@ td:nth-child(9) {
     color: #7ff4dc;
     font-weight: 700;
 }
+
+.layout-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0 22px;
+}
