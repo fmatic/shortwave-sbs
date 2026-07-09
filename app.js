@@ -1339,7 +1339,7 @@ function renderTable() {
     if (!rows.length) {
         els.scheduleBody.innerHTML = `
     <tr>
-      <td colspan="8" class="empty-row">
+      <td colspan="9" class="empty-row">
         No broadcasts found with current filters
       </td>
     </tr>
@@ -1358,6 +1358,7 @@ function renderTable() {
   </button>
 </td>
     <td>${escapeHtml(fmtTime(item.start, item.end))}</td>
+	<td>${escapeHtml(formatDays(item.days))}</td>
     <td>${escapeHtml(item.station)}</td>
     <td>${escapeHtml(item.language)}</td>
     <td>${escapeHtml(item.target)}</td>
@@ -1400,6 +1401,16 @@ function renderTable() {
             showFrequencyDetails(rows[index]);
         });
     });
+}
+
+function formatDays(value) {
+    const days = String(value || "").trim();
+
+    if (!days) return "Daily";
+    if (days === "1234567") return "Daily";
+    if (days === "MTWTFSS") return "Daily";
+
+    return days;
 }
 
 function getCurrentLocationForCalculations() {
@@ -1528,7 +1539,7 @@ function showDetails(item) {
         ["Tx Code", item.txCode],
         ["Tx Country", item.txCountry],
         ["Tx Coordinates", item.txLat && item.txLon ? `${item.txLat}, ${item.txLon}` : ""],
-        ["Days", item.days],
+        ["Days", formatDays(item.days)],
         ["Power", item.power],
         ["Remarks", item.remarks],
         ["Source", item.source],
