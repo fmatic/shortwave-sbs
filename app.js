@@ -1351,32 +1351,30 @@ function renderTable() {
         const live = isOnAir(item);
 
         return `
-  <tr class="${live ? "live-row" : ""}" data-index="${index}">
-    <td>
-  <button class="freq-btn" type="button" data-index="${index}">
-    ${escapeHtml(item.freq)} kHz
-  </button>
-</td>
-    <td>${escapeHtml(fmtTime(item.start, item.end))}</td>
-	<td>${escapeHtml(formatDays(item.days))}</td>
-    <td>${escapeHtml(item.station)}</td>
-    <td>${escapeHtml(item.language)}</td>
-    <td>${escapeHtml(item.target)}</td>
-
-    <td>
-      <span class="flag ${item.country === 'CLA' ? 'flag-cla' : ''}">
-        ${getFlag(item.country)}
-      </span>
-      ${escapeHtml(item.country)}
-    </td>
-
-   <td>
-  <button class="tx-site-btn" type="button" data-index="${index}">
-    ${escapeHtml(formatTxSite(item))}
-  </button>
-</td>
-    <td>${escapeHtml(item.source)}</td>
-  </tr>
+<tr class="${live ? "live-row" : ""}" data-index="${index}">
+  <td>
+    <button class="freq-btn" type="button" data-index="${index}">
+      ${escapeHtml(item.freq)} kHz
+    </button>
+  </td>
+  <td>${escapeHtml(fmtTime(item.start, item.end))}</td>
+  <td>${escapeHtml(item.daysLabel || "Daily")}</td>
+  <td>${escapeHtml(item.station)}</td>
+  <td>${escapeHtml(item.language)}</td>
+  <td>${escapeHtml(item.target)}</td>
+  <td>
+    <span class="flag ${item.country === 'CLA' ? 'flag-cla' : ''}">
+      ${getFlag(item.country)}
+    </span>
+    ${escapeHtml(item.country)}
+  </td>
+  <td>
+    <button class="tx-site-btn" type="button" data-index="${index}">
+      ${escapeHtml(formatTxSite(item))}
+    </button>
+  </td>
+  <td>${escapeHtml(item.source)}</td>
+</tr>
 `;
     }).join("");
 
