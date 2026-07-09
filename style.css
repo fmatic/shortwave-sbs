@@ -1422,3 +1422,8 @@ td:nth-child(9) {
 .section-toggle {
   justify-content: flex-start;
 }
+
+.layout-btn.active {
+    background:#ff9800;
+    color:#111;
+}

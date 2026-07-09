@@ -56,6 +56,42 @@ const locationProfiles = {
     }
 };
 
+const sectionLayouts = {
+
+  minimal: [
+    "controls",
+    "table"
+  ],
+
+  monitoring: [
+    "bandLive",
+    "spaceWeather",
+    "conditions",
+    "controls",
+    "table"
+  ],
+
+  dx: [
+    "bandLive",
+    "spaceWeather",
+    "conditions",
+    "bestDx",
+    "insights",
+    "controls",
+    "table"
+  ],
+
+  statistics: [
+    "bandLive",
+    "activity",
+    "insights",
+    "spaceWeather"
+  ],
+
+  everything: Object.keys(sectionConfig)
+
+};
+
 const bandOrder = Object.keys(bandRanges);
 
 const els = {
@@ -102,6 +138,35 @@ const els = {
     sectionsList: document.getElementById("sectionsList"),
     sectionsReset: document.getElementById("sectionsReset")
 };
+
+function applyLayout(name) {
+
+    const layout = sectionLayouts[name];
+    if (!layout) return;
+
+    const state = {};
+
+    Object.keys(sectionConfig).forEach(key => {
+        state[key] = layout.includes(key);
+    });
+
+    saveSectionState(state);
+    applySectionVisibility();
+    renderSectionSettings();
+
+    localStorage.setItem("swLayout", name);
+    updateCurrentLayout();
+}
+
+function updateCurrentLayout() {
+
+    const current =
+        localStorage.getItem("swLayout") || "Custom";
+
+    els.currentLayoutName.textContent =
+        current.charAt(0).toUpperCase() +
+        current.slice(1);
+}
 
 function updateClock() {
     const now = new Date();
@@ -1752,14 +1817,19 @@ function renderSectionSettings() {
     }).join("");
 
     els.sectionsList.querySelectorAll(".sectionVisibilityToggle").forEach(input => {
-        input.addEventListener("change", () => {
-            const next = getSectionState();
-            next[input.value] = input.checked;
+    input.addEventListener("change", () => {
+        const next = getSectionState();
+        next[input.value] = input.checked;
 
-            saveSectionState(next);
-            applySectionVisibility();
-        });
+        saveSectionState(next);
+
+        // Käyttäjä poistui presetistä -> nyt käytössä on oma näkymä
+        localStorage.removeItem("swLayout");
+        updateCurrentLayout();
+
+        applySectionVisibility();
     });
+});
 }
 
 function showSections() {
