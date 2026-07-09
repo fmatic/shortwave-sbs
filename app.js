@@ -1358,7 +1358,7 @@ function renderTable() {
     </button>
   </td>
   <td>${escapeHtml(fmtTime(item.start, item.end))}</td>
-  <td>${escapeHtml(item.daysLabel || "Daily")}</td>
+  <td>${escapeHtml(item.daysLabel || "")}</td>
   <td>${escapeHtml(item.station)}</td>
   <td>${escapeHtml(item.language)}</td>
   <td>${escapeHtml(item.target)}</td>

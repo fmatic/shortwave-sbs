@@ -1,21 +1,8 @@
-function formatDays(days) {
-  const raw = String(days || "").trim();
+function formatDays(value) {
+  const raw = String(value || "").trim();
 
-  if (!raw) return "Daily";
-
-  const cleaned = raw
-    .replaceAll("Mo", "1")
-    .replaceAll("Tu", "2")
-    .replaceAll("We", "3")
-    .replaceAll("Th", "4")
-    .replaceAll("Fr", "5")
-    .replaceAll("Sa", "6")
-    .replaceAll("Su", "7")
-    .replace(/[^\d]/g, "");
-
-  if (cleaned === "1234567") return "Daily";
-  if (cleaned === "12345") return "Mo–Fr";
-  if (cleaned === "67") return "Weekend";
+  if (!raw) return "";
+  if (raw === "1234567") return "";
 
   const names = {
     1: "Mon",
@@ -27,13 +14,13 @@ function formatDays(days) {
     7: "Sun"
   };
 
-  if (/^[1-7]+$/.test(cleaned)) {
-    return [...cleaned].map(day => names[day]).join(", ");
-  }
+  if (raw === "67") return "Weekend";
+  if (raw === "12345") return "Weekdays";
 
-  if (/irr|irreg|var|tent/i.test(raw)) return "Irregular";
-
-  return raw;
+  return raw
+    .split("")
+    .map(d => names[d] || d)
+    .join(", ");
 }
 
 module.exports = {
