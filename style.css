@@ -1409,3 +1409,16 @@ td:nth-child(9) {
   text-overflow: ellipsis;
 }
 
+.section-hidden {
+  display: none !important;
+}
+
+.sections-list {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+
+.section-toggle {
+  justify-content: flex-start;
+}

@@ -95,7 +95,12 @@ const els = {
     swXray: document.getElementById("swXray"),
     swAurora: document.getElementById("swAurora"),
     swBandSummary: document.getElementById("swBandSummary"),
-    mapLink: document.getElementById("mapLink")
+    mapLink: document.getElementById("mapLink"),
+    sectionsBtn: document.getElementById("sectionsBtn"),
+    sectionsModal: document.getElementById("sectionsModal"),
+    sectionsClose: document.getElementById("sectionsClose"),
+    sectionsList: document.getElementById("sectionsList"),
+    sectionsReset: document.getElementById("sectionsReset")
 };
 
 function updateClock() {
@@ -1404,9 +1409,12 @@ function renderTable() {
 function formatDays(value) {
     const days = String(value || "").trim();
 
-    if (!days) return "Daily";
-    if (days === "1234567") return "Daily";
-    if (days === "MTWTFSS") return "Daily";
+    if (!days)
+        return "Daily";
+    if (days === "1234567")
+        return "Daily";
+    if (days === "MTWTFSS")
+        return "Daily";
 
     return days;
 }
@@ -1654,6 +1662,16 @@ els.locationBtn.addEventListener("click", requestLocation);
 els.aboutBtn.addEventListener("click", showAbout);
 els.aboutClose.addEventListener("click", hideAbout);
 
+els.sectionsBtn.addEventListener("click", showSections);
+els.sectionsClose.addEventListener("click", hideSections);
+els.sectionsReset.addEventListener("click", resetSections);
+
+els.sectionsModal.addEventListener("click", event => {
+    if (event.target === els.sectionsModal) {
+        hideSections();
+    }
+});
+
 els.regionSelect.addEventListener("change", () => {
     userLocation = null;
     localStorage.setItem("swRegion", els.regionSelect.value);
@@ -1685,9 +1703,85 @@ document.addEventListener("keydown", event => {
     }
 });
 
+const sectionConfig = {
+    bandLive: "Band Live",
+    activity: "HF Activity Now",
+    insights: "Best DX Targets / Snapshot",
+    spaceWeather: "HF Propagation Info",
+    bestDx: "Best DX Now",
+    conditions: "HF Conditions",
+    controls: "Search and filters",
+    table: "Schedule table"
+};
+
+function getSectionState() {
+    try {
+        return JSON.parse(localStorage.getItem("swSections")) || {};
+    } catch {
+        return {};
+    }
+}
+
+function saveSectionState(state) {
+    localStorage.setItem("swSections", JSON.stringify(state));
+}
+
+function applySectionVisibility() {
+    const state = getSectionState();
+
+    document.querySelectorAll("[data-section]").forEach(section => {
+        const key = section.dataset.section;
+        const visible = state[key] !== false;
+
+        section.classList.toggle("section-hidden", !visible);
+    });
+}
+
+function renderSectionSettings() {
+    const state = getSectionState();
+
+    els.sectionsList.innerHTML = Object.entries(sectionConfig).map(([key, label]) => {
+        const checked = state[key] !== false ? "checked" : "";
+
+        return `
+      <label class="toggle section-toggle">
+        <input class="sectionVisibilityToggle" type="checkbox" value="${escapeHtml(key)}" ${checked} />
+        <span>${escapeHtml(label)}</span>
+      </label>
+    `;
+    }).join("");
+
+    els.sectionsList.querySelectorAll(".sectionVisibilityToggle").forEach(input => {
+        input.addEventListener("change", () => {
+            const next = getSectionState();
+            next[input.value] = input.checked;
+
+            saveSectionState(next);
+            applySectionVisibility();
+        });
+    });
+}
+
+function showSections() {
+    renderSectionSettings();
+    els.sectionsModal.classList.remove("hidden");
+}
+
+function hideSections() {
+    els.sectionsModal.classList.add("hidden");
+}
+
+function resetSections() {
+    localStorage.removeItem("swSections");
+    renderSectionSettings();
+    applySectionVisibility();
+}
+
 updateClock();
 setInterval(updateClock, 1000);
 setInterval(render, 60_000);
+
+applySectionVisibility();
 
 loadSchedules().catch(err => {
     console.error(err);

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>shortwave.sbs</title>
-  <link rel="stylesheet" href="style.css?v=0.5.7" />
+  <link rel="stylesheet" href="style.css?v=0.6.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -16,19 +16,20 @@
         <p>Live HF broadcast monitor</p>
       </div>
 <div class="clock">
-  <div class="version">v0.5.7</div>
+  <div class="version">v0.6.0</div>
 
-  <div class="top-actions">
-    <button id="aboutBtn" class="about-btn" type="button">About</button>
-    <a id="mapLink" class="about-btn" href="map.html">Map</a>
-  </div>
+ <div class="top-actions">
+  <button id="sectionsBtn" class="about-btn" type="button">Sections</button>
+  <button id="aboutBtn" class="about-btn" type="button">About</button>
+  <a id="mapLink" class="about-btn" href="map.html">Map</a>
+</div>
 
   <span id="utcClock">--:-- UTC</span>
   <small id="dataInfo">Loading schedules…</small>
 </div>
     </header>
 
-    <section class="band-card">
+    <section class="band-card" data-section="bandLive">
       <div>
         <h2 id="bandTitle">31m Band Live</h2>
         <p id="bandRange">9400–9900 kHz</p>
@@ -43,7 +44,7 @@
       </div>
     </section>
 
-<section class="activity-card">
+<section class="activity-card" data-section="activity">
   <div class="section-head">
     <h2>HF Activity Now</h2>
     <span>Active broadcasts by band</span>
@@ -51,7 +52,7 @@
   <div id="activityBands" class="activity-bands"></div>
 </section>
 
-<section class="insights-grid">
+<section class="insights-grid" data-section="insights">
   <section class="insight-card">
     <div class="section-head">
       <h2>Best DX Targets Now</h2>
@@ -78,7 +79,7 @@
   </section>
 </section>
 
-<section class="space-weather-card">
+<section class="space-weather-card" data-section="spaceWeather">
   <div class="section-head">
     <h2>HF Propagation Info</h2>
     <span id="spaceWeatherUpdated">Loading NOAA data…</span>
@@ -106,19 +107,21 @@
   <div id="swBandSummary" class="sw-band-summary"></div>
 </section>
 
-<section class="conditions-card">
-  <div class="section-head">
-    <h2>HF Conditions</h2>
-    <span id="conditionLocation">Location not set</span>
-  </div>
-
-<section class="best-dx-card">
+<section class="best-dx-card" data-section="bestDx">
   <div class="section-head">
     <h2>Best DX Now</h2>
     <span>Distance, path and active schedules</span>
   </div>
   <div id="bestDxList" class="best-dx-list"></div>
-</section>
+  
+  <section class="conditions-card" data-section="conditions">
+  <div class="section-head">
+    <h2>HF Conditions</h2>
+    <span id="conditionLocation">Location not set</span>
+  </div>
+
+
+
 
   <div class="conditions-top">
     <div>
@@ -140,7 +143,7 @@
   <div id="conditionBands" class="condition-bands"></div>
 </section>
 
-<section class="controls">
+<section class="controls" data-section="controls">
   <input id="searchInput" type="search" placeholder="Search frequency, station, language, country…" />
 
   <select id="bandSelect">
@@ -190,7 +193,7 @@
 </section>
 
 
-    <section class="table-wrap">
+    <section class="table-wrap" data-section="table">
       <table>
         <thead>
           <tr>
@@ -292,6 +295,11 @@
     <div class="about-section">
       <h3>Changelog & source updates</h3>
 		<div class="log-row">
+		<span>09.07.2026</span>
+		<strong>[Feature]</strong>
+		<p>Added customizable section visibility and station broadcast day display.</p>
+		</div>
+		<div class="log-row">
 		<span>15.06.2026</span>
 		<strong>[Polish]</strong>
 		<p>Cleaned up optional source toggles, improved merged-source display and polished table layout for desktop and iPad.</p>
@@ -368,6 +376,15 @@
   </p>
 </div>
 
+<div id="sectionsModal" class="modal hidden">
+  <div class="modal-card">
+    <button id="sectionsClose" class="modal-close">×</button>
+    <h2>Visible sections</h2>
+    <div id="sectionsList" class="sections-list"></div>
+    <button id="sectionsReset" class="auto-btn" type="button">Reset view</button>
+  </div>
+</div>
+
     <div class="about-section">
       <h3>Roadmap</h3>
       <ul>
@@ -394,7 +411,7 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.5.7"></script>
+<script src="app.js?v=0.6.0"></script>
 </body>
 </html>
 
