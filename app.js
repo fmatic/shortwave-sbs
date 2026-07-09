@@ -106,7 +106,7 @@ const sectionLayouts = {
 const bandOrder = Object.keys(bandRanges);
 
 const els = {
-    utcClock: document.querySelectorAll(".layout-btn").forEach(btn => {.getElementById("utcClock"),
+    utcClock: document.querySelectorAll("utcClock"),
     dataInfo: document.getElementById("dataInfo"),
     searchInput: document.getElementById("searchInput"),
     bandSelect: document.getElementById("bandSelect"),
