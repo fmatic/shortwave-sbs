@@ -881,16 +881,27 @@ tr {
 }
 
 .flag {
-  display: inline-block;
-  min-width: 1.6em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
   margin-right: 6px;
 }
 
-.flag-cla {
-  filter: saturate(1.4);
-  opacity: .95;
+.flag-img {
+  width: 18px;
+  height: 13.5px;
+  display: block;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.12);
 }
 
+.flag-cla,
+.flag-fallback {
+  font-size: 18px;
+  line-height: 1;
+}
 .tx-site-btn {
   appearance: none;
   -webkit-appearance: none;
