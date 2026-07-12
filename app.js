@@ -978,7 +978,7 @@ function requestLocation() {
         };
 
         els.locationBtn.textContent = "Location active";
-        renderConditions();
+		render();
     },
         error => {
         els.locationBtn.textContent = "Use my location";
@@ -999,7 +999,7 @@ function requestLocation() {
             message: error.message
         });
 
-        renderConditions();
+        render();
     }, {
         enableHighAccuracy: false,
         timeout: 15000,
@@ -1353,8 +1353,8 @@ function showFrequencyDetails(item) {
           <span>${escapeHtml(fmtTime(x.start, x.end))}</span>
           <strong>
             <span class="flag ${x.country === "CLA" ? "flag-cla" : ""}">
-              ${getFlag(x.country)}
-            </span>
+			${getFlagHtml(x.country)}
+			</span>
             ${escapeHtml(x.station || "Unknown station")}
             <br>
             <small>
@@ -1929,7 +1929,7 @@ els.regionSelect.addEventListener("change", () => {
     userLocation = null;
     localStorage.setItem("swRegion", els.regionSelect.value);
     els.locationBtn.textContent = "Use my location";
-    renderConditions();
+    render();
 });
 
 els.aboutModal.addEventListener("click", event => {
