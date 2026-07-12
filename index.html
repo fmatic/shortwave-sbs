@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>shortwave.sbs</title>
-  <link rel="stylesheet" href="style.css?v=0.6.1" />
+  <link rel="stylesheet" href="style.css?v=0.7.0" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="icon" href="favicon/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
@@ -19,7 +19,7 @@
         <p>Live HF broadcast monitor</p>
       </div>
 <div class="clock">
-  <div class="version">v0.6.1</div>
+  <div class="version">v0.7.0</div>
 
  <div class="top-actions">
   <button id="sectionsBtn" class="about-btn" type="button">Sections</button>
@@ -31,6 +31,20 @@
   <small id="dataInfo">Loading schedules…</small>
 </div>
     </header>
+
+		<section class="dx-assistant-card" data-section="assistant">
+  <div class="section-head">
+    <h2>DX Assistant</h2>
+    <span id="dxAssistantStatus">Analysing current conditions…</span>
+  </div>
+
+  <div id="dxAssistantMain" class="dx-assistant-main">
+    Waiting for schedule and propagation data…
+  </div>
+
+  <div id="dxAssistantTips" class="dx-assistant-tips"></div>
+</section>
+
 
     <section class="band-card" data-section="bandLive">
       <div>
@@ -46,6 +60,7 @@
         <span>active broadcasts now</span>
       </div>
     </section>
+
 
 <section class="activity-card" data-section="activity">
   <div class="section-head">
@@ -447,7 +462,7 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.6.1"></script>
+<script src="app.js?v=0.7.0"></script>
 </body>
 </html>
 

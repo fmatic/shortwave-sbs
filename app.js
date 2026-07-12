@@ -57,6 +57,7 @@ const locationProfiles = {
 };
 
 const sectionConfig = {
+    assistant: "DX Assistant",
     bandLive: "Band Live",
     activity: "HF Activity Now",
     insights: "Best DX Targets / Snapshot",
@@ -69,43 +70,50 @@ const sectionConfig = {
 
 const sectionLayouts = {
 
-  minimal: [
-    "controls",
-    "table"
-  ],
+    minimal: [
+        "assistant",
+        "controls",
+        "table"
+    ],
 
-  monitoring: [
-    "bandLive",
-    "spaceWeather",
-    "conditions",
-    "controls",
-    "table"
-  ],
+    monitoring: [
+        "assistant",
+        "bandLive",
+        "spaceWeather",
+        "conditions",
+        "controls",
+        "table"
+    ],
 
-  dx: [
-    "bandLive",
-    "spaceWeather",
-    "conditions",
-    "bestDx",
-    "insights",
-    "controls",
-    "table"
-  ],
+    dx: [
+        "assistant",
+        "bandLive",
+        "spaceWeather",
+        "conditions",
+        "bestDx",
+        "insights",
+        "controls",
+        "table"
+    ],
 
-  statistics: [
-    "bandLive",
-    "activity",
-    "insights",
-    "spaceWeather"
-  ],
+    statistics: [
+        "assistant",
+        "bandLive",
+        "activity",
+        "insights",
+        "spaceWeather"
+    ],
 
-  everything: Object.keys(sectionConfig)
+    everything: Object.keys(sectionConfig)
 
 };
 
 const bandOrder = Object.keys(bandRanges);
 
 const els = {
+    dxAssistantStatus: document.getElementById("dxAssistantStatus"),
+    dxAssistantMain: document.getElementById("dxAssistantMain"),
+    dxAssistantTips: document.getElementById("dxAssistantTips"),
     utcClock: document.getElementById("utcClock"),
     dataInfo: document.getElementById("dataInfo"),
     searchInput: document.getElementById("searchInput"),
@@ -148,13 +156,14 @@ const els = {
     sectionsClose: document.getElementById("sectionsClose"),
     sectionsList: document.getElementById("sectionsList"),
     sectionsReset: document.getElementById("sectionsReset"),
-	currentLayoutName: document.getElementById("currentLayoutName"),
+    currentLayoutName: document.getElementById("currentLayoutName"),
 };
 
 function applyLayout(name) {
 
     const layout = sectionLayouts[name];
-    if (!layout) return;
+    if (!layout)
+        return;
 
     const state = {};
 
@@ -171,7 +180,8 @@ function applyLayout(name) {
 }
 
 function updateCurrentLayout() {
-    if (!els.currentLayoutName) return;
+    if (!els.currentLayoutName)
+        return;
 
     const current = localStorage.getItem("swLayout") || "custom";
 
@@ -579,7 +589,7 @@ function renderBestDxNow() {
             showFrequencyDetails(active[index].item);
         });
     });
-	
+
 }
 
 function getPathAwareness(item) {
@@ -759,6 +769,141 @@ function getConditionScore(band, mode) {
     };
 
     return scores[mode]?.[band] ?? 0;
+}
+
+function getAssistantBandScore(band, mode, activeCount) {
+    let score = getConditionScore(band, mode);
+
+    // Aktiivisuus vaikuttaa, mutta ei saa yksin määrätä suositusta.
+    score += Math.min(25, activeCount * 0.25);
+
+    if (spaceWeather) {
+        const kp = Number(spaceWeather.kp || 0);
+        const sfi = Number(spaceWeather.sfi || 100);
+
+        const lowBands = [
+            "120m", "90m", "75m", "60m", "49m"
+        ];
+
+        const highBands = [
+            "25m", "22m", "19m", "16m", "13m", "11m"
+        ];
+
+        if (kp >= 5) {
+            score -= 20;
+        } else if (kp >= 4) {
+            score -= 10;
+        }
+
+        if (sfi >= 130 && highBands.includes(band)) {
+            score += 18;
+        }
+
+        if (sfi < 90 && lowBands.includes(band)) {
+            score += 8;
+        }
+    }
+
+    return Math.round(score);
+}
+
+function getAssistantBandReason(band, mode, activeCount) {
+    if (
+        mode === "Night" &&
+        ["120m", "90m", "75m", "60m", "49m", "41m"].includes(band)
+    ) {
+        return `Night conditions and ${activeCount} active broadcasts favour lower-band reception.`;
+    }
+
+    if (
+        mode === "Day" &&
+        ["31m", "25m", "22m", "19m", "16m"].includes(band)
+    ) {
+        return `Daylight conditions and ${activeCount} active broadcasts favour this band.`;
+    }
+
+    if (mode === "Twilight") {
+        return `Twilight conditions may support longer-distance reception, with ${activeCount} active broadcasts available.`;
+    }
+
+    return `${activeCount} active broadcasts and current propagation conditions make this the strongest choice.`;
+}
+
+function renderDxAssistant() {
+    if (
+        !els.dxAssistantStatus ||
+        !els.dxAssistantMain ||
+        !els.dxAssistantTips
+    ) {
+        return;
+    }
+
+    const loc = getCurrentLocationForCalculations();
+    const elevation = getSolarElevationApprox(loc.lat, loc.lon);
+    const mode = getPathMode(elevation);
+
+    const selectedSources = getSelectedSources();
+
+    const rankedBands = bandOrder
+        .map(band => {
+            const active = allSchedules.filter(item => {
+                if (item.band !== band) {
+                    return false;
+                }
+
+                if (!isOnAir(item)) {
+                    return false;
+                }
+
+                return itemHasSelectedSource(item, selectedSources);
+            });
+
+            return {
+                band,
+                activeCount: active.length,
+                score: getAssistantBandScore(
+                    band,
+                    mode,
+                    active.length
+                )
+            };
+        })
+        .filter(item => item.activeCount > 0)
+        .sort((a, b) => b.score - a.score);
+
+    const best = rankedBands[0];
+
+    if (!best) {
+        els.dxAssistantStatus.textContent = "No recommendation";
+        els.dxAssistantMain.innerHTML = `
+            <strong>No suitable active broadcasts found.</strong>
+            <p>Try enabling another schedule source or selecting all bands.</p>
+        `;
+        els.dxAssistantTips.innerHTML = "";
+        return;
+    }
+
+    els.dxAssistantStatus.textContent =
+        `${mode} path · score ${best.score}`;
+
+    els.dxAssistantMain.innerHTML = `
+        <strong>${escapeHtml(best.band)} is currently the strongest band.</strong>
+        <p>
+            ${escapeHtml(
+                getAssistantBandReason(
+                    best.band,
+                    mode,
+                    best.activeCount
+                )
+            )}
+        </p>
+    `;
+
+    els.dxAssistantTips.innerHTML = `
+        <div>
+            ${best.activeCount} active broadcasts on ${escapeHtml(best.band)}
+        </div>
+    `;
 }
 
 function conditionLabel(score) {
@@ -1040,7 +1185,6 @@ function getFlagHtml(code) {
         >
     `;
 }
-
 
 function escapeHtml(value) {
     return String(value ?? "")
@@ -1671,6 +1815,7 @@ function hideDetails() {
 function render() {
     updateMapLink();
     renderBandLive();
+	renderDxAssistant();
     renderActivityOverview();
     renderTargets();
     renderSnapshot();
@@ -1811,8 +1956,6 @@ document.addEventListener("keydown", event => {
     }
 });
 
-
-
 function getSectionState() {
     try {
         return JSON.parse(localStorage.getItem("swSections")) || {};
@@ -1851,19 +1994,19 @@ function renderSectionSettings() {
     }).join("");
 
     els.sectionsList.querySelectorAll(".sectionVisibilityToggle").forEach(input => {
-    input.addEventListener("change", () => {
-        const next = getSectionState();
-        next[input.value] = input.checked;
+        input.addEventListener("change", () => {
+            const next = getSectionState();
+            next[input.value] = input.checked;
 
-        saveSectionState(next);
+            saveSectionState(next);
 
-        // Käyttäjä poistui presetistä -> nyt käytössä on oma näkymä
-        localStorage.removeItem("swLayout");
-        updateCurrentLayout();
+            // Käyttäjä poistui presetistä -> nyt käytössä on oma näkymä
+            localStorage.removeItem("swLayout");
+            updateCurrentLayout();
 
-        applySectionVisibility();
+            applySectionVisibility();
+        });
     });
-});
 }
 
 function showSections() {
