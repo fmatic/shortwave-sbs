@@ -55,13 +55,6 @@ h1 {
   padding-top: 10px;
 }
 
-.clock span {
-  display: block;
-  font-size: 24px;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
 .clock small {
   color: var(--muted);
 }
@@ -478,7 +471,14 @@ tr {
   opacity: .55;
 }
 
-.clock span::after {
+#utcClock {
+  display: block;
+  font-size: 24px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+#utcClock::after {
   content: "";
   display: inline-block;
   width: 7px;
@@ -1797,17 +1797,18 @@ td:nth-child(9) {
 }
 
 .source-status-dot {
+  display: inline-block;
   width: 7px;
   height: 7px;
+  flex: 0 0 7px;
   border-radius: 50%;
   background: rgba(136, 163, 183, .75);
   box-shadow: 0 0 8px rgba(136, 163, 183, .25);
 }
 
-.source-status.latest {
-  color: #67ead8;
-  border-color: rgba(77, 225, 207, .25);
-  background: rgba(29, 194, 174, .07);
+.source-status.latest .source-status-dot {
+  background: #55e3d0;
+  box-shadow: 0 0 10px rgba(85, 227, 208, .52);
 }
 
 .source-status.latest .source-status-dot {
@@ -1903,16 +1904,7 @@ td:nth-child(9) {
 
 /* Schedule Sources – final cleanup */
 
-/* Poista vanhoista source-tyyleistä jääneet automaattiset pisteet */
-.source-info-panel span::before,
-.source-info-panel span::after,
-.source-info-panel strong::before,
-.source-info-panel strong::after,
-.source-info-panel article::before,
-.source-info-panel article::after {
-  content: none !important;
-  display: none !important;
-}
+
 
 /* Palauta vain tarkoituksellinen statuspiste */
 .source-info-panel .source-status-dot {
