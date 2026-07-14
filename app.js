@@ -427,6 +427,18 @@ function formatSourceDate(value) {
     });
 }
 
+function formatUtcTime(value) {
+    const raw = String(value || "")
+        .replace(/\D/g, "")
+        .padStart(4, "0");
+
+    if (raw.length !== 4) {
+        return value || "";
+    }
+
+    return `${raw.slice(0, 2)}:${raw.slice(2)}`;
+}
+
 function renderSourceInfo(sources) {
     if (!els.sourceInfoPanel || !sources) {
         return;
@@ -434,40 +446,98 @@ function renderSourceInfo(sources) {
 
     const sourceOrder = ["EiBi", "AOKI", "HFCC", "HFBC"];
 
-    els.sourceInfoPanel.innerHTML = sourceOrder.map(name => {
-        const source = sources[name] || {};
-        const season = source.season || "—";
-        const date = formatSourceDate(source.publishedAt);
-        const rows = Number(source.rows || 0).toLocaleString("en-US");
+    const newestDate = sourceOrder
+        .map(name => sources[name]?.publishedAt)
+        .filter(Boolean)
+        .sort()
+        .at(-1) || "";
 
-        let extra = "";
+    els.sourceInfoPanel.innerHTML = `
+        <div class="source-panel-head">
+            <div>
+                <strong>Schedule sources</strong>
+                <span>Current database releases</span>
+            </div>
+        </div>
 
-        if (name === "AOKI" && source.publishedTime) {
-            extra = ` · ${escapeHtml(source.publishedTime)} UTC`;
-        }
+        <div class="source-dashboard">
+            ${sourceOrder.map(name => {
+                const source = sources[name] || {};
 
-        if (name === "HFCC" && source.processedTime) {
-            extra = ` · processed ${escapeHtml(source.processedTime)} UTC`;
-        }
+                const season = source.season || "—";
+                const publishedAt = source.publishedAt || "";
+                const publishedDate = formatSourceDate(publishedAt);
 
-        return `
-          <div class="source-info-row">
-            <strong>${escapeHtml(name)}</strong>
+                const rows = Number(source.rows || 0)
+                    .toLocaleString("en-US");
 
-            <span class="source-season">
-              ${escapeHtml(season)}
-            </span>
+                const isLatest =
+                    publishedAt &&
+                    newestDate &&
+                    publishedAt === newestDate;
 
-            <span class="source-date">
-              ${escapeHtml(date)}${extra}
-            </span>
+                const statusLabel = isLatest
+                    ? "Latest"
+                    : publishedAt
+                        ? "Current"
+                        : "Unknown";
 
-            <span class="source-count">
-              ${rows} rows
-            </span>
-          </div>
-        `;
-    }).join("");
+                let detail = "";
+
+                if (name === "AOKI" && source.publishedTime) {
+                    detail =
+                        `${formatUtcTime(source.publishedTime)} UTC`;
+                }
+
+                if (name === "HFCC" && source.processedTime) {
+                    detail =
+                        `Processed ${formatUtcTime(source.processedTime)} UTC`;
+                }
+
+                if (
+                    name === "HFBC" &&
+                    source.createdAt
+                ) {
+                    detail = "ITU eHFBC";
+                }
+
+                return `
+                    <article class="source-card">
+                        <div class="source-card-top">
+                            <strong class="source-name">
+                                ${escapeHtml(name)}
+                            </strong>
+
+                            <span class="source-status ${isLatest ? "latest" : ""}">
+                                <span class="source-status-dot"></span>
+                                ${escapeHtml(statusLabel)}
+                            </span>
+                        </div>
+
+                        <div class="source-card-main">
+                            <span class="source-season">
+                                ${escapeHtml(season)}
+                            </span>
+
+                            <span class="source-date">
+                                ${escapeHtml(publishedDate)}
+                            </span>
+                        </div>
+
+                        <div class="source-card-bottom">
+                            <span class="source-detail">
+                                ${escapeHtml(detail || "Release date")}
+                            </span>
+
+                            <span class="source-count">
+                                ${escapeHtml(rows)} rows
+                            </span>
+                        </div>
+                    </article>
+                `;
+            }).join("")}
+        </div>
+    `;
 }
 
 function toggleSourceInfo() {
