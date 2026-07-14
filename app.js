@@ -2083,11 +2083,12 @@ els.regionSelect.addEventListener("change", () => {
     render();
 });
 
-if (els.sourceInfoBtn) {
-    els.sourceInfoBtn.addEventListener(
-        "click",
-        toggleSourceInfo
-    );
+if (els.sourceInfoBtn && els.sourceInfoPanel) {
+    els.sourceInfoBtn.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleSourceInfo();
+    });
 }
 
 els.aboutModal.addEventListener("click", event => {
