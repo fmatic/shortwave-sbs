@@ -1900,3 +1900,101 @@ td:nth-child(9) {
   outline-offset: 4px;
   border-radius: 4px;
 }
+
+/* Schedule Sources – final cleanup */
+
+/* Poista vanhoista source-tyyleistä jääneet automaattiset pisteet */
+.source-info-panel span::before,
+.source-info-panel span::after,
+.source-info-panel strong::before,
+.source-info-panel strong::after,
+.source-info-panel article::before,
+.source-info-panel article::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Palauta vain tarkoituksellinen statuspiste */
+.source-info-panel .source-status-dot {
+  display: inline-block !important;
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: rgba(136, 163, 183, .75);
+  box-shadow: 0 0 8px rgba(136, 163, 183, .25);
+}
+
+.source-info-panel .source-status.latest .source-status-dot {
+  background: #55e3d0;
+  box-shadow: 0 0 10px rgba(85, 227, 208, .52);
+}
+
+/* Paneeli hieman leveämmäksi ja matalammaksi */
+.source-info-panel {
+  width: min(590px, calc(100vw - 32px));
+  padding: 16px;
+}
+
+/* Desktopilla kortit kahteen sarakkeeseen */
+.source-dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.source-card {
+  min-height: 0;
+  padding: 12px 13px;
+  gap: 8px;
+}
+
+.source-card-top,
+.source-card-main,
+.source-card-bottom {
+  min-width: 0;
+}
+
+.source-name {
+  font-size: .9rem;
+}
+
+.source-status {
+  padding: 3px 8px;
+  font-size: .68rem;
+  line-height: 1.2;
+}
+
+.source-season {
+  min-width: auto;
+  font-size: 1.05rem;
+}
+
+.source-date {
+  font-size: .9rem;
+}
+
+.source-card-bottom {
+  font-size: .74rem;
+}
+
+.source-detail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-count {
+  font-size: .76rem;
+}
+
+/* Tabletilla ja puhelimella yksi kortti per rivi */
+@media (max-width: 700px) {
+  .source-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .source-info-panel {
+    width: auto;
+  }
+}
