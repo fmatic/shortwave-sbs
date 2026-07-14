@@ -126,10 +126,123 @@ function parseAdmins(zip) {
   return admins;
 }
 
+const monthNumbers = {
+  jan: "01",
+  feb: "02",
+  mar: "03",
+  apr: "04",
+  may: "05",
+  jun: "06",
+  jul: "07",
+  aug: "08",
+  sep: "09",
+  oct: "10",
+  nov: "11",
+  dec: "12"
+};
+
+function parseHfccDate(value) {
+  const match = String(value || "")
+    .trim()
+    .match(/(\d{1,2})-([A-Za-z]{3})-(\d{4})/i);
+
+  if (!match) {
+    return "";
+  }
+
+  const day = match[1].padStart(2, "0");
+  const month = monthNumbers[match[2].toLowerCase()];
+  const year = match[3];
+
+  if (!month) {
+    return "";
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+function readHfccMetadata(raw, entryName = "") {
+  const fallback = {
+    season: "",
+    publishedAt: "",
+    processedAt: "",
+    processedTime: "",
+    label: "HFCC release information unavailable",
+    sourceFile: entryName
+  };
+
+  const lines = String(raw || "")
+    .split(/\r?\n/)
+    .slice(0, 10);
+
+  const headerText = lines.join("\n");
+
+  const releaseMatch = headerText.match(
+    /\b([AB]\d{2})\s+ALL\s+(\d{1,2}-[A-Za-z]{3}-\d{4})/i
+  );
+
+  const processedMatch = headerText.match(
+    /Processed\s+on\s+(\d{1,2}-[A-Za-z]{3}-\d{4})\s+at\s+(\d{1,2}):(\d{2})\s*UTC/i
+  );
+
+  const season = releaseMatch
+    ? releaseMatch[1].toUpperCase()
+    : "";
+
+  const publishedAt = releaseMatch
+    ? parseHfccDate(releaseMatch[2])
+    : "";
+
+  const processedAt = processedMatch
+    ? parseHfccDate(processedMatch[1])
+    : "";
+
+  const processedTime = processedMatch
+    ? `${processedMatch[2].padStart(2, "0")}${processedMatch[3]}`
+    : "";
+
+  if (!season && !publishedAt) {
+    console.warn(
+      "HFCC release information could not be detected from:",
+      entryName
+    );
+
+    return fallback;
+  }
+
+  return {
+    season,
+    publishedAt,
+    processedAt,
+    processedTime,
+    label: [
+      "HFCC",
+      season,
+      publishedAt
+    ].filter(Boolean).join(" • "),
+    sourceFile: entryName
+  };
+}
+
 function importHfcc() {
+  const schedules = [];
+
+  const fallbackMeta = {
+    season: "",
+    publishedAt: "",
+    processedAt: "",
+    processedTime: "",
+    label: "HFCC release information unavailable",
+    sourceFile: ""
+  };
+
   if (!fs.existsSync(inputPath)) {
     console.warn("HFCC file missing:", inputPath);
-    return [];
+
+    return {
+      schedules,
+      meta: fallbackMeta
+    };
   }
 
   const zip = new AdmZip(inputPath);
@@ -145,18 +258,23 @@ function importHfcc() {
 
   if (!entry) {
     console.warn("HFCC TXT file not found");
-    return [];
+
+    return {
+      schedules,
+      meta: fallbackMeta
+    };
   }
 
   const raw = entry.getData().toString("latin1");
+  const metadata = readHfccMetadata(raw, entry.entryName);
   const lines = raw.split(/\r?\n/);
-
-  const schedules = [];
 
   for (const line of lines) {
     const trimmed = line.trim();
 
-    if (!/^\d{4,5}\s+\d{4}\s+\d{4}/.test(trimmed)) continue;
+    if (!/^\d{4,5}\s+\d{4}\s+\d{4}/.test(trimmed)) {
+      continue;
+    }
 
     const parts = trimmed.split(/\s+/);
 
@@ -168,44 +286,59 @@ function importHfcc() {
     const txCode = parts[4] || "";
     const site = sites[txCode];
 
-  let adminIndex = -1;
+    let adminIndex = -1;
 
-for (let i = parts.length - 1; i >= 0; i--) {
-  if (admins[parts[i]] && broadcasters[parts[i + 1]]) {
-    adminIndex = i;
-    break;
-  }
-}
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (
+        admins[parts[i]] &&
+        broadcasters[parts[i + 1]]
+      ) {
+        adminIndex = i;
+        break;
+      }
+    }
 
-if (adminIndex === -1) {
-  continue;
-}
+    if (adminIndex === -1) {
+      continue;
+    }
 
-const adminCode = parts[adminIndex];
-const broadcasterCode = parts[adminIndex + 1] || "";
-const fmoCode = parts[adminIndex + 2] || "";
-const reqNo = parts[adminIndex + 3] || "";
-const language = parts[adminIndex - 1] || "";
+    const adminCode = parts[adminIndex];
+    const broadcasterCode =
+      parts[adminIndex + 1] || "";
 
-		schedules.push({
-		  freq,
-		  start,
-		  end,
+    const fmoCode =
+      parts[adminIndex + 2] || "";
 
-		  days: parts[9] || "",
+    const reqNo =
+      parts[adminIndex + 3] || "";
 
-		  country: adminCode,
-		  countryName: admins[adminCode]?.name || "",
+    const language =
+      parts[adminIndex - 1] || "";
 
-		  adminCode,
+    schedules.push({
+      freq,
+      start,
+      end,
 
-		 station: broadcasters[broadcasterCode] || broadcasterCode || "",
-	stationCode: broadcasterCode,
+      days: parts[9] || "",
 
-	fmoCode,
-	reqNo,
+      country: adminCode,
+      countryName:
+        admins[adminCode]?.name || "",
 
-	language,
+      adminCode,
+
+      station:
+        broadcasters[broadcasterCode] ||
+        broadcasterCode ||
+        "",
+
+      stationCode: broadcasterCode,
+
+      fmoCode,
+      reqNo,
+
+      language,
       target,
       type: "",
       power: parts[5] || "",
@@ -223,8 +356,23 @@ const language = parts[adminIndex - 1] || "";
   }
 
   console.log(`HFCC: ${schedules.length} rows`);
+  console.log(`HFCC release: ${metadata.label}`);
 
-  return schedules;
+  if (metadata.processedAt) {
+    console.log(
+      `HFCC processed: ${metadata.processedAt}` +
+      (
+        metadata.processedTime
+          ? ` at ${metadata.processedTime} UTC`
+          : ""
+      )
+    );
+  }
+
+  return {
+    schedules,
+    meta: metadata
+  };
 }
 
 module.exports = {

@@ -6,95 +6,215 @@ const { importAoki } = require("./import-aoki");
 const { importHfcc } = require("./import-hfcc");
 const { importHfbc } = require("./import-hfbc");
 
-const outputPath = path.join(__dirname, "..", "data", "schedules.json");
+const outputPath = path.join(
+        __dirname,
+        "..",
+        "data",
+        "schedules.json");
 
 async function main() {
-  const schedules = [];
+    const schedules = [];
 
-  schedules.push(...importEibi());
-  schedules.push(...importAoki());
-  schedules.push(...importHfcc());
-  schedules.push(...importHfbc());
+    const eibi = importEibi();
+    const aoki = importAoki();
+    const hfcc = importHfcc();
+    const hfbc = importHfbc();
 
-  const merged = new Map();
+    schedules.push(...eibi.schedules);
+    schedules.push(...aoki.schedules);
+    schedules.push(...hfcc.schedules);
+    schedules.push(...hfbc.schedules);
 
-  for (const item of schedules) {
-    const key = [
-      item.freq,
-      item.start,
-      item.end,
-      String(item.station).toLowerCase()
-    ].join("|");
+    const merged = new Map();
 
-    if (!merged.has(key)) {
-      merged.set(key, item);
-      continue;
+    for (const item of schedules) {
+        const key = [
+            item.freq,
+            item.start,
+            item.end,
+            String(item.station).toLowerCase()
+        ].join("|");
+
+        if (!merged.has(key)) {
+            merged.set(key, item);
+            continue;
+        }
+
+        const existing = merged.get(key);
+
+        const sources = new Set(
+                String(existing.source)
+                .split("+")
+                .map(x => x.trim()));
+
+        sources.add(item.source);
+        existing.source = [...sources].join("+");
+
+        if (!existing.target && item.target)
+            existing.target = item.target;
+
+        if (!existing.language && item.language)
+            existing.language = item.language;
+
+        if (!existing.country && item.country)
+            existing.country = item.country;
+
+        if (!existing.txSite && item.txSite)
+            existing.txSite = item.txSite;
+
+        if (!existing.txCode && item.txCode)
+            existing.txCode = item.txCode;
+
+        if (!existing.txCountry && item.txCountry)
+            existing.txCountry = item.txCountry;
+
+        if (!existing.txLat && item.txLat)
+            existing.txLat = item.txLat;
+
+        if (!existing.txLon && item.txLon)
+            existing.txLon = item.txLon;
+
+        if (!existing.countryName && item.countryName)
+            existing.countryName = item.countryName;
+
+        if (!existing.adminCode && item.adminCode)
+            existing.adminCode = item.adminCode;
+
+        if (!existing.stationCode && item.stationCode)
+            existing.stationCode = item.stationCode;
+
+        if (!existing.type && item.type)
+            existing.type = item.type;
+
+        if (!existing.power && item.power)
+            existing.power = item.power;
+
+        if (!existing.azimuth && item.azimuth)
+            existing.azimuth = item.azimuth;
+
+        if (!existing.days && item.days)
+            existing.days = item.days;
+
+        if (!existing.daysLabel && item.daysLabel)
+            existing.daysLabel = item.daysLabel;
+
+        if (!existing.cirafZones && item.cirafZones)
+            existing.cirafZones = item.cirafZones;
+
+        if (!existing.broadcasterName && item.broadcasterName)
+            existing.broadcasterName = item.broadcasterName;
     }
 
-    const existing = merged.get(key);
+    const finalSchedules = [...merged.values()];
 
-    const sources = new Set(
-      String(existing.source)
-        .split("+")
-        .map(x => x.trim())
-    );
+    finalSchedules.sort((a, b) => {
+        if (a.freq !== b.freq) {
+            return a.freq - b.freq;
+        }
 
-    sources.add(item.source);
-    existing.source = [...sources].join("+");
+        return String(a.start).localeCompare(
+            String(b.start));
+    });
 
-    if (!existing.target && item.target) existing.target = item.target;
-    if (!existing.language && item.language) existing.language = item.language;
-    if (!existing.country && item.country) existing.country = item.country;
-    if (!existing.txSite && item.txSite) existing.txSite = item.txSite;
-    if (!existing.txCode && item.txCode) existing.txCode = item.txCode;
-    if (!existing.txCountry && item.txCountry) existing.txCountry = item.txCountry;
-    if (!existing.txLat && item.txLat) existing.txLat = item.txLat;
-    if (!existing.txLon && item.txLon) existing.txLon = item.txLon;
-    if (!existing.countryName && item.countryName) existing.countryName = item.countryName;
-    if (!existing.adminCode && item.adminCode) existing.adminCode = item.adminCode;
-    if (!existing.stationCode && item.stationCode) existing.stationCode = item.stationCode;
-    if (!existing.type && item.type) existing.type = item.type;
-    if (!existing.power && item.power) existing.power = item.power;
-    if (!existing.azimuth && item.azimuth) existing.azimuth = item.azimuth;
-	if (!existing.days && item.days) existing.days = item.days;
-	if (!existing.daysLabel && item.daysLabel) existing.daysLabel = item.daysLabel;
-    if (!existing.cirafZones && item.cirafZones) existing.cirafZones = item.cirafZones;
-    if (!existing.broadcasterName && item.broadcasterName) existing.broadcasterName = item.broadcasterName;
-  }
+    fs.mkdirSync(
+        path.dirname(outputPath), {
+        recursive: true
+    });
 
-  const finalSchedules = [...merged.values()];
+    fs.writeFileSync(
+        outputPath,
+        JSON.stringify({
+            generatedAt: new Date().toISOString(),
+            count: finalSchedules.length,
 
-  finalSchedules.sort((a, b) => {
-    if (a.freq !== b.freq) return a.freq - b.freq;
-    return String(a.start).localeCompare(String(b.start));
-  });
+            sources: {
+                EiBi: {
+                    rows: eibi.schedules.length,
+                    season: eibi.meta?.season || "",
+                    publishedAt:
+                    eibi.meta?.publishedAt || "",
+                    validFrom:
+                    eibi.meta?.validFrom || "",
+                    validUntil:
+                    eibi.meta?.validUntil || "",
+                    label:
+                    eibi.meta?.label ||
+                    "EiBi release information unavailable"
+                },
 
-  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+                AOKI: {
+                    rows: aoki.schedules.length,
+                    season: aoki.meta?.season || "",
+                    publishedAt:
+                    aoki.meta?.publishedAt || "",
+                    publishedTime:
+                    aoki.meta?.publishedTime || "",
+                    label:
+                    aoki.meta?.label ||
+                    "AOKI release information unavailable"
+                },
+                HFCC: {
+                    rows: hfcc.schedules.length,
+                    season: hfcc.meta?.season || "",
+                    publishedAt:
+                    hfcc.meta?.publishedAt || "",
+                    processedAt:
+                    hfcc.meta?.processedAt || "",
+                    processedTime:
+                    hfcc.meta?.processedTime || "",
+                    sourceFile:
+                    hfcc.meta?.sourceFile || "",
+                    label:
+                    hfcc.meta?.label ||
+                    "HFCC release information unavailable"
+                },
 
-  fs.writeFileSync(
-    outputPath,
-    JSON.stringify(
-      {
-        generatedAt: new Date().toISOString(),
-        count: finalSchedules.length,
-        sources: {
-          EiBi: schedules.filter(x => x.source === "EiBi").length,
-          AOKI: schedules.filter(x => x.source === "AOKI").length,
-          HFCC: schedules.filter(x => x.source === "HFCC").length,
-          HFBC: schedules.filter(x => x.source === "HFBC").length
+                HFBC: {
+                    rows: hfbc.schedules.length,
+                    season: hfbc.meta?.season || "",
+                    notifyingOrg:
+                    hfbc.meta?.notifyingOrg || "",
+                    publishedAt:
+                    hfbc.meta?.publishedAt || "",
+                    createdAt:
+                    hfbc.meta?.createdAt || "",
+                    label:
+                    hfbc.meta?.label ||
+                    "HFBC release information unavailable"
+                }
+            },
+
+            schedules: finalSchedules
         },
-        schedules: finalSchedules
-      },
-      null,
-      2
-    )
-  );
+            null,
+            2));
 
-  console.log(`Imported total: ${schedules.length}`);
-  console.log(`Written: ${outputPath}`);
+    console.log("");
+    console.log("Schedule source summary:");
+
+    console.log(
+        `EiBi: ${eibi.schedules.length} rows · ` + 
+`${eibi.meta?.label || "release unknown"}`);
+
+    console.log(
+        `AOKI: ${aoki.schedules.length} rows · ` + 
+`${aoki.meta?.label || "release unknown"}`);
+
+    console.log(
+        `HFCC: ${hfcc.schedules.length} rows · ` + 
+`${hfcc.meta?.label || "release unknown"}`);
+
+    console.log(
+        `HFBC: ${hfbc.schedules.length} rows · ` + 
+`${hfbc.meta?.label || "release unknown"}`);
+
+    console.log("");
+    console.log(`Imported total: ${schedules.length}`);
+    console.log(`Merged total: ${finalSchedules.length}`);
+    console.log(`Written: ${outputPath}`);
 }
 
 main().catch(err => {
-  console.error(err);
-  process.exit(1);
+    console.error(err);
+    process.exit(1);
 });

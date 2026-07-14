@@ -133,6 +133,8 @@ const els = {
     activeCountries: document.getElementById("activeCountries"),
     activeStations: document.getElementById("activeStations"),
     sourceToggles: document.querySelectorAll(".sourceToggle"),
+	sourceInfoBtn: document.getElementById("sourceInfoBtn"),
+	sourceInfoPanel: document.getElementById("sourceInfoPanel"),
     autoBandBtn: document.getElementById("autoBandBtn"),
     bandReason: document.getElementById("bandReason"),
     aboutBtn: document.getElementById("aboutBtn"),
@@ -404,6 +406,83 @@ function itemHasSelectedSource(item, selectedSources) {
     .split("+")
     .map(x => x.trim())
     .some(src => selectedSources.includes(src));
+}
+
+function formatSourceDate(value) {
+    if (!value) {
+        return "Unknown";
+    }
+
+    const date = new Date(`${value}T00:00:00Z`);
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC"
+    });
+}
+
+function renderSourceInfo(sources) {
+    if (!els.sourceInfoPanel || !sources) {
+        return;
+    }
+
+    const sourceOrder = ["EiBi", "AOKI", "HFCC", "HFBC"];
+
+    els.sourceInfoPanel.innerHTML = sourceOrder.map(name => {
+        const source = sources[name] || {};
+        const season = source.season || "—";
+        const date = formatSourceDate(source.publishedAt);
+        const rows = Number(source.rows || 0).toLocaleString("en-US");
+
+        let extra = "";
+
+        if (name === "AOKI" && source.publishedTime) {
+            extra = ` · ${escapeHtml(source.publishedTime)} UTC`;
+        }
+
+        if (name === "HFCC" && source.processedTime) {
+            extra = ` · processed ${escapeHtml(source.processedTime)} UTC`;
+        }
+
+        return `
+          <div class="source-info-row">
+            <strong>${escapeHtml(name)}</strong>
+
+            <span class="source-season">
+              ${escapeHtml(season)}
+            </span>
+
+            <span class="source-date">
+              ${escapeHtml(date)}${extra}
+            </span>
+
+            <span class="source-count">
+              ${rows} rows
+            </span>
+          </div>
+        `;
+    }).join("");
+}
+
+function toggleSourceInfo() {
+    if (!els.sourceInfoBtn || !els.sourceInfoPanel) {
+        return;
+    }
+
+    const opening =
+        els.sourceInfoPanel.classList.contains("hidden");
+
+    els.sourceInfoPanel.classList.toggle("hidden", !opening);
+    els.sourceInfoBtn.setAttribute(
+        "aria-expanded",
+        String(opening)
+    );
 }
 
 function getDxScore(item, path, awareness) {
@@ -1888,6 +1967,7 @@ async function loadSchedules() {
     }
 
     allSchedules = data.schedules || [];
+	renderSourceInfo(data.sources);
 
     const updated = new Date(data.generatedAt).toLocaleString("fi-FI", {
         day: "2-digit",
@@ -1913,6 +1993,7 @@ els.sectionsBtn.addEventListener("click", showSections);
 els.sectionsClose.addEventListener("click", hideSections);
 els.sectionsReset.addEventListener("click", resetSections);
 
+
 document.querySelectorAll(".layout-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         applyLayout(btn.dataset.layout);
@@ -1931,6 +2012,13 @@ els.regionSelect.addEventListener("change", () => {
     els.locationBtn.textContent = "Use my location";
     render();
 });
+
+if (els.sourceInfoBtn) {
+    els.sourceInfoBtn.addEventListener(
+        "click",
+        toggleSourceInfo
+    );
+}
 
 els.aboutModal.addEventListener("click", event => {
     if (event.target === els.aboutModal)

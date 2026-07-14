@@ -7,6 +7,96 @@ const SITE_INPUT = "sources/hfbc-site.txt";
 const BROADCASTER_INPUT = "sources/hfbc-broadcas.txt";
 const CIRAF_INPUT = "sources/hfbc-ciraf.txt";
 
+const monthNumbers = {
+    jan: "01",
+    feb: "02",
+    mar: "03",
+    apr: "04",
+    may: "05",
+    jun: "06",
+    jul: "07",
+    aug: "08",
+    sep: "09",
+    oct: "10",
+    nov: "11",
+    dec: "12"
+};
+
+function parseHfbcDate(value) {
+    const match = String(value || "").match(
+            /(\d{1,2})-([A-Za-z]{3})-(\d{4})/i);
+
+    if (!match) {
+        return "";
+    }
+
+    const day = match[1].padStart(2, "0");
+    const month = monthNumbers[match[2].toLowerCase()];
+    const year = match[3];
+
+    if (!month) {
+        return "";
+    }
+
+    return `${year}-${month}-${day}`;
+}
+
+function readHfbcMetadata(text) {
+    const fallback = {
+        season: "",
+        notifyingOrg: "",
+        publishedAt: "",
+        createdAt: "",
+        label: "HFBC release information unavailable"
+    };
+
+    const header = String(text || "")
+        .split(/\r?\n/)
+        .slice(0, 15)
+        .join("\n");
+
+    const releaseMatch = header.match(
+            /^;\s*([AB]\d{2})\s+([A-Z0-9_-]+)\s+(\d{1,2}-[A-Za-z]{3}-\d{4})/im);
+
+    const createdMatch = header.match(
+            /Created\s+by\s+ITU\s+eHFBC\s+(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})/i);
+
+    const season = releaseMatch
+         ? releaseMatch[1].toUpperCase()
+         : "";
+
+    const notifyingOrg = releaseMatch
+         ? releaseMatch[2].toUpperCase()
+         : "";
+
+    const publishedAt = releaseMatch
+         ? parseHfbcDate(releaseMatch[3])
+         : "";
+
+    const createdAt = createdMatch
+         ? `${createdMatch[1]}T${createdMatch[2]}`
+         : "";
+
+    if (!season && !publishedAt) {
+        console.warn(
+            "HFBC release information could not be detected");
+
+        return fallback;
+    }
+
+    return {
+        season,
+        notifyingOrg,
+        publishedAt,
+        createdAt,
+        label: [
+            "HFBC",
+            season,
+            publishedAt
+        ].filter(Boolean).join(" • ")
+    };
+}
+
 const bandRanges = {
     "120m": [2300, 2495],
     "90m": [3200, 3400],
@@ -271,6 +361,7 @@ async function main() {
     const broadcasterLookup = await loadBroadcasterLookup();
     const cirafLookup = await loadCirafLookup();
     const text = await fs.readFile(INPUT, "utf8");
+    const metadata = readHfbcMetadata(text);
 
     const schedules = text
         .split(/\r?\n/)
@@ -284,6 +375,7 @@ async function main() {
             generatedAt: new Date().toISOString(),
             source: "HFBC",
             count: schedules.length,
+            meta: metadata,
             schedules
         },
             null,
@@ -295,13 +387,38 @@ async function main() {
     console.log(`HFBC broadcasters loaded: ${broadcasterLookup.size}`);
     console.log(`HFBC CIRAF zones loaded: ${cirafLookup.size}`);
     console.log(`Written: ${OUTPUT}`);
+    console.log(`HFBC release: ${metadata.label}`);
+
+    if (metadata.createdAt) {
+        console.log(`HFBC created: ${metadata.createdAt}`);
+    }
 }
 
 function importHfbc() {
+    const fallbackMeta = {
+        season: "",
+        notifyingOrg: "",
+        publishedAt: "",
+        createdAt: "",
+        label: "HFBC release information unavailable"
+    };
+
+    if (!fsSync.existsSync(OUTPUT)) {
+        console.warn("HFBC JSON file missing:", OUTPUT);
+
+        return {
+            schedules: [],
+            meta: fallbackMeta
+        };
+    }
+
     const raw = fsSync.readFileSync(OUTPUT, "utf8");
     const data = JSON.parse(raw);
 
-    return data.schedules || [];
+    return {
+        schedules: data.schedules || [],
+        meta: data.meta || fallbackMeta
+    };
 }
 
 module.exports = {
