@@ -110,6 +110,8 @@ const sectionLayouts = {
 
 const bandOrder = Object.keys(bandRanges);
 
+// Els-object
+
 const els = {
     dxAssistantStatus: document.getElementById("dxAssistantStatus"),
     dxAssistantMain: document.getElementById("dxAssistantMain"),
@@ -159,6 +161,7 @@ const els = {
     sectionsList: document.getElementById("sectionsList"),
     sectionsReset: document.getElementById("sectionsReset"),
     currentLayoutName: document.getElementById("currentLayoutName"),
+	dxAssistantTargets: document.getElementById("dxAssistantTargets"),
 };
 
 function applyLayout(name) {
@@ -231,6 +234,133 @@ function timeToMinutes(value) {
         return null;
 
     return h * 60 + m;
+}
+
+function getAssistantTargets(band, limit = 4) {
+    const selectedSources = getSelectedSources();
+    const seen = new Set();
+
+    return allSchedules
+        .filter(item => {
+            if (item.band !== band) {
+                return false;
+            }
+
+            if (!isOnAir(item)) {
+                return false;
+            }
+
+            if (!itemHasSelectedSource(item, selectedSources)) {
+                return false;
+            }
+
+            return Boolean(
+                item.station &&
+                item.freq &&
+                item.txLat &&
+                item.txLon
+            );
+        })
+        .map(item => {
+            const path = getTxPathInfo(item);
+            const awareness = getPathAwareness(item);
+            const score = getDxScore(item, path, awareness);
+
+            return {
+                item,
+                path,
+                awareness,
+                score
+            };
+        })
+        .filter(candidate => {
+            const key = [
+                candidate.item.freq,
+                String(candidate.item.station).toLowerCase()
+            ].join("|");
+
+            if (seen.has(key)) {
+                return false;
+            }
+
+            seen.add(key);
+            return true;
+        })
+        .sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+
+            return (b.path.distance || 0) -
+                (a.path.distance || 0);
+        })
+        .slice(0, limit);
+}
+
+function renderAssistantTargets(band) {
+    if (!els.dxAssistantTargets) {
+        return;
+    }
+
+    const targets = getAssistantTargets(band);
+
+    if (!targets.length) {
+        els.dxAssistantTargets.innerHTML = `
+            <div class="dx-assistant-empty">
+                No suitable transmitter targets found on ${escapeHtml(band)}.
+            </div>
+        `;
+        return;
+    }
+
+    els.dxAssistantTargets.innerHTML = targets
+        .map(({ item, path, awareness, score }, index) => `
+            <button
+                class="dx-assistant-target"
+                type="button"
+                data-index="${index}">
+
+                <div class="dx-assistant-target-rank">
+                    ${index + 1}
+                </div>
+
+                <div class="dx-assistant-target-main">
+                    <strong>
+                        ${getFlagHtml(item.country)}
+                        ${escapeHtml(item.station)}
+                    </strong>
+
+                    <span>
+                        ${escapeHtml(item.freq)} kHz
+                        · ${escapeHtml(formatTxSite(item))}
+                    </span>
+                </div>
+
+                <div class="dx-assistant-target-path">
+                    <strong>
+                        ${path.distance.toLocaleString("en-US")} km
+                    </strong>
+
+                    <span>
+                        ${path.bearing}° ${escapeHtml(path.compass)}
+                    </span>
+                </div>
+
+                <div class="dx-assistant-target-score">
+                    <strong>${score}</strong>
+                    <span>${escapeHtml(awareness.label)}</span>
+                </div>
+            </button>
+        `)
+        .join("");
+
+    els.dxAssistantTargets
+        .querySelectorAll(".dx-assistant-target")
+        .forEach((button, index) => {
+            button.addEventListener("click", () => {
+                showFrequencyDetails(targets[index].item);
+            });
+        });
 }
 
 function showAbout() {
@@ -1029,6 +1159,9 @@ function renderDxAssistant() {
             <p>Try enabling another schedule source or selecting all bands.</p>
         `;
         els.dxAssistantTips.innerHTML = "";
+		 if (els.dxAssistantTargets) {
+        els.dxAssistantTargets.innerHTML = "";
+    }
         return;
     }
 
@@ -1047,7 +1180,7 @@ function renderDxAssistant() {
             )}
         </p>
     `;
-
+	renderAssistantTargets(best.band);
     els.dxAssistantTips.innerHTML = `
         <div>
             ${best.activeCount} active broadcasts on ${escapeHtml(best.band)}
