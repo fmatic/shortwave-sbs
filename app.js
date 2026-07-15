@@ -164,6 +164,104 @@ const els = {
 	dxAssistantTargets: document.getElementById("dxAssistantTargets"),
 };
 
+function getAssistantOpening(band, mode, score) {
+
+    const openings = [];
+
+    if (score >= 120) {
+        openings.push(
+            `I'd definitely start on ${band}.`,
+            `${band} is calling right now.`,
+            `If I were tuning the bands, I'd begin with ${band}.`
+        );
+    }
+    else if (score >= 90) {
+        openings.push(
+            `${band} looks like today's sweet spot.`,
+            `I'd spend some time on ${band}.`,
+            `${band} is worth checking first.`
+        );
+    }
+    else {
+        openings.push(
+            `${band} is probably your best bet right now.`,
+            `Nothing spectacular yet, but ${band} has the edge.`,
+            `Let's begin with ${band}.`
+        );
+    }
+
+    return openings[
+        Math.floor(Math.random() * openings.length)
+    ];
+}
+
+function getAssistantAnalysis(band, mode, activeCount) {
+
+    const parts = [];
+
+    if (mode === "Night") {
+        parts.push(
+            "Night-time propagation currently favours the lower shortwave bands."
+        );
+    }
+
+    if (mode === "Twilight") {
+        parts.push(
+            "Greyline conditions are developing and can produce surprisingly long paths."
+        );
+    }
+
+    if (mode === "Day") {
+        parts.push(
+            "Daylight propagation is supporting the higher HF bands."
+        );
+    }
+
+    parts.push(
+        `${activeCount} broadcasts are currently active on ${band}.`
+    );
+
+    if (spaceWeather) {
+
+        const kp = Number(spaceWeather.kp || 0);
+        const sfi = Number(spaceWeather.sfi || 100);
+
+        if (kp <= 2)
+            parts.push(
+                "Geomagnetic conditions are nice and quiet."
+            );
+
+        if (kp >= 5)
+            parts.push(
+                "Geomagnetic activity may make long paths less predictable."
+            );
+
+        if (sfi >= 140)
+            parts.push(
+                "Solar flux is helping the higher frequencies."
+            );
+    }
+
+    return parts.join(" ");
+}
+
+function getAssistantOperatorNote(band) {
+
+    const active = getActiveBySources()
+        .filter(x => x.band === band)
+        .slice(0,3);
+
+    if (!active.length) {
+        return "Nothing really stands out just yet.";
+    }
+
+    const freqs = active
+        .map(x => `${x.freq} kHz`)
+        .join(", ");
+
+    return `Operator's note: I'd check ${freqs} first.`;
+}
+
 function applyLayout(name) {
 
     const layout = sectionLayouts[name];
@@ -1351,29 +1449,42 @@ function renderDxAssistant() {
     els.dxAssistantStatus.textContent =
         `${mode} path · score ${best.score}`;
 
-    const targets = getAssistantTargets(best.band);
+ 
 
-    const contextMessage =
-        getAssistantContextMessage(
-            best.band,
-            mode,
-            best.activeCount,
-            targets
-        );
+const opening =
+    getAssistantOpening(
+        best.band,
+        mode,
+        best.score
+    );
 
-    els.dxAssistantMain.innerHTML = `
-        <button
-            id="dxAssistantBandBtn"
-            class="dx-assistant-band-btn"
-            type="button"
-            aria-label="Show active broadcasts on ${escapeHtml(best.band)}">
+const analysis =
+    getAssistantAnalysis(
+        best.band,
+        mode,
+        best.activeCount
+    );
 
-            ${escapeHtml(best.band)}
-            is currently the strongest band.
-        </button>
+const note =
+    getAssistantOperatorNote(
+        best.band
+    );
 
-        <p>${escapeHtml(contextMessage)}</p>
-    `;
+els.dxAssistantMain.innerHTML = `
+    <button
+        id="dxAssistantBandBtn"
+        class="dx-assistant-band-btn"
+        type="button">
+
+        ${escapeHtml(opening)}
+    </button>
+
+    <p>${escapeHtml(analysis)}</p>
+
+    <div class="assistant-note">
+        💬 ${escapeHtml(note)}
+    </div>
+`;
 
     const dxAssistantBandBtn =
         document.getElementById(
