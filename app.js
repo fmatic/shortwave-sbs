@@ -238,9 +238,8 @@ function timeToMinutes(value) {
 
 function getAssistantTargets(band, limit = 4) {
     const selectedSources = getSelectedSources();
-    const seen = new Set();
 
-    return allSchedules
+    const candidates = allSchedules
         .filter(item => {
             if (item.band !== band) {
                 return false;
@@ -264,7 +263,11 @@ function getAssistantTargets(band, limit = 4) {
         .map(item => {
             const path = getTxPathInfo(item);
             const awareness = getPathAwareness(item);
-            const score = getDxScore(item, path, awareness);
+            const score = getDxScore(
+                item,
+                path,
+                awareness
+            );
 
             return {
                 item,
@@ -273,94 +276,153 @@ function getAssistantTargets(band, limit = 4) {
                 score
             };
         })
-        .filter(candidate => {
-            const key = [
-                candidate.item.freq,
-                String(candidate.item.station).toLowerCase()
-            ].join("|");
-
-            if (seen.has(key)) {
-                return false;
-            }
-
-            seen.add(key);
-            return true;
-        })
+        .filter(candidate => candidate.path.distance)
         .sort((a, b) => {
             if (b.score !== a.score) {
                 return b.score - a.score;
             }
 
-            return (b.path.distance || 0) -
-                (a.path.distance || 0);
-        })
-        .slice(0, limit);
+            return (
+                (b.path.distance || 0) -
+                (a.path.distance || 0)
+            );
+        });
+
+    const selected = [];
+    const seenStations = new Set();
+    const seenFrequencies = new Set();
+
+    for (const candidate of candidates) {
+        const stationKey = String(
+            candidate.item.station || ""
+        )
+            .trim()
+            .toLowerCase();
+
+        const frequencyKey = String(
+            candidate.item.freq || ""
+        );
+
+        if (
+            seenStations.has(stationKey) ||
+            seenFrequencies.has(frequencyKey)
+        ) {
+            continue;
+        }
+
+        seenStations.add(stationKey);
+        seenFrequencies.add(frequencyKey);
+        selected.push(candidate);
+
+        if (selected.length >= limit) {
+            break;
+        }
+    }
+
+    return selected;
 }
 
-function renderAssistantTargets(band) {
+function renderAssistantTargets(
+    band,
+    mode,
+    activeCount
+) {
     if (!els.dxAssistantTargets) {
-        return;
+        return [];
     }
 
     const targets = getAssistantTargets(band);
 
     if (!targets.length) {
         els.dxAssistantTargets.innerHTML = `
-            <div class="dx-assistant-empty">
-                No suitable transmitter targets found on ${escapeHtml(band)}.
+            <div class="assistant-listening">
+                <div class="assistant-listening-head">
+                    <strong>Suggested listening</strong>
+                </div>
+
+                <div class="assistant-listening-empty">
+                    No suitable transmitter targets with known
+                    coordinates were found on ${escapeHtml(band)}.
+                </div>
             </div>
         `;
-        return;
+
+        return [];
     }
 
-    els.dxAssistantTargets.innerHTML = targets
-        .map(({ item, path, awareness, score }, index) => `
-            <button
-                class="dx-assistant-target"
-                type="button"
-                data-index="${index}">
+    const title = getAssistantListeningTitle(mode);
 
-                <div class="dx-assistant-target-rank">
-                    ${index + 1}
-                </div>
+    els.dxAssistantTargets.innerHTML = `
+        <div class="assistant-listening">
+            <div class="assistant-listening-head">
+                <strong>${escapeHtml(title)}</strong>
+                <span>
+                    Ranked by path, distance and current conditions
+                </span>
+            </div>
 
-                <div class="dx-assistant-target-main">
-                    <strong>
-                        ${getFlagHtml(item.country)}
-                        ${escapeHtml(item.station)}
-                    </strong>
+            <div class="assistant-listening-rows">
+                ${targets.map(({
+                    item,
+                    path,
+                    awareness,
+                    score
+                }, index) => `
+                    <button
+                        class="assistant-listening-row"
+                        type="button"
+                        data-index="${index}"
+                        aria-label="Open details for
+                            ${escapeHtml(item.station)}
+                            on ${escapeHtml(item.freq)} kilohertz">
 
-                    <span>
-                        ${escapeHtml(item.freq)} kHz
-                        · ${escapeHtml(formatTxSite(item))}
-                    </span>
-                </div>
+                        <span class="assistant-listening-rank">
+                            ${index + 1}
+                        </span>
 
-                <div class="dx-assistant-target-path">
-                    <strong>
-                        ${path.distance.toLocaleString("en-US")} km
-                    </strong>
+                        <span class="assistant-listening-station">
+                            <span class="assistant-listening-name">
+                                ${getFlagHtml(item.country)}
+                                <strong>
+                                    ${escapeHtml(
+                                        item.station ||
+                                        "Unknown station"
+                                    )}
+                                </strong>
+                            </span>
 
-                    <span>
-                        ${path.bearing}° ${escapeHtml(path.compass)}
-                    </span>
-                </div>
+                            <span class="assistant-listening-meta">
+                                ${path.distance.toLocaleString("en-US")} km
+                                · ${escapeHtml(awareness.label)}
+                            </span>
+                        </span>
 
-                <div class="dx-assistant-target-score">
-                    <strong>${score}</strong>
-                    <span>${escapeHtml(awareness.label)}</span>
-                </div>
-            </button>
-        `)
-        .join("");
+                        <span class="assistant-listening-frequency">
+                            ${escapeHtml(item.freq)} kHz
+                        </span>
+
+                        <span
+                            class="assistant-listening-score"
+                            title="DX score">
+                            ${score}
+                        </span>
+                    </button>
+                `).join("")}
+            </div>
+        </div>
+    `;
 
     els.dxAssistantTargets
-        .querySelectorAll(".dx-assistant-target")
+        .querySelectorAll(".assistant-listening-row")
         .forEach((button, index) => {
             button.addEventListener("click", () => {
-                showFrequencyDetails(targets[index].item);
+                showFrequencyDetails(
+                    targets[index].item
+                );
             });
         });
+
+    return targets;
 }
 
 function showAbout() {
@@ -1108,6 +1170,115 @@ function getAssistantBandReason(band, mode, activeCount) {
     return `${activeCount} active broadcasts and current propagation conditions make this the strongest choice.`;
 }
 
+function getAssistantRegionLabel(item) {
+    const region = getSeasonalRegion(item);
+
+    const labels = {
+        "south-america": "South America",
+        "north-america": "North America",
+        "asia": "Asia",
+        "africa": "Africa",
+        "europe": "Europe"
+    };
+
+    return labels[region] || "";
+}
+
+function getDominantAssistantRegion(targets) {
+    const counts = new Map();
+
+    targets.forEach(({ item }) => {
+        const region = getAssistantRegionLabel(item);
+
+        if (!region) {
+            return;
+        }
+
+        counts.set(region, (counts.get(region) || 0) + 1);
+    });
+
+    return [...counts.entries()]
+        .sort((a, b) => b[1] - a[1])[0]?.[0] || "";
+}
+
+function getAssistantListeningTitle(mode) {
+    if (mode === "Twilight") {
+        return "Greyline targets worth trying";
+    }
+
+    if (mode === "Night") {
+        return "Suggested listening tonight";
+    }
+
+    if (mode === "Day") {
+        return "Suggested daytime listening";
+    }
+
+    return "Suggested listening";
+}
+
+function getAssistantContextMessage(
+    band,
+    mode,
+    activeCount,
+    targets
+) {
+    const dominantRegion =
+        getDominantAssistantRegion(targets);
+
+    const regionText = dominantRegion
+        ? ` towards ${dominantRegion}`
+        : "";
+
+    const greylineTargets = targets.filter(
+        target =>
+            target.awareness.label ===
+            "Greyline potential"
+    ).length;
+
+    if (mode === "Twilight" && greylineTargets >= 2) {
+        return (
+            `Greyline enhancement is developing${regionText}. ` +
+            `These active stations are worth checking first.`
+        );
+    }
+
+    if (
+        mode === "Night" &&
+        ["120m", "90m", "75m", "60m", "49m", "41m"]
+            .includes(band)
+    ) {
+        return (
+            `The lower bands are coming alive${regionText}. ` +
+            `${activeCount} active broadcasts are available on ${band}.`
+        );
+    }
+
+    if (
+        mode === "Day" &&
+        ["31m", "25m", "22m", "19m", "16m"]
+            .includes(band)
+    ) {
+        return (
+            `Daytime propagation currently favours ${band}` +
+            `${regionText}. These broadcasts offer the strongest ` +
+            `calculated paths right now.`
+        );
+    }
+
+    if (dominantRegion) {
+        return (
+            `Current propagation favours paths towards ` +
+            `${dominantRegion}. These stations rank highest on ${band}.`
+        );
+    }
+
+    return (
+        `${activeCount} active broadcasts are available on ${band}. ` +
+        `These stations currently have the strongest calculated paths.`
+    );
+}
+
 function renderDxAssistant() {
     if (
         !els.dxAssistantStatus ||
@@ -1118,9 +1289,10 @@ function renderDxAssistant() {
     }
 
     const loc = getCurrentLocationForCalculations();
-    const elevation = getSolarElevationApprox(loc.lat, loc.lon);
-    const mode = getPathMode(elevation);
+    const elevation =
+        getSolarElevationApprox(loc.lat, loc.lon);
 
+    const mode = getPathMode(elevation);
     const selectedSources = getSelectedSources();
 
     const rankedBands = bandOrder
@@ -1134,7 +1306,10 @@ function renderDxAssistant() {
                     return false;
                 }
 
-                return itemHasSelectedSource(item, selectedSources);
+                return itemHasSelectedSource(
+                    item,
+                    selectedSources
+                );
             });
 
             return {
@@ -1153,39 +1328,96 @@ function renderDxAssistant() {
     const best = rankedBands[0];
 
     if (!best) {
-        els.dxAssistantStatus.textContent = "No recommendation";
+        els.dxAssistantStatus.textContent =
+            "No recommendation";
+
         els.dxAssistantMain.innerHTML = `
             <strong>No suitable active broadcasts found.</strong>
-            <p>Try enabling another schedule source or selecting all bands.</p>
+            <p>
+                Try enabling another schedule source
+                or selecting all bands.
+            </p>
         `;
+
         els.dxAssistantTips.innerHTML = "";
-		 if (els.dxAssistantTargets) {
-        els.dxAssistantTargets.innerHTML = "";
-    }
+
+        if (els.dxAssistantTargets) {
+            els.dxAssistantTargets.innerHTML = "";
+        }
+
         return;
     }
 
     els.dxAssistantStatus.textContent =
         `${mode} path · score ${best.score}`;
 
+    const targets = getAssistantTargets(best.band);
+
+    const contextMessage =
+        getAssistantContextMessage(
+            best.band,
+            mode,
+            best.activeCount,
+            targets
+        );
+
     els.dxAssistantMain.innerHTML = `
-        <strong>${escapeHtml(best.band)} is currently the strongest band.</strong>
-        <p>
-            ${escapeHtml(
-                getAssistantBandReason(
-                    best.band,
-                    mode,
-                    best.activeCount
-                )
-            )}
-        </p>
+        <button
+            id="dxAssistantBandBtn"
+            class="dx-assistant-band-btn"
+            type="button"
+            aria-label="Show active broadcasts on ${escapeHtml(best.band)}">
+
+            ${escapeHtml(best.band)}
+            is currently the strongest band.
+        </button>
+
+        <p>${escapeHtml(contextMessage)}</p>
     `;
-	renderAssistantTargets(best.band);
+
+    const dxAssistantBandBtn =
+        document.getElementById(
+            "dxAssistantBandBtn"
+        );
+
+    if (dxAssistantBandBtn) {
+        dxAssistantBandBtn.addEventListener(
+            "click",
+            () => {
+                els.bandSelect.value = best.band;
+                els.onAirOnly.checked = true;
+
+                if (els.autoBandBtn) {
+                    els.autoBandBtn.textContent =
+                        `Assistant: ${best.band}`;
+                }
+
+                render();
+
+                document
+                    .querySelector(
+                        '[data-section="controls"]'
+                    )
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+            }
+        );
+    }
+
     els.dxAssistantTips.innerHTML = `
         <div>
-            ${best.activeCount} active broadcasts on ${escapeHtml(best.band)}
+            ${best.activeCount} active broadcasts
+            on ${escapeHtml(best.band)}
         </div>
     `;
+
+    renderAssistantTargets(
+        best.band,
+        mode,
+        best.activeCount
+    );
 }
 
 function conditionLabel(score) {
