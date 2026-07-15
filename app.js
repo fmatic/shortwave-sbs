@@ -194,25 +194,25 @@ function getAssistantWhyTitle() {
 
     const titles = [
 
-        "Why this recommendation",
+        "Why this recommendation?",
 
-        "Why I'm suggesting this",
+        "Why I'm suggesting this?",
 
-        "Here's what caught my eye",
+        "Here's what caught my eye!",
 
-        "Why this band stands out",
+        "Why this band stands out?",
 
-        "What's behind this suggestion",
+        "What's behind this suggestion?",
 
-        "Here's my thinking",
+        "Here's my thinking...",
 
-        "Let's look at the evidence",
+        "Let's look at the evidence!",
 
-        "Why I'd start here",
+        "Why I'd start here?",
 
-        "Why this one looks promising",
+        "Why this one looks promising?",
 
-        "What makes this interesting"
+        "What makes this interesting?"
 
     ];
 
@@ -240,7 +240,9 @@ function getAssistantWhyTitle() {
 
             "🌍 Somewhere, a transmitter is waiting",
 
-            "🎧 Put the headphones on..."
+            "🎧 Put the headphones on...",
+			,
+			"🖖 Heading, sir?"
 
         ];
 
