@@ -50,7 +50,7 @@
 
 <meta name="twitter:image"
       content="https://shortwave.sbs/images/og-image.png">
-  <link rel="stylesheet" href="style.css?v=0.7.2" />
+  <link rel="stylesheet" href="style.css?v=0.7.3" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="icon" href="favicon/favicon.ico" sizes="any">
   <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg">
@@ -74,7 +74,7 @@
   "isAccessibleForFree": true,
   "image": "https://shortwave.sbs/images/og-image.png",
   "screenshot": "https://shortwave.sbs/images/og-image.png",
-  "softwareVersion": "0.7.2",
+  "softwareVersion": "0.7.3",
   "featureList": [
     "Live HF broadcast schedules",
     "DX Assistant",
@@ -113,7 +113,7 @@
         <p>Live HF broadcast monitor</p>
       </div>
 <div class="clock">
-  <div class="version">v0.7.2</div>
+  <div class="version">v0.7.3</div>
 
  <div class="top-actions">
   <button id="sectionsBtn" class="about-btn" type="button">Sections</button>
@@ -358,11 +358,13 @@
         shortwave.sbs is a modern dark-themed HF broadcast monitor
         built for shortwave listeners, DXers and radio enthusiasts.
       </p>
-      <p>
-        It combines multiple shortwave schedule sources with live filtering,
-        transmitter-site data, distance and bearing calculations, NOAA space weather,
-        greyline awareness and propagation-oriented DX ranking.
-      </p>
+    <p>
+		It combines multiple shortwave schedule sources with live filtering,
+		transmitter-site data, distance and bearing calculations, NOAA space weather,
+		greyline awareness and propagation-oriented DX ranking.
+		The built-in DX Assistant analyses current conditions and recommends both
+		the most promising band and active stations to try right now.
+</p>
     </div>
 
     <div class="about-section">
@@ -372,6 +374,10 @@
         <li>On-air now filtering</li>
         <li>HF band activity overview</li>
         <li>Auto Band recommendation</li>
+		<li>DX Assistant with live band recommendations</li>
+		<li>Clickable recommended band with one-step filtering</li>
+		<li>Try These Now station recommendations</li>
+		<li>Propagation-aware target ranking with distance and bearing</li>
         <li>Best DX Now with propagation-aware scoring</li>
         <li>HF Conditions with regional fallback profiles</li>
         <li>NOAA-based HF Weather widget</li>
@@ -417,11 +423,31 @@
         <li>Unified space-weather JSON output</li>
         <li>Basic duplicate/source merge logic</li>
         <li>Propagation-aware Best DX scoring</li>
+		<li>DX Assistant band scoring engine</li>
+		<li>Propagation-aware station recommendation engine</li>
+		<li>Schedule source release metadata and update verification</li>
       </ul>
     </div>
 
     <div class="about-section">
       <h3>Changelog & source updates</h3>
+		<div class="log-row">
+		<span>15.07.2026</span>
+		<strong>[Feature]</strong>
+		<p>
+		Added the first interactive version of DX Assistant with live band
+		recommendations, clickable band filtering and active station targets
+		ranked by propagation, distance and current conditions.
+		</p>
+		</div>
+		<div class="log-row">
+		<span>15.07.2026</span>
+		<strong>[Data]</strong>
+		<p>
+		Added verified release metadata for EiBi, AOKI, HFCC and ITU HFBC,
+		together with a Schedule Sources dashboard showing current database versions.
+		</p>
+		</div>
 	    <div class="log-row">
 		<span>14.07.2026</span>
 		<strong>[Update]</strong>
@@ -518,13 +544,14 @@
     <div class="about-section">
       <h3>Roadmap</h3>
       <ul>
-        <li>Live DX Map with active transmitter sites</li>
-        <li>More complete EiBi transmitter-site aliases</li>
-        <li>Bandmap / waterfall-style frequency view</li>
-        <li>More advanced propagation-aware Auto Band</li>
-        <li>More advanced DX recommendations by user region</li>
-        <li>Utility and non-broadcast HF support later</li>
-      </ul>
+	  <li>More advanced DX Assistant explanations and listening tips</li>
+	  <li>Alternative band recommendations</li>
+	  <li>Rare-country and low-interference target weighting</li>
+      <li>Live DX Map with active transmitter sites</li>
+      <li>Bandmap / waterfall-style frequency view</li>
+      <li>More complete EiBi transmitter-site aliases</li>
+      <li>Utility and non-broadcast HF support later</li>
+	  </ul>
     </div>
   </div>
   </div>
@@ -577,7 +604,7 @@
 </footer>
   </main>
 
-<script src="app.js?v=0.7.2"></script>
+<script src="app.js?v=0.7.3"></script>
 </body>
 </html>
 

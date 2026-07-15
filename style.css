@@ -2199,3 +2199,54 @@ td:nth-child(9) {
     font-size: .7rem;
   }
 }
+
+.dx-assistant-band-btn {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+  box-shadow: none;
+
+  color: #e8f2fb;
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.dx-assistant-band-btn:hover {
+  color: #70ead8;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dx-assistant-band-btn:focus,
+.dx-assistant-band-btn:active {
+  background: transparent;
+  box-shadow: none;
+}
+
+.dx-assistant-band-btn:focus-visible {
+  outline: 2px solid rgba(91, 231, 213, .42);
+  outline-offset: 5px;
+  border-radius: 5px;
+}
+
+.dx-assistant-band-btn::after {
+  content: " →";
+  color: rgba(85, 227, 208, .7);
+  font-size: .9em;
+}
