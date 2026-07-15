@@ -240,7 +240,7 @@ function getAssistantWhyTitle() {
 
             "🌍 Somewhere, a transmitter is waiting",
 
-            "🎧 Put the headphones on...", 
+            "🎧 Put the headphones on...",
             "🖖 Heading, sir?"
 
         ];
@@ -314,8 +314,8 @@ function getAssistantHumour() {
     const jokes = [
 
         "☕ Coffee might last longer than today's opening.",
-		
-		"🍕 Even yesterday's cold pizza might be better than today's opening.",
+
+        "🍕 Even yesterday's cold pizza might be better than today's opening.",
 
         "📻 Don't blame your antenna this time.",
 
@@ -361,6 +361,32 @@ function getAssistantEncouragement() {
     return texts[
         Math.floor(Math.random() * texts.length)
     ];
+}
+
+function getAssistantSessionValue(key, generator) {
+    const storageKey = `dxAssistant:${key}`;
+
+    try {
+        const saved = sessionStorage.getItem(storageKey);
+
+        if (saved !== null) {
+            return saved;
+        }
+
+        const value = generator();
+
+        sessionStorage.setItem(
+            storageKey,
+            String(value ?? ""));
+
+        return value;
+    } catch (error) {
+        console.warn(
+            "Assistant session storage unavailable:",
+            error);
+
+        return generator();
+    }
 }
 
 function getAssistantAnalysis(band, mode, activeCount) {
@@ -1718,8 +1744,10 @@ function renderDxAssistant() {
 
     const targets = getAssistantTargets(best.band);
 
-	const greeting =
-    getAssistantGreeting();
+    const greeting =
+        getAssistantSessionValue(
+            "greeting",
+            getAssistantGreeting);
 
     const opening =
         getAssistantOpening(
@@ -1744,6 +1772,26 @@ function renderDxAssistant() {
             best.activeCount,
             best.score,
             targets);
+
+    const whyTitle =
+        getAssistantSessionValue(
+            "whyTitle",
+            getAssistantWhyTitle);
+
+    const humour =
+        getAssistantSessionValue(
+            "humour",
+            getAssistantHumour);
+
+    const encouragement =
+        getAssistantSessionValue(
+            "encouragement",
+            getAssistantEncouragement);
+
+    const closing =
+        getAssistantSessionValue(
+            "closing",
+            getAssistantClosing);
 
     els.dxAssistantMain.innerHTML = `
 	   <div class="assistant-greeting">
@@ -1776,7 +1824,7 @@ function renderDxAssistant() {
                 aria-expanded="false"
                 aria-controls="dxAssistantWhyPanel">
 
-                <span>${escapeHtml(getAssistantWhyTitle())}</span>
+                <span>${escapeHtml(whyTitle)}</span>
                 <span
                     class="assistant-why-chevron"
                     aria-hidden="true">
