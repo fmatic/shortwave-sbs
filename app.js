@@ -262,6 +262,140 @@ function getAssistantOperatorNote(band) {
     return ` I'd check ${freqs} first.`;
 }
 
+function getAssistantWhyReasons(
+    band,
+    mode,
+    activeCount,
+    score,
+    targets
+) {
+    const reasons = [];
+
+    const greylineTargets = targets.filter(
+        target =>
+            target.awareness?.label ===
+            "Greyline potential"
+    );
+
+    const dominantRegion =
+        getDominantAssistantRegion(targets);
+
+    if (mode === "Twilight") {
+        reasons.push({
+            icon: "🌅",
+            text:
+                "Your receiving location is currently in twilight, " +
+                "which can improve some long-distance paths."
+        });
+    }
+
+    if (
+        mode === "Night" &&
+        ["120m", "90m", "75m", "60m", "49m", "41m"]
+            .includes(band)
+    ) {
+        reasons.push({
+            icon: "🌙",
+            text:
+                `${band} is well suited to the current ` +
+                "night-time conditions."
+        });
+    }
+
+    if (
+        mode === "Day" &&
+        ["31m", "25m", "22m", "19m", "16m"]
+            .includes(band)
+    ) {
+        reasons.push({
+            icon: "☀️",
+            text:
+                `${band} is currently favoured by daylight ` +
+                "propagation."
+        });
+    }
+
+    if (greylineTargets.length >= 2) {
+        reasons.push({
+            icon: "🌍",
+            text:
+                `${greylineTargets.length} of the leading targets ` +
+                "currently show greyline potential."
+        });
+    } else if (dominantRegion) {
+        reasons.push({
+            icon: "🧭",
+            text:
+                `Several of the strongest calculated paths point ` +
+                `towards ${dominantRegion}.`
+        });
+    }
+
+    if (activeCount >= 50) {
+        reasons.push({
+            icon: "📻",
+            text:
+                `${activeCount} broadcasts are currently active ` +
+                `on ${band}.`
+        });
+    } else if (activeCount > 0) {
+        reasons.push({
+            icon: "📻",
+            text:
+                `${activeCount} broadcasts are currently available ` +
+                `on ${band}.`
+        });
+    }
+
+    if (spaceWeather) {
+        const kp = Number(spaceWeather.kp);
+        const sfi = Number(spaceWeather.sfi);
+
+        if (Number.isFinite(kp)) {
+            if (kp <= 2) {
+                reasons.push({
+                    icon: "🟢",
+                    text:
+                        `Geomagnetic activity is quiet at Kp ${kp}, ` +
+                        "which supports more stable paths."
+                });
+            } else if (kp >= 5) {
+                reasons.push({
+                    icon: "⚠️",
+                    text:
+                        `Geomagnetic activity is elevated at Kp ${kp}, ` +
+                        "so reception may be less predictable."
+                });
+            }
+        }
+
+        if (
+            Number.isFinite(sfi) &&
+            sfi >= 130 &&
+            ["25m", "22m", "19m", "16m", "13m", "11m"]
+                .includes(band)
+        ) {
+            reasons.push({
+                icon: "☀️",
+                text:
+                    `Solar flux is ${sfi}, which is supporting ` +
+                    "the higher HF bands."
+            });
+        }
+    }
+
+    if (score >= 110) {
+        reasons.push({
+            icon: "✓",
+            text:
+                `${band} has the highest combined activity and ` +
+                "propagation score right now."
+        });
+    }
+
+    return reasons.slice(0, 4);
+}
+
 function applyLayout(name) {
 
     const layout = sectionLayouts[name];
@@ -1469,6 +1603,15 @@ const note =
     getAssistantOperatorNote(
         best.band
     );
+	
+	const whyReasons =
+    getAssistantWhyReasons(
+        best.band,
+        mode,
+        best.activeCount,
+        best.score,
+        targets
+    );
 
 els.dxAssistantMain.innerHTML = `
     <button
@@ -1479,11 +1622,51 @@ els.dxAssistantMain.innerHTML = `
         ${escapeHtml(opening)}
     </button>
 
-    <p>${escapeHtml(analysis)}</p>
+    <p class="assistant-analysis">
+        ${escapeHtml(analysis)}
+    </p>
 
     <div class="assistant-note">
         💬 ${escapeHtml(note)}
     </div>
+
+    ${whyReasons.length ? `
+        <div class="assistant-why">
+            <button
+                id="dxAssistantWhyBtn"
+                class="assistant-why-btn"
+                type="button"
+                aria-expanded="false"
+                aria-controls="dxAssistantWhyPanel">
+
+                <span>Why this recommendation?</span>
+                <span
+                    class="assistant-why-chevron"
+                    aria-hidden="true">
+                    +
+                </span>
+            </button>
+
+            <div
+                id="dxAssistantWhyPanel"
+                class="assistant-why-panel hidden">
+
+                ${whyReasons.map(reason => `
+                    <div class="assistant-why-reason">
+                        <span
+                            class="assistant-why-icon"
+                            aria-hidden="true">
+                            ${reason.icon}
+                        </span>
+
+                        <span>
+                            ${escapeHtml(reason.text)}
+                        </span>
+                    </div>
+                `).join("")}
+            </div>
+        </div>
+    ` : ""}
 `;
 
     const dxAssistantBandBtn =
@@ -1516,6 +1699,50 @@ els.dxAssistantMain.innerHTML = `
             }
         );
     }
+
+const dxAssistantWhyBtn =
+    document.getElementById(
+        "dxAssistantWhyBtn"
+    );
+
+const dxAssistantWhyPanel =
+    document.getElementById(
+        "dxAssistantWhyPanel"
+    );
+
+if (
+    dxAssistantWhyBtn &&
+    dxAssistantWhyPanel
+) {
+    dxAssistantWhyBtn.addEventListener(
+        "click",
+        () => {
+            const opening =
+                dxAssistantWhyPanel
+                    .classList
+                    .contains("hidden");
+
+            dxAssistantWhyPanel
+                .classList
+                .toggle("hidden", !opening);
+
+            dxAssistantWhyBtn.setAttribute(
+                "aria-expanded",
+                String(opening)
+            );
+
+            const chevron =
+                dxAssistantWhyBtn.querySelector(
+                    ".assistant-why-chevron"
+                );
+
+            if (chevron) {
+                chevron.textContent =
+                    opening ? "−" : "+";
+            }
+        }
+    );
+}
 
     els.dxAssistantTips.innerHTML = `
         <div>

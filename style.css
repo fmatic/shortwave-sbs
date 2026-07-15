@@ -2250,3 +2250,77 @@ td:nth-child(9) {
   color: rgba(85, 227, 208, .7);
   font-size: .9em;
 }
+
+.assistant-why {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.assistant-why-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 7px 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: rgba(225, 238, 246, 0.78);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+}
+
+.assistant-why-btn:hover {
+    color: #70ead8;
+    background: transparent;
+    box-shadow: none;
+}
+
+.assistant-why-btn:focus-visible {
+    outline: 2px solid rgba(91, 231, 213, 0.42);
+    outline-offset: 4px;
+    border-radius: 5px;
+}
+
+.assistant-why-chevron {
+    flex: 0 0 auto;
+    margin-left: 12px;
+    color: #70ead8;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.assistant-why-panel {
+    display: grid;
+    gap: 8px;
+    padding: 8px 0 3px;
+}
+
+.assistant-why-panel.hidden {
+    display: none;
+}
+
+.assistant-why-reason {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 9px;
+    align-items: start;
+    color: rgba(220, 233, 241, 0.78);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.assistant-why-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.4em;
+    font-size: 0.9rem;
+}
