@@ -259,7 +259,7 @@ function getAssistantOperatorNote(band) {
         .map(x => `${x.freq} kHz`)
         .join(", ");
 
-    return `Operator's note: I'd check ${freqs} first.`;
+    return ` I'd check ${freqs} first.`;
 }
 
 function applyLayout(name) {
