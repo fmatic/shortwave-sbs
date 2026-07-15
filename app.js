@@ -193,6 +193,7 @@ function getAssistantOpening(band, mode, score) {
     return openings[
     Math.floor(Math.random() * openings.length)
 ] + " →";
+}
 
 function getAssistantAnalysis(band, mode, activeCount) {
 
