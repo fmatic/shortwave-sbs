@@ -315,7 +315,7 @@ function getAssistantHumour() {
 
         "☕ Coffee might last longer than today's opening.",
 		
-		"🍕 Even yesterday cold pizza might be better than today's opening.",
+		"🍕 Even yesterday's cold pizza might be better than today's opening.",
 
         "📻 Don't blame your antenna this time.",
 
