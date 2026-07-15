@@ -190,6 +190,70 @@ function getAssistantOpening(band, mode, score) {
     ];
 }
 
+function getAssistantWhyTitle() {
+
+    const titles = [
+
+        "Why this recommendation",
+
+        "Why I'm suggesting this",
+
+        "Here's what caught my eye",
+
+        "Why this band stands out",
+
+        "What's behind this suggestion",
+
+        "Here's my thinking",
+
+        "Let's look at the evidence",
+
+        "Why I'd start here",
+
+        "Why this one looks promising",
+
+        "What makes this interesting"
+
+    ];
+
+    // Harvinainen yllätys (~3 %)
+
+    if (Math.random() < 0.03) {
+
+        const easterEggs = [
+
+            "🕵️ DX detective notes",
+
+            "☕ Coffee break analysis",
+
+            "📻 The band whispered something",
+
+            "🛰️ Signals don't lie",
+
+            "🤫 Between you and me...",
+
+            "🎯 My DX instinct",
+
+            "🧭 Compass says this way",
+
+            "📖 A page from the DX logbook",
+
+            "🌍 Somewhere, a transmitter is waiting",
+
+            "🎧 Put the headphones on..."
+
+        ];
+
+        return easterEggs[
+            Math.floor(Math.random() * easterEggs.length)
+        ];
+    }
+
+    return titles[
+        Math.floor(Math.random() * titles.length)
+    ];
+}
+
 function getAssistantAnalysis(band, mode, activeCount) {
 
     const parts = [];
@@ -1595,7 +1659,7 @@ function renderDxAssistant() {
                 aria-expanded="false"
                 aria-controls="dxAssistantWhyPanel">
 
-                <span>Why this recommendation?</span>
+                <span>${escapeHtml(getAssistantWhyTitle())}</span>
                 <span
                     class="assistant-why-chevron"
                     aria-hidden="true">
