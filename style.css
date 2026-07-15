@@ -2324,3 +2324,11 @@ td:nth-child(9) {
     min-height: 1.4em;
     font-size: 0.9rem;
 }
+
+.assistant-greeting {
+    margin: 0 0 7px;
+    color: rgba(201, 220, 230, 0.72);
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.4;
+}

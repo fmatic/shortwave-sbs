@@ -240,9 +240,8 @@ function getAssistantWhyTitle() {
 
             "🌍 Somewhere, a transmitter is waiting",
 
-            "🎧 Put the headphones on...",
-			,
-			"🖖 Heading, sir?"
+            "🎧 Put the headphones on...", 
+            "🖖 Heading, sir?"
 
         ];
 
@@ -253,6 +252,114 @@ function getAssistantWhyTitle() {
 
     return titles[
         Math.floor(Math.random() * titles.length)
+    ];
+}
+
+function getAssistantGreeting() {
+
+    const greetings = [
+
+        "👋 Good to see you.",
+
+        "📻 Ready for another DX session?",
+
+        "🎧 Let's see what's happening on the bands.",
+
+        "🌍 Time to chase a few signals.",
+
+        "☕ Welcome back.",
+
+        "🛰️ Let's have a look at today's conditions.",
+
+        "📡 I've been watching the bands for you."
+
+    ];
+
+    return greetings[
+        Math.floor(Math.random() * greetings.length)
+    ];
+}
+
+function getAssistantClosing() {
+
+    const endings = [
+
+        "Good luck and happy DXing!",
+
+        "Let's see what you can catch.",
+
+        "One good ID can make the whole day.",
+
+        "Enjoy the bands!",
+
+        "Keep your ears open.",
+
+        "I hope something surprising appears.",
+
+        "Don't forget to check neighbouring frequencies."
+
+    ];
+
+    return endings[
+        Math.floor(Math.random() * endings.length)
+    ];
+}
+
+function getAssistantHumour() {
+
+    if (Math.random() > 0.15) {
+        return "";
+    }
+
+    const jokes = [
+
+        "☕ Coffee might last longer than today's opening.",
+		
+		"🍕 Even yesterday cold pizza might be better than today's opening.",
+
+        "📻 Don't blame your antenna this time.",
+
+        "🌍 Solar storms rarely read the rulebook.",
+
+        "😄 Sometimes the band chooses you.",
+
+        "🎧 Headphones recommended.",
+
+        "📡 Somewhere a transmitter engineer is making your evening better.",
+
+        "🤫 Don't tell the other bands... but this one looks confident today.",
+
+        "🛰️ I promise I didn't move the ionosphere."
+
+    ];
+
+    return jokes[
+        Math.floor(Math.random() * jokes.length)
+    ];
+}
+
+function getAssistantEncouragement() {
+
+    const texts = [
+
+        "Every great logbook starts with one frequency.",
+
+        "Patience often beats perfect conditions.",
+
+        "Even quiet bands can surprise you.",
+
+        "The next station might be the memorable one.",
+
+        "Some of the best catches happen when you least expect them.",
+
+        "DX rewards curiosity.",
+
+        "Keep tuning."
+
+    ];
+
+    return texts[
+        Math.floor(Math.random() * texts.length)
     ];
 }
 
@@ -1611,6 +1718,9 @@ function renderDxAssistant() {
 
     const targets = getAssistantTargets(best.band);
 
+	const greeting =
+    getAssistantGreeting();
+
     const opening =
         getAssistantOpening(
             best.band,
@@ -1636,6 +1746,11 @@ function renderDxAssistant() {
             targets);
 
     els.dxAssistantMain.innerHTML = `
+	   <div class="assistant-greeting">
+
+        ${escapeHtml(greeting)}
+
+    </div
     <button
         id="dxAssistantBandBtn"
         class="dx-assistant-band-btn"
