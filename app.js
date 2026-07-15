@@ -1543,6 +1543,8 @@ function renderDxAssistant() {
     els.dxAssistantStatus.textContent =
 `${mode} path · score ${best.score}`;
 
+    const targets = getAssistantTargets(best.band);
+
     const opening =
         getAssistantOpening(
             best.band,
@@ -1622,10 +1624,6 @@ function renderDxAssistant() {
         </div>
     ` : ""}
 `;
-
-    const dxAssistantBandBtn =
-        document.getElementById(
-            "dxAssistantBandBtn");
 
     const dxAssistantBandBtn =
 
