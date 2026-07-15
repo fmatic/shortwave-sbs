@@ -135,8 +135,8 @@ const els = {
     activeCountries: document.getElementById("activeCountries"),
     activeStations: document.getElementById("activeStations"),
     sourceToggles: document.querySelectorAll(".sourceToggle"),
-	sourceInfoBtn: document.getElementById("sourceInfoBtn"),
-	sourceInfoPanel: document.getElementById("sourceInfoPanel"),
+    sourceInfoBtn: document.getElementById("sourceInfoBtn"),
+    sourceInfoPanel: document.getElementById("sourceInfoPanel"),
     autoBandBtn: document.getElementById("autoBandBtn"),
     bandReason: document.getElementById("bandReason"),
     aboutBtn: document.getElementById("aboutBtn"),
@@ -161,7 +161,7 @@ const els = {
     sectionsList: document.getElementById("sectionsList"),
     sectionsReset: document.getElementById("sectionsReset"),
     currentLayoutName: document.getElementById("currentLayoutName"),
-	dxAssistantTargets: document.getElementById("dxAssistantTargets"),
+    dxAssistantTargets: document.getElementById("dxAssistantTargets"),
 };
 
 function getAssistantOpening(band, mode, score) {
@@ -170,24 +170,19 @@ function getAssistantOpening(band, mode, score) {
 
     if (score >= 120) {
         openings.push(
-            `I'd definitely start on ${band}.`,
-            `${band} is calling right now.`,
-            `If I were tuning the bands, I'd begin with ${band}.`
-        );
-    }
-    else if (score >= 90) {
+            `I'd definitely start on ${band}.`, 
+            `${band} is calling right now.`, 
+`If I were tuning the bands, I'd begin with ${band}.`);
+    } else if (score >= 90) {
         openings.push(
-            `${band} looks like today's sweet spot.`,
-            `I'd spend some time on ${band}.`,
-            `${band} is worth checking first.`
-        );
-    }
-    else {
+            `${band} looks like today's sweet spot.`, 
+            `I'd spend some time on ${band}.`, 
+`${band} is worth checking first.`);
+    } else {
         openings.push(
-            `${band} is probably your best bet right now.`,
-            `Nothing spectacular yet, but ${band} has the edge.`,
-            `Let's begin with ${band}.`
-        );
+            `${band} is probably your best bet right now.`, 
+            `Nothing spectacular yet, but ${band} has the edge.`, 
+`Let's begin with ${band}.`);
     }
 
     return openings[
@@ -201,25 +196,21 @@ function getAssistantAnalysis(band, mode, activeCount) {
 
     if (mode === "Night") {
         parts.push(
-            "Night-time propagation currently favours the lower shortwave bands."
-        );
+            "Night-time propagation currently favours the lower shortwave bands.");
     }
 
     if (mode === "Twilight") {
         parts.push(
-            "Greyline conditions are developing and can produce surprisingly long paths."
-        );
+            "Greyline conditions are developing and can produce surprisingly long paths.");
     }
 
     if (mode === "Day") {
         parts.push(
-            "Daylight propagation is supporting the higher HF bands."
-        );
+            "Daylight propagation is supporting the higher HF bands.");
     }
 
     parts.push(
-        `${activeCount} broadcasts are currently active on ${band}.`
-    );
+`${activeCount} broadcasts are currently active on ${band}.`);
 
     if (spaceWeather) {
 
@@ -228,18 +219,15 @@ function getAssistantAnalysis(band, mode, activeCount) {
 
         if (kp <= 2)
             parts.push(
-                "Geomagnetic conditions are nice and quiet."
-            );
+                "Geomagnetic conditions are nice and quiet.");
 
         if (kp >= 5)
             parts.push(
-                "Geomagnetic activity may make long paths less predictable."
-            );
+                "Geomagnetic activity may make long paths less predictable.");
 
         if (sfi >= 140)
             parts.push(
-                "Solar flux is helping the higher frequencies."
-            );
+                "Solar flux is helping the higher frequencies.");
     }
 
     return parts.join(" ");
@@ -249,7 +237,7 @@ function getAssistantOperatorNote(band) {
 
     const active = getActiveBySources()
         .filter(x => x.band === band)
-        .slice(0,3);
+        .slice(0, 3);
 
     if (!active.length) {
         return "Nothing really stands out just yet.";
@@ -267,15 +255,13 @@ function getAssistantWhyReasons(
     mode,
     activeCount,
     score,
-    targets
-) {
+    targets) {
     const reasons = [];
 
     const greylineTargets = targets.filter(
-        target =>
+            target =>
             target.awareness?.label ===
-            "Greyline potential"
-    );
+            "Greyline potential");
 
     const dominantRegion =
         getDominantAssistantRegion(targets);
@@ -284,34 +270,32 @@ function getAssistantWhyReasons(
         reasons.push({
             icon: "🌅",
             text:
-                "Your receiving location is currently in twilight, " +
-                "which can improve some long-distance paths."
+            "Your receiving location is currently in twilight, " +
+            "which can improve some long-distance paths."
         });
     }
 
     if (
         mode === "Night" &&
         ["120m", "90m", "75m", "60m", "49m", "41m"]
-            .includes(band)
-    ) {
+        .includes(band)) {
         reasons.push({
             icon: "🌙",
             text:
-                `${band} is well suited to the current ` +
-                "night-time conditions."
+`${band} is well suited to the current ` +
+            "night-time conditions."
         });
     }
 
     if (
         mode === "Day" &&
         ["31m", "25m", "22m", "19m", "16m"]
-            .includes(band)
-    ) {
+        .includes(band)) {
         reasons.push({
             icon: "☀️",
             text:
-                `${band} is currently favoured by daylight ` +
-                "propagation."
+`${band} is currently favoured by daylight ` +
+            "propagation."
         });
     }
 
@@ -319,15 +303,15 @@ function getAssistantWhyReasons(
         reasons.push({
             icon: "🌍",
             text:
-                `${greylineTargets.length} of the leading targets ` +
-                "currently show greyline potential."
+`${greylineTargets.length} of the leading targets ` +
+            "currently show greyline potential."
         });
     } else if (dominantRegion) {
         reasons.push({
             icon: "🧭",
             text:
-                `Several of the strongest calculated paths point ` +
-                `towards ${dominantRegion}.`
+            `Several of the strongest calculated paths point ` + 
+`towards ${dominantRegion}.`
         });
     }
 
@@ -335,15 +319,15 @@ function getAssistantWhyReasons(
         reasons.push({
             icon: "📻",
             text:
-                `${activeCount} broadcasts are currently active ` +
-                `on ${band}.`
+            `${activeCount} broadcasts are currently active ` + 
+`on ${band}.`
         });
     } else if (activeCount > 0) {
         reasons.push({
             icon: "📻",
             text:
-                `${activeCount} broadcasts are currently available ` +
-                `on ${band}.`
+            `${activeCount} broadcasts are currently available ` + 
+`on ${band}.`
         });
     }
 
@@ -356,15 +340,15 @@ function getAssistantWhyReasons(
                 reasons.push({
                     icon: "🟢",
                     text:
-                        `Geomagnetic activity is quiet at Kp ${kp}, ` +
-                        "which supports more stable paths."
+`Geomagnetic activity is quiet at Kp ${kp}, ` +
+                    "which supports more stable paths."
                 });
             } else if (kp >= 5) {
                 reasons.push({
                     icon: "⚠️",
                     text:
-                        `Geomagnetic activity is elevated at Kp ${kp}, ` +
-                        "so reception may be less predictable."
+`Geomagnetic activity is elevated at Kp ${kp}, ` +
+                    "so reception may be less predictable."
                 });
             }
         }
@@ -373,13 +357,12 @@ function getAssistantWhyReasons(
             Number.isFinite(sfi) &&
             sfi >= 130 &&
             ["25m", "22m", "19m", "16m", "13m", "11m"]
-                .includes(band)
-        ) {
+            .includes(band)) {
             reasons.push({
                 icon: "☀️",
                 text:
-                    `Solar flux is ${sfi}, which is supporting ` +
-                    "the higher HF bands."
+`Solar flux is ${sfi}, which is supporting ` +
+                "the higher HF bands."
             });
         }
     }
@@ -388,8 +371,8 @@ function getAssistantWhyReasons(
         reasons.push({
             icon: "✓",
             text:
-                `${band} has the highest combined activity and ` +
-                "propagation score right now."
+`${band} has the highest combined activity and ` +
+            "propagation score right now."
         });
     }
 
@@ -489,17 +472,15 @@ function getAssistantTargets(band, limit = 4) {
                 item.station &&
                 item.freq &&
                 item.txLat &&
-                item.txLon
-            );
+                item.txLon);
         })
         .map(item => {
             const path = getTxPathInfo(item);
             const awareness = getPathAwareness(item);
             const score = getDxScore(
-                item,
-                path,
-                awareness
-            );
+                    item,
+                    path,
+                    awareness);
 
             return {
                 item,
@@ -516,8 +497,7 @@ function getAssistantTargets(band, limit = 4) {
 
             return (
                 (b.path.distance || 0) -
-                (a.path.distance || 0)
-            );
+                (a.path.distance || 0));
         });
 
     const selected = [];
@@ -526,19 +506,16 @@ function getAssistantTargets(band, limit = 4) {
 
     for (const candidate of candidates) {
         const stationKey = String(
-            candidate.item.station || ""
-        )
+                candidate.item.station || "")
             .trim()
             .toLowerCase();
 
         const frequencyKey = String(
-            candidate.item.freq || ""
-        );
+                candidate.item.freq || "");
 
         if (
             seenStations.has(stationKey) ||
-            seenFrequencies.has(frequencyKey)
-        ) {
+            seenFrequencies.has(frequencyKey)) {
             continue;
         }
 
@@ -557,8 +534,7 @@ function getAssistantTargets(band, limit = 4) {
 function renderAssistantTargets(
     band,
     mode,
-    activeCount
-) {
+    activeCount) {
     if (!els.dxAssistantTargets) {
         return [];
     }
@@ -595,11 +571,11 @@ function renderAssistantTargets(
 
             <div class="assistant-listening-rows">
                 ${targets.map(({
-                    item,
-                    path,
-                    awareness,
-                    score
-                }, index) => `
+                item,
+                path,
+                awareness,
+                score
+            }, index) => `
                     <button
                         class="assistant-listening-row"
                         type="button"
@@ -617,9 +593,8 @@ function renderAssistantTargets(
                                 ${getFlagHtml(item.country)}
                                 <strong>
                                     ${escapeHtml(
-                                        item.station ||
-                                        "Unknown station"
-                                    )}
+                item.station ||
+                "Unknown station")}
                                 </strong>
                             </span>
 
@@ -645,14 +620,13 @@ function renderAssistantTargets(
     `;
 
     els.dxAssistantTargets
-        .querySelectorAll(".assistant-listening-row")
-        .forEach((button, index) => {
-            button.addEventListener("click", () => {
-                showFrequencyDetails(
-                    targets[index].item
-                );
-            });
+    .querySelectorAll(".assistant-listening-row")
+    .forEach((button, index) => {
+        button.addEventListener("click", () => {
+            showFrequencyDetails(
+                targets[index].item);
         });
+    });
 
     return targets;
 }
@@ -886,46 +860,45 @@ function renderSourceInfo(sources) {
 
         <div class="source-dashboard">
             ${sourceOrder.map(name => {
-                const source = sources[name] || {};
+            const source = sources[name] || {};
 
-                const season = source.season || "—";
-                const publishedAt = source.publishedAt || "";
-                const publishedDate = formatSourceDate(publishedAt);
+            const season = source.season || "—";
+            const publishedAt = source.publishedAt || "";
+            const publishedDate = formatSourceDate(publishedAt);
 
-                const rows = Number(source.rows || 0)
-                    .toLocaleString("en-US");
+            const rows = Number(source.rows || 0)
+                .toLocaleString("en-US");
 
-                const isLatest =
-                    publishedAt &&
-                    newestDate &&
-                    publishedAt === newestDate;
+            const isLatest =
+                publishedAt &&
+                newestDate &&
+                publishedAt === newestDate;
 
-                const statusLabel = isLatest
-                    ? "Latest"
-                    : publishedAt
-                        ? "Current"
-                        : "Unknown";
+            const statusLabel = isLatest
+                 ? "Latest"
+                 : publishedAt
+                 ? "Current"
+                 : "Unknown";
 
-                let detail = "";
+            let detail = "";
 
-                if (name === "AOKI" && source.publishedTime) {
-                    detail =
-                        `${formatUtcTime(source.publishedTime)} UTC`;
-                }
+            if (name === "AOKI" && source.publishedTime) {
+                detail =
+`${formatUtcTime(source.publishedTime)} UTC`;
+            }
 
-                if (name === "HFCC" && source.processedTime) {
-                    detail =
-                        `Processed ${formatUtcTime(source.processedTime)} UTC`;
-                }
+            if (name === "HFCC" && source.processedTime) {
+                detail =
+`Processed ${formatUtcTime(source.processedTime)} UTC`;
+            }
 
-                if (
-                    name === "HFBC" &&
-                    source.createdAt
-                ) {
-                    detail = "ITU eHFBC";
-                }
+            if (
+                name === "HFBC" &&
+                source.createdAt) {
+                detail = "ITU eHFBC";
+            }
 
-                return `
+            return `
                     <article class="source-card">
                         <div class="source-card-top">
                             <strong class="source-name">
@@ -959,7 +932,7 @@ function renderSourceInfo(sources) {
                         </div>
                     </article>
                 `;
-            }).join("")}
+        }).join("")}
         </div>
     `;
 }
@@ -975,8 +948,7 @@ function toggleSourceInfo() {
     els.sourceInfoPanel.classList.toggle("hidden", !opening);
     els.sourceInfoBtn.setAttribute(
         "aria-expanded",
-        String(opening)
-    );
+        String(opening));
 }
 
 function getDxScore(item, path, awareness) {
@@ -1383,15 +1355,13 @@ function getAssistantBandScore(band, mode, activeCount) {
 function getAssistantBandReason(band, mode, activeCount) {
     if (
         mode === "Night" &&
-        ["120m", "90m", "75m", "60m", "49m", "41m"].includes(band)
-    ) {
+        ["120m", "90m", "75m", "60m", "49m", "41m"].includes(band)) {
         return `Night conditions and ${activeCount} active broadcasts favour lower-band reception.`;
     }
 
     if (
         mode === "Day" &&
-        ["31m", "25m", "22m", "19m", "16m"].includes(band)
-    ) {
+        ["31m", "25m", "22m", "19m", "16m"].includes(band)) {
         return `Daylight conditions and ${activeCount} active broadcasts favour this band.`;
     }
 
@@ -1419,7 +1389,9 @@ function getAssistantRegionLabel(item) {
 function getDominantAssistantRegion(targets) {
     const counts = new Map();
 
-    targets.forEach(({ item }) => {
+    targets.forEach(({
+            item
+        }) => {
         const region = getAssistantRegionLabel(item);
 
         if (!region) {
@@ -1430,7 +1402,7 @@ function getDominantAssistantRegion(targets) {
     });
 
     return [...counts.entries()]
-        .sort((a, b) => b[1] - a[1])[0]?.[0] || "";
+    .sort((a, b) => b[1] - a[1])[0]?.[0] || "";
 }
 
 function getAssistantListeningTitle(mode) {
@@ -1453,70 +1425,60 @@ function getAssistantContextMessage(
     band,
     mode,
     activeCount,
-    targets
-) {
+    targets) {
     const dominantRegion =
         getDominantAssistantRegion(targets);
 
     const regionText = dominantRegion
-        ? ` towards ${dominantRegion}`
-        : "";
+         ? ` towards ${dominantRegion}`
+         : "";
 
     const greylineTargets = targets.filter(
-        target =>
+            target =>
             target.awareness.label ===
-            "Greyline potential"
-    ).length;
+            "Greyline potential").length;
 
     if (mode === "Twilight" && greylineTargets >= 2) {
         return (
-            `Greyline enhancement is developing${regionText}. ` +
-            `These active stations are worth checking first.`
-        );
+            `Greyline enhancement is developing${regionText}. ` + 
+`These active stations are worth checking first.`);
     }
 
     if (
         mode === "Night" &&
         ["120m", "90m", "75m", "60m", "49m", "41m"]
-            .includes(band)
-    ) {
+        .includes(band)) {
         return (
-            `The lower bands are coming alive${regionText}. ` +
-            `${activeCount} active broadcasts are available on ${band}.`
-        );
+            `The lower bands are coming alive${regionText}. ` + 
+`${activeCount} active broadcasts are available on ${band}.`);
     }
 
     if (
         mode === "Day" &&
         ["31m", "25m", "22m", "19m", "16m"]
-            .includes(band)
-    ) {
+        .includes(band)) {
         return (
-            `Daytime propagation currently favours ${band}` +
-            `${regionText}. These broadcasts offer the strongest ` +
-            `calculated paths right now.`
-        );
+            `Daytime propagation currently favours ${band}` + 
+            `${regionText}. These broadcasts offer the strongest ` + 
+`calculated paths right now.`);
     }
 
     if (dominantRegion) {
         return (
-            `Current propagation favours paths towards ` +
-            `${dominantRegion}. These stations rank highest on ${band}.`
-        );
+            `Current propagation favours paths towards ` + 
+`${dominantRegion}. These stations rank highest on ${band}.`);
     }
 
     return (
-        `${activeCount} active broadcasts are available on ${band}. ` +
-        `These stations currently have the strongest calculated paths.`
-    );
+        `${activeCount} active broadcasts are available on ${band}. ` + 
+`These stations currently have the strongest calculated paths.`);
 }
 
 function renderDxAssistant() {
     if (
         !els.dxAssistantStatus ||
         !els.dxAssistantMain ||
-        !els.dxAssistantTips
-    ) {
+        !els.dxAssistantTips) {
         return;
     }
 
@@ -1540,8 +1502,7 @@ function renderDxAssistant() {
 
                 return itemHasSelectedSource(
                     item,
-                    selectedSources
-                );
+                    selectedSources);
             });
 
             return {
@@ -1550,8 +1511,7 @@ function renderDxAssistant() {
                 score: getAssistantBandScore(
                     band,
                     mode,
-                    active.length
-                )
+                    active.length)
             };
         })
         .filter(item => item.activeCount > 0)
@@ -1581,39 +1541,33 @@ function renderDxAssistant() {
     }
 
     els.dxAssistantStatus.textContent =
-        `${mode} path · score ${best.score}`;
+`${mode} path · score ${best.score}`;
 
- 
+    const opening =
+        getAssistantOpening(
+            best.band,
+            mode,
+            best.score);
 
-const opening =
-    getAssistantOpening(
-        best.band,
-        mode,
-        best.score
-    );
+    const analysis =
+        getAssistantAnalysis(
+            best.band,
+            mode,
+            best.activeCount);
 
-const analysis =
-    getAssistantAnalysis(
-        best.band,
-        mode,
-        best.activeCount
-    );
+    const note =
+        getAssistantOperatorNote(
+            best.band);
 
-const note =
-    getAssistantOperatorNote(
-        best.band
-    );
-	
-	const whyReasons =
-    getAssistantWhyReasons(
-        best.band,
-        mode,
-        best.activeCount,
-        best.score,
-        targets
-    );
+    const whyReasons =
+        getAssistantWhyReasons(
+            best.band,
+            mode,
+            best.activeCount,
+            best.score,
+            targets);
 
-els.dxAssistantMain.innerHTML = `
+    els.dxAssistantMain.innerHTML = `
     <button
         id="dxAssistantBandBtn"
         class="dx-assistant-band-btn"
@@ -1671,78 +1625,111 @@ els.dxAssistantMain.innerHTML = `
 
     const dxAssistantBandBtn =
         document.getElementById(
-            "dxAssistantBandBtn"
-        );
+            "dxAssistantBandBtn");
+
+    const dxAssistantBandBtn =
+
+        document.getElementById(
+
+            "dxAssistantBandBtn");
 
     if (dxAssistantBandBtn) {
+
         dxAssistantBandBtn.addEventListener(
+
             "click",
+
             () => {
-                els.bandSelect.value = best.band;
-                els.onAirOnly.checked = true;
 
-                if (els.autoBandBtn) {
-                    els.autoBandBtn.textContent =
-                        `Assistant: ${best.band}`;
-                }
+            els.bandSelect.value = best.band;
 
-                render();
+            els.onAirOnly.checked = true;
 
-                document
-                    .querySelector(
-                        '[data-section="controls"]'
-                    )
-                    ?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
+            if (els.autoBandBtn) {
+
+                els.autoBandBtn.textContent =
+
+`Assistant: ${best.band}`;
+
             }
-        );
+
+            render();
+
+            document
+
+            .querySelector(
+
+                '[data-section="controls"]')
+
+            ?.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "start"
+
+            });
+
+        });
+
     }
 
-const dxAssistantWhyBtn =
-    document.getElementById(
-        "dxAssistantWhyBtn"
-    );
+    const dxAssistantWhyBtn =
 
-const dxAssistantWhyPanel =
-    document.getElementById(
-        "dxAssistantWhyPanel"
-    );
+        document.getElementById(
 
-if (
-    dxAssistantWhyBtn &&
-    dxAssistantWhyPanel
-) {
-    dxAssistantWhyBtn.addEventListener(
-        "click",
-        () => {
+            "dxAssistantWhyBtn");
+
+    const dxAssistantWhyPanel =
+
+        document.getElementById(
+
+            "dxAssistantWhyPanel");
+
+    if (
+
+        dxAssistantWhyBtn &&
+
+        dxAssistantWhyPanel) {
+
+        dxAssistantWhyBtn.addEventListener(
+
+            "click",
+
+            () => {
+
             const opening =
-                dxAssistantWhyPanel
-                    .classList
-                    .contains("hidden");
 
-            dxAssistantWhyPanel
-                .classList
-                .toggle("hidden", !opening);
+                dxAssistantWhyPanel.classList.contains("hidden");
+
+            dxAssistantWhyPanel.classList.toggle(
+
+                "hidden",
+
+                !opening);
 
             dxAssistantWhyBtn.setAttribute(
+
                 "aria-expanded",
-                String(opening)
-            );
+
+                String(opening));
 
             const chevron =
+
                 dxAssistantWhyBtn.querySelector(
-                    ".assistant-why-chevron"
-                );
+
+                    ".assistant-why-chevron");
 
             if (chevron) {
+
                 chevron.textContent =
+
                     opening ? "−" : "+";
+
             }
-        }
-    );
-}
+
+        });
+
+    }
 
     els.dxAssistantTips.innerHTML = `
         <div>
@@ -1754,8 +1741,7 @@ if (
     renderAssistantTargets(
         best.band,
         mode,
-        best.activeCount
-    );
+        best.activeCount);
 }
 
 function conditionLabel(score) {
@@ -1830,7 +1816,7 @@ function requestLocation() {
         };
 
         els.locationBtn.textContent = "Location active";
-		render();
+        render();
     },
         error => {
         els.locationBtn.textContent = "Use my location";
@@ -2667,7 +2653,7 @@ function hideDetails() {
 function render() {
     updateMapLink();
     renderBandLive();
-	renderDxAssistant();
+    renderDxAssistant();
     renderActivityOverview();
     renderTargets();
     renderSnapshot();
@@ -2740,7 +2726,7 @@ async function loadSchedules() {
     }
 
     allSchedules = data.schedules || [];
-	renderSourceInfo(data.sources);
+    renderSourceInfo(data.sources);
 
     const updated = new Date(data.generatedAt).toLocaleString("fi-FI", {
         day: "2-digit",
@@ -2765,7 +2751,6 @@ els.aboutClose.addEventListener("click", hideAbout);
 els.sectionsBtn.addEventListener("click", showSections);
 els.sectionsClose.addEventListener("click", hideSections);
 els.sectionsReset.addEventListener("click", resetSections);
-
 
 document.querySelectorAll(".layout-btn").forEach(btn => {
     btn.addEventListener("click", () => {
