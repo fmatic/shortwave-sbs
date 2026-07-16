@@ -625,6 +625,76 @@ function getAssistantWhyReasons(
     return reasons.slice(0, 4);
 }
 
+function getAssistantObservation(
+    band,
+    mode,
+    activeCount,
+    targets
+) {
+    const observations = [];
+
+    const dominantRegion =
+        getDominantAssistantRegion(targets);
+
+    const greylineCount = targets.filter(
+        target =>
+            target.awareness?.label ===
+            "Greyline potential"
+    ).length;
+
+    const longDistanceCount = targets.filter(
+        target =>
+            Number(target.path?.distance || 0) >= 7000
+    ).length;
+
+    if (
+        mode === "Twilight" &&
+        greylineCount >= 3
+    ) {
+        observations.push(
+            `👀 ${greylineCount} of the leading targets currently show greyline potential.`
+        );
+    }
+
+    if (
+        dominantRegion &&
+        targets.length >= 3
+    ) {
+        observations.push(
+            `🧭 Most of the strongest calculated paths currently point towards ${dominantRegion}.`
+        );
+    }
+
+    if (longDistanceCount >= 3) {
+        observations.push(
+            `🌍 ${longDistanceCount} of the leading targets are more than 7,000 km away.`
+        );
+    }
+
+    if (activeCount >= 70) {
+        observations.push(
+            `📻 ${band} is especially busy right now, with ${activeCount} active broadcasts.`
+        );
+    }
+
+    if (
+        spaceWeather &&
+        Number(spaceWeather.kp) >= 5
+    ) {
+        observations.push(
+            `⚠️ Geomagnetic activity is elevated, so even the strongest paths may behave unpredictably.`
+        );
+    }
+
+    if (!observations.length) {
+        return "";
+    }
+
+    return observations[
+        Math.floor(Math.random() * observations.length)
+    ];
+}
+
 function applyLayout(name) {
 
     const layout = sectionLayouts[name];
@@ -1831,6 +1901,14 @@ function renderDxAssistant() {
             best.score,
             targets);
 
+	const observation =
+    getAssistantObservation(
+        best.band,
+        mode,
+        best.activeCount,
+        targets
+    );
+
     const whyTitle =
         getAssistantSessionValue(
             "whyTitle",
@@ -1910,6 +1988,12 @@ function renderDxAssistant() {
             `).join("")}
 
         </div>
+    </div>
+` : ""}
+
+${observation ? `
+    <div class="assistant-observation">
+        ${escapeHtml(observation)}
     </div>
 ` : ""}
 
