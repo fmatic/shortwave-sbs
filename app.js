@@ -1829,43 +1829,53 @@ function renderDxAssistant() {
     </div>
 
     ${whyReasons.length ? `
-        <div class="assistant-why">
-            <button
-                id="dxAssistantWhyBtn"
-                class="assistant-why-btn"
-                type="button"
-                aria-expanded="false"
-                aria-controls="dxAssistantWhyPanel">
+    <div class="assistant-why">
+        <button
+            id="dxAssistantWhyBtn"
+            class="assistant-why-btn"
+            type="button"
+            aria-expanded="false"
+            aria-controls="dxAssistantWhyPanel">
 
-                <span>${escapeHtml(whyTitle)}</span>
-                <span
-                    class="assistant-why-chevron"
-                    aria-hidden="true">
-                    +
-                </span>
-            </button>
+            <span>${escapeHtml(whyTitle)}</span>
 
-            <div
-                id="dxAssistantWhyPanel"
-                class="assistant-why-panel hidden">
+            <span
+                class="assistant-why-chevron"
+                aria-hidden="true">
+                +
+            </span>
+        </button>
 
-                ${whyReasons.map(reason => `
-                    <div class="assistant-why-reason">
-                        <span
-                            class="assistant-why-icon"
-                            aria-hidden="true">
-                            ${reason.icon}
-                        </span>
+        <div
+            id="dxAssistantWhyPanel"
+            class="assistant-why-panel hidden">
 
-                        <span>
-                            ${escapeHtml(reason.text)}
-                        </span>
-                    </div>
-                `).join("")}
-            </div>
+            ${whyReasons.map(reason => `
+                <div class="assistant-why-reason">
+                    <span
+                        class="assistant-why-icon"
+                        aria-hidden="true">
+                        ${reason.icon}
+                    </span>
+
+                    <span>
+                        ${escapeHtml(reason.text)}
+                    </span>
+                </div>
+            `).join("")}
+
         </div>
-    ` : ""}
+    </div>
+` : ""}
+
+${humour ? `
+    <div class="assistant-humour">
+        ${escapeHtml(humour)}
+    </div>
+` : ""}
 `;
+
+	
 
     const dxAssistantBandBtn =
 
