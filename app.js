@@ -433,20 +433,33 @@ function getAssistantAnalysis(band, mode, activeCount) {
 }
 
 function getAssistantOperatorNote(band) {
-
-    const active = getActiveBySources()
-        .filter(x => x.band === band)
+    const uniqueFrequencies = [
+        ...new Set(
+            getActiveBySources()
+                .filter(item => item.band === band)
+                .map(item => Number(item.freq))
+                .filter(Number.isFinite)
+        )
+    ]
+        .sort((a, b) => a - b)
         .slice(0, 3);
 
-    if (!active.length) {
+    if (!uniqueFrequencies.length) {
         return "Nothing really stands out just yet.";
     }
 
-    const freqs = active
-        .map(x => `${x.freq} kHz`)
-        .join(", ");
+    const formatted = uniqueFrequencies
+        .map(freq => `${freq} kHz`);
 
-    return ` I'd check ${freqs} first.`;
+    if (formatted.length === 1) {
+        return `I'd check ${formatted[0]} first.`;
+    }
+
+    if (formatted.length === 2) {
+        return `I'd check ${formatted[0]} and ${formatted[1]} first.`;
+    }
+
+    return `I'd check ${formatted[0]}, ${formatted[1]} and ${formatted[2]} first.`;
 }
 
 function getAssistantWhyReasons(
