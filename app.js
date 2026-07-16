@@ -113,6 +113,7 @@ const bandOrder = Object.keys(bandRanges);
 // Els-object
 
 const els = {
+    dxAssistantTitle: document.getElementById("dxAssistantTitle"),
     dxAssistantStatus: document.getElementById("dxAssistantStatus"),
     dxAssistantMain: document.getElementById("dxAssistantMain"),
     dxAssistantTips: document.getElementById("dxAssistantTips"),
@@ -249,6 +250,39 @@ function getAssistantWhyTitle() {
             Math.floor(Math.random() * easterEggs.length)
         ];
     }
+
+    return titles[
+        Math.floor(Math.random() * titles.length)
+    ];
+}
+
+function getAssistantTitle(mode) {
+    const titlesByMode = {
+        Day: [
+            "☀️ Daylight Desk",
+            "📡 HF Observer",
+            "🎧 Listening Guide",
+            "◉ DX Assistant"
+        ],
+
+        Twilight: [
+            "🌅 Greyline Watch",
+            "🧭 Band Watch",
+            "📻 Twilight Listening Desk",
+            "◉ DX Assistant"
+        ],
+
+        Night: [
+            "🌙 Night Watch",
+            "📻 Lower Band Desk",
+            "🎧 After-Dark Listening",
+            "◉ DX Assistant"
+        ]
+    };
+
+    const titles =
+        titlesByMode[mode] ||
+        ["◉ DX Assistant"];
 
     return titles[
         Math.floor(Math.random() * titles.length)
@@ -1700,6 +1734,17 @@ function renderDxAssistant() {
 
     const mode = getPathMode(elevation);
     const selectedSources = getSelectedSources();
+    
+    const assistantTitle =
+    getAssistantSessionValue(
+        `title:${mode}`,
+        () => getAssistantTitle(mode)
+    );
+    
+    if (els.dxAssistantTitle) {
+    els.dxAssistantTitle.textContent =
+        assistantTitle;
+}
 
     const rankedBands = bandOrder
         .map(band => {
