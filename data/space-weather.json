@@ -1,10 +1,10 @@
 {
-  "updated": "2026-07-16T09:26:07.949Z",
+  "updated": "2026-07-16T11:52:48.234Z",
   "kp": 2,
   "sfi": 107,
   "aIndex": 7,
   "xray": "B-class",
-  "xrayFlux": 3.9286456399167946e-7,
+  "xrayFlux": 3.618335995270172e-7,
   "aurora": false,
   "hf": {
     "lowBands": "fair",
