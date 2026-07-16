@@ -2215,6 +2215,7 @@ const ituToIso = {
     SUI: "ch",
     SVK: "sk",
     SVN: "si",
+	SVZ: "sz",
     SYR: "sy",
     THA: "th",
     TJK: "tj",
