@@ -3565,20 +3565,32 @@ async function loadSpaceWeather() {
             );
         }
 
-        spaceWeather = await res.json();
+        const data = await res.json();
 
-        markDataLoadSuccessful(
-            "spaceWeather"
+        if (
+            !data ||
+            typeof data !== "object"
+        ) {
+            throw new Error(
+                "Space weather data is invalid"
+            );
+        }
+
+        spaceWeather = data;
+
+        console.info(
+            "Space weather data loaded successfully"
         );
     } catch (error) {
         spaceWeather = null;
 
-        markDataLoadFailed(
-            "spaceWeather",
+        console.warn(
+            "Could not load space weather data:",
             error
         );
     }
 }
+
 function renderSpaceWeather() {
     if (!spaceWeather) {
         els.spaceWeatherUpdated.textContent = "NOAA data unavailable";
@@ -3765,18 +3777,13 @@ if (els.dataLoadRetry) {
         "click",
         async () => {
             els.dataLoadRetry.disabled = true;
-            els.dataLoadRetry.textContent =
-                "Retrying…";
-
-            failedDataResources.clear();
-            renderDataLoadWarning();
+            els.dataLoadRetry.textContent = "Retrying…";
 
             try {
                 await loadSchedules();
             } finally {
                 els.dataLoadRetry.disabled = false;
-                els.dataLoadRetry.textContent =
-                    "Retry";
+                els.dataLoadRetry.textContent = "Retry";
             }
         }
     );
