@@ -137,6 +137,42 @@
 </div>
     </header>
 
+<div
+  id="dataLoadWarning"
+  class="data-load-warning hidden"
+  role="status"
+  aria-live="polite">
+
+  <div class="data-load-warning-icon" aria-hidden="true">
+    ⚠️
+  </div>
+
+  <div class="data-load-warning-content">
+    <strong>Some data could not be loaded</strong>
+
+    <p id="dataLoadWarningText">
+      A browser extension, privacy tool or temporary network problem may be
+      blocking required resources. shortwave.sbs contains no advertisements
+      or advertising trackers.
+    </p>
+  </div>
+
+  <button
+    id="dataLoadRetry"
+    class="data-load-retry"
+    type="button">
+    Retry
+  </button>
+
+  <button
+    id="dataLoadWarningClose"
+    class="data-load-warning-close"
+    type="button"
+    aria-label="Dismiss warning">
+    ×
+  </button>
+</div>
+
 <section class="dx-assistant-card" data-section="assistant">
   <div class="section-head">
     <h2 id="dxAssistantTitle">DX Assistant</h2>

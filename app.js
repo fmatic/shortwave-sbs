@@ -163,7 +163,85 @@ const els = {
     sectionsReset: document.getElementById("sectionsReset"),
     currentLayoutName: document.getElementById("currentLayoutName"),
     dxAssistantTargets: document.getElementById("dxAssistantTargets"),
+    dataLoadWarning:
+    document.getElementById("dataLoadWarning"),
+
+    dataLoadWarningText:
+    document.getElementById("dataLoadWarningText"),
+
+    dataLoadRetry:
+    document.getElementById("dataLoadRetry"),
+
+    dataLoadWarningClose:
+    document.getElementById("dataLoadWarningClose"),
 };
+
+const failedDataResources = new Set();
+
+function getDataResourceLabel(resource) {
+    const labels = {
+        schedules: "broadcast schedules",
+        spaceWeather: "space weather data",
+        map: "map data",
+        transmitterSites: "transmitter-site data"
+    };
+
+    return labels[resource] || resource;
+}
+
+function renderDataLoadWarning() {
+    if (
+        !els.dataLoadWarning ||
+        !els.dataLoadWarningText
+    ) {
+        return;
+    }
+
+    if (!failedDataResources.size) {
+        els.dataLoadWarning.classList.add("hidden");
+        return;
+    }
+
+    const resources = [...failedDataResources]
+        .map(getDataResourceLabel);
+
+    let resourceText = "";
+
+    if (resources.length === 1) {
+        resourceText = resources[0];
+    } else if (resources.length === 2) {
+        resourceText =
+            `${resources[0]} and ${resources[1]}`;
+    } else {
+        resourceText =
+            `${resources.slice(0, -1).join(", ")} ` +
+            `and ${resources.at(-1)}`;
+    }
+
+    els.dataLoadWarningText.textContent =
+        `Unable to load ${resourceText}. ` +
+        `A browser extension, privacy tool or temporary network ` +
+        `problem may be blocking required resources. ` +
+        `shortwave.sbs contains no advertisements or ` +
+        `advertising trackers.`;
+
+    els.dataLoadWarning.classList.remove("hidden");
+}
+
+function markDataLoadFailed(resource, error) {
+    failedDataResources.add(resource);
+    renderDataLoadWarning();
+
+    console.warn(
+        `Could not load ${resource}:`,
+        error
+    );
+}
+
+function markDataLoadSuccessful(resource) {
+    failedDataResources.delete(resource);
+    renderDataLoadWarning();
+}
 
 function getAssistantOpening(band, mode, score) {
 
@@ -3474,14 +3552,33 @@ function render() {
 
 async function loadSpaceWeather() {
     try {
-        const res = await fetch("data/space-weather.json");
+        const res = await fetch(
+            "data/space-weather.json",
+            {
+                cache: "no-store"
+            }
+        );
+
+        if (!res.ok) {
+            throw new Error(
+                `HTTP ${res.status} ${res.statusText}`
+            );
+        }
+
         spaceWeather = await res.json();
-    } catch (err) {
-        console.warn("Could not load space weather", err);
+
+        markDataLoadSuccessful(
+            "spaceWeather"
+        );
+    } catch (error) {
         spaceWeather = null;
+
+        markDataLoadFailed(
+            "spaceWeather",
+            error
+        );
     }
 }
-
 function renderSpaceWeather() {
     if (!spaceWeather) {
         els.spaceWeatherUpdated.textContent = "NOAA data unavailable";
@@ -3526,28 +3623,86 @@ function renderSpaceWeather() {
 async function loadSchedules() {
     await loadSpaceWeather();
 
-    const res = await fetch("data/schedules.json");
-    const data = await res.json();
+    try {
+        const res = await fetch(
+            "data/schedules.json",
+            {
+                cache: "no-store"
+            }
+        );
 
-    const savedRegion = localStorage.getItem("swRegion");
-    if (savedRegion && locationProfiles[savedRegion]) {
-        els.regionSelect.value = savedRegion;
+        if (!res.ok) {
+            throw new Error(
+                `HTTP ${res.status} ${res.statusText}`
+            );
+        }
+
+        const data = await res.json();
+
+        if (!Array.isArray(data.schedules)) {
+            throw new Error(
+                "Schedule data is missing or invalid"
+            );
+        }
+
+        markDataLoadSuccessful(
+            "schedules"
+        );
+
+        const savedRegion =
+            localStorage.getItem("swRegion");
+
+        if (
+            savedRegion &&
+            locationProfiles[savedRegion]
+        ) {
+            els.regionSelect.value =
+                savedRegion;
+        }
+
+        allSchedules =
+            data.schedules || [];
+
+        renderSourceInfo(
+            data.sources
+        );
+
+        const generatedAt =
+            new Date(data.generatedAt);
+
+        const updated =
+            Number.isNaN(generatedAt.getTime())
+                ? "unknown"
+                : generatedAt.toLocaleString(
+                    "fi-FI",
+                    {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false
+                    }
+                );
+
+        els.dataInfo.textContent =
+            `${data.count ?? allSchedules.length} schedules ` +
+            `• lists updated ${updated}`;
+
+        render();
+    } catch (error) {
+        allSchedules = [];
+
+        markDataLoadFailed(
+            "schedules",
+            error
+        );
+
+        els.dataInfo.textContent =
+            "Schedule data unavailable";
+
+        render();
     }
-
-    allSchedules = data.schedules || [];
-    renderSourceInfo(data.sources);
-
-    const updated = new Date(data.generatedAt).toLocaleString("fi-FI", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-    });
-
-    els.dataInfo.textContent = `${data.count} schedules • lists updated ${updated}`;
-    render();
 }
 
 els.searchInput.addEventListener("input", render);
@@ -3604,6 +3759,42 @@ els.detailModal.addEventListener("click", event => {
     if (event.target === els.detailModal)
         hideDetails();
 });
+
+if (els.dataLoadRetry) {
+    els.dataLoadRetry.addEventListener(
+        "click",
+        async () => {
+            els.dataLoadRetry.disabled = true;
+            els.dataLoadRetry.textContent =
+                "Retrying…";
+
+            failedDataResources.clear();
+            renderDataLoadWarning();
+
+            try {
+                await loadSchedules();
+            } finally {
+                els.dataLoadRetry.disabled = false;
+                els.dataLoadRetry.textContent =
+                    "Retry";
+            }
+        }
+    );
+}
+
+if (
+    els.dataLoadWarningClose &&
+    els.dataLoadWarning
+) {
+    els.dataLoadWarningClose.addEventListener(
+        "click",
+        () => {
+            els.dataLoadWarning.classList.add(
+                "hidden"
+            );
+        }
+    );
+}
 
 document.addEventListener("keydown", event => {
     if (event.key === "Escape") {
