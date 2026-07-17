@@ -536,8 +536,7 @@ function loadAssistantSnapshot() {
     try {
         const raw =
             localStorage.getItem(
-                ASSISTANT_SNAPSHOT_KEY
-            );
+                ASSISTANT_SNAPSHOT_KEY);
 
         if (!raw) {
             return null;
@@ -548,8 +547,7 @@ function loadAssistantSnapshot() {
 
         if (
             !snapshot ||
-            typeof snapshot !== "object"
-        ) {
+            typeof snapshot !== "object") {
             return null;
         }
 
@@ -557,8 +555,7 @@ function loadAssistantSnapshot() {
     } catch (error) {
         console.warn(
             "Could not load Assistant snapshot:",
-            error
-        );
+            error);
 
         return null;
     }
@@ -571,13 +568,11 @@ function saveAssistantSnapshot(snapshot) {
             JSON.stringify({
                 ...snapshot,
                 timestamp: Date.now()
-            })
-        );
+            }));
     } catch (error) {
         console.warn(
             "Could not save Assistant snapshot:",
-            error
-        );
+            error);
     }
 }
 
@@ -585,13 +580,12 @@ function getAssistantSessionBaseline() {
     try {
         const savedBaseline =
             sessionStorage.getItem(
-                ASSISTANT_BASELINE_KEY
-            );
+                ASSISTANT_BASELINE_KEY);
 
         if (savedBaseline !== null) {
             return savedBaseline
-                ? JSON.parse(savedBaseline)
-                : null;
+             ? JSON.parse(savedBaseline)
+             : null;
         }
 
         /*
@@ -605,16 +599,14 @@ function getAssistantSessionBaseline() {
         sessionStorage.setItem(
             ASSISTANT_BASELINE_KEY,
             previousSnapshot
-                ? JSON.stringify(previousSnapshot)
-                : ""
-        );
+             ? JSON.stringify(previousSnapshot)
+             : "");
 
         return previousSnapshot;
     } catch (error) {
         console.warn(
             "Could not create Assistant baseline:",
-            error
-        );
+            error);
 
         return loadAssistantSnapshot();
     }
@@ -622,8 +614,7 @@ function getAssistantSessionBaseline() {
 
 function getAssistantMemoryMessage(
     previous,
-    current
-) {
+    current) {
     if (!previous) {
         return "";
     }
@@ -642,21 +633,18 @@ function getAssistantMemoryMessage(
         Number.isFinite(previousTime) &&
         Number.isFinite(currentTime) &&
         currentTime - previousTime >
-            48 * 60 * 60 * 1000
-    ) {
+        48 * 60 * 60 * 1000) {
         return "";
     }
 
     if (
         previous.band &&
         current.band &&
-        previous.band !== current.band
-    ) {
+        previous.band !== current.band) {
         return (
-            `🔄 Things have changed since your last visit — ` +
-            `${current.band} has taken the lead from ` +
-            `${previous.band}.`
-        );
+            `🔄 Things have changed since your last visit — ` + 
+            `${current.band} has taken the lead from ` + 
+`${previous.band}.`);
     }
 
     const previousActive =
@@ -667,25 +655,22 @@ function getAssistantMemoryMessage(
 
     if (
         Number.isFinite(previousActive) &&
-        Number.isFinite(currentActive)
-    ) {
+        Number.isFinite(currentActive)) {
         const difference =
             currentActive - previousActive;
 
         if (difference >= 10) {
             return (
-                `📈 ${current.band} has gained ` +
-                `${difference} active broadcasts ` +
-                `since your last visit.`
-            );
+                `📈 ${current.band} has gained ` + 
+                `${difference} active broadcasts ` + 
+`since your last visit.`);
         }
 
         if (difference <= -10) {
             return (
-                `📉 ${current.band} has become noticeably ` +
-                `quieter since your last visit, with ` +
-                `${Math.abs(difference)} fewer active broadcasts.`
-            );
+                `📉 ${current.band} has become noticeably ` + 
+                `quieter since your last visit, with ` + 
+`${Math.abs(difference)} fewer active broadcasts.`);
         }
     }
 
@@ -697,24 +682,21 @@ function getAssistantMemoryMessage(
 
     if (
         Number.isFinite(previousScore) &&
-        Number.isFinite(currentScore)
-    ) {
+        Number.isFinite(currentScore)) {
         const scoreChange =
             currentScore - previousScore;
 
         if (scoreChange >= 15) {
             return (
-                `👀 ${current.band} looks considerably stronger ` +
-                `than it did during your previous visit.`
-            );
+                `👀 ${current.band} looks considerably stronger ` + 
+`than it did during your previous visit.`);
         }
 
         if (scoreChange <= -15) {
             return (
-                `📡 ${current.band} is still leading, but the ` +
-                `calculated conditions have weakened since ` +
-                `your previous visit.`
-            );
+                `📡 ${current.band} is still leading, but the ` + 
+                `calculated conditions have weakened since ` + 
+`your previous visit.`);
         }
     }
 
@@ -2172,12 +2154,11 @@ function getAssistantContextMessage(
 `These stations currently have the strongest calculated paths.`);
 }
 
-	function renderDxAssistant() {
+function renderDxAssistant() {
     if (
         !els.dxAssistantStatus ||
         !els.dxAssistantMain ||
-        !els.dxAssistantTips
-    ) {
+        !els.dxAssistantTips) {
         return;
     }
 
@@ -2187,8 +2168,7 @@ function getAssistantContextMessage(
     const elevation =
         getSolarElevationApprox(
             loc.lat,
-            loc.lon
-        );
+            loc.lon);
 
     const mode =
         getPathMode(elevation);
@@ -2210,8 +2190,7 @@ function getAssistantContextMessage(
 
                     return itemHasSelectedSource(
                         item,
-                        selectedSources
-                    );
+                        selectedSources);
                 });
 
             return {
@@ -2220,8 +2199,7 @@ function getAssistantContextMessage(
                 score: getAssistantBandScore(
                     band,
                     mode,
-                    active.length
-                )
+                    active.length)
             };
         })
         .filter(item => item.activeCount > 0)
@@ -2253,7 +2231,7 @@ function getAssistantContextMessage(
     }
 
     els.dxAssistantStatus.textContent =
-        `${mode} path · score ${best.score}`;
+`${mode} path · score ${best.score}`;
 
     const targets =
         getAssistantTargets(best.band);
@@ -2263,39 +2241,34 @@ function getAssistantContextMessage(
             mode,
             best.score,
             best.activeCount,
-            targets
-        );
+            targets);
 
-	const currentSnapshot = {
-    band: best.band,
-    score: best.score,
-    activeCount: best.activeCount,
-    mode,
-    mood,
-    timestamp: Date.now(),
-    topStations: targets.map(
-        target =>
-            target.item.station || ""
-    )
-};
+    const currentSnapshot = {
+        band: best.band,
+        score: best.score,
+        activeCount: best.activeCount,
+        mode,
+        mood,
+        timestamp: Date.now(),
+        topStations: targets.map(
+            target =>
+            target.item.station || "")
+    };
 
-const previousSnapshot =
-    getAssistantSessionBaseline();
+    const previousSnapshot =
+        getAssistantSessionBaseline();
 
-const memoryMessage =
-    getAssistantMemoryMessage(
-        previousSnapshot,
-        currentSnapshot
-    );
+    const memoryMessage =
+        getAssistantMemoryMessage(
+            previousSnapshot,
+            currentSnapshot);
 
     const assistantTitle =
         getAssistantSessionValue(
-            `title:${mode}:${mood}`,
+`title:${mode}:${mood}`,
             () => getAssistantTitle(
                 mode,
-                mood
-            )
-        );
+                mood));
 
     if (els.dxAssistantTitle) {
         els.dxAssistantTitle.textContent =
@@ -2304,12 +2277,10 @@ const memoryMessage =
 
     const greeting =
         getAssistantSessionValue(
-            `greeting:${mood}`,
+`greeting:${mood}`,
             () => getAssistantGreeting(
                 mood,
-                best.band
-            )
-        );
+                best.band));
 
     const opening =
         getAssistantOpening(
@@ -2572,13 +2543,12 @@ ${humour ? `
         </div>
     `;
 
-renderAssistantTargets(
-    best.band,
-    mode,
-    best.activeCount
-);
+    renderAssistantTargets(
+        best.band,
+        mode,
+        best.activeCount);
 
-saveAssistantSnapshot(currentSnapshot);
+    saveAssistantSnapshot(currentSnapshot);
 
 }
 
