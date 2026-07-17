@@ -1977,48 +1977,47 @@ function getAssistantContextMessage(
 `These stations currently have the strongest calculated paths.`);
 }
 
-function renderDxAssistant() {
+	function renderDxAssistant() {
     if (
         !els.dxAssistantStatus ||
         !els.dxAssistantMain ||
-        !els.dxAssistantTips) {
+        !els.dxAssistantTips
+    ) {
         return;
     }
 
-    const loc = getCurrentLocationForCalculations();
+    const loc =
+        getCurrentLocationForCalculations();
+
     const elevation =
-        getSolarElevationApprox(loc.lat, loc.lon);
+        getSolarElevationApprox(
+            loc.lat,
+            loc.lon
+        );
 
-    const mode = getPathMode(elevation);
-    const selectedSources = getSelectedSources();
+    const mode =
+        getPathMode(elevation);
 
-    const assistantTitle =
-        getAssistantSessionValue(
-`title:${mode}:${mood}`,
-            () => getAssistantTitle(
-                mode,
-                mood));
-
-    if (els.dxAssistantTitle) {
-        els.dxAssistantTitle.textContent =
-            assistantTitle;
-    }
+    const selectedSources =
+        getSelectedSources();
 
     const rankedBands = bandOrder
         .map(band => {
-            const active = allSchedules.filter(item => {
-                if (item.band !== band) {
-                    return false;
-                }
+            const active =
+                allSchedules.filter(item => {
+                    if (item.band !== band) {
+                        return false;
+                    }
 
-                if (!isOnAir(item)) {
-                    return false;
-                }
+                    if (!isOnAir(item)) {
+                        return false;
+                    }
 
-                return itemHasSelectedSource(
-                    item,
-                    selectedSources);
-            });
+                    return itemHasSelectedSource(
+                        item,
+                        selectedSources
+                    );
+                });
 
             return {
                 band,
@@ -2026,7 +2025,8 @@ function renderDxAssistant() {
                 score: getAssistantBandScore(
                     band,
                     mode,
-                    active.length)
+                    active.length
+                )
             };
         })
         .filter(item => item.activeCount > 0)
@@ -2039,7 +2039,9 @@ function renderDxAssistant() {
             "No recommendation";
 
         els.dxAssistantMain.innerHTML = `
-            <strong>No suitable active broadcasts found.</strong>
+            <strong>
+                No suitable active broadcasts found.
+            </strong>
             <p>
                 Try enabling another schedule source
                 or selecting all bands.
@@ -2056,23 +2058,41 @@ function renderDxAssistant() {
     }
 
     els.dxAssistantStatus.textContent =
-`${mode} path · score ${best.score}`;
+        `${mode} path · score ${best.score}`;
 
-    const targets = getAssistantTargets(best.band);
+    const targets =
+        getAssistantTargets(best.band);
 
     const mood =
         getAssistantMood(
             mode,
             best.score,
             best.activeCount,
-            targets);
+            targets
+        );
+
+    const assistantTitle =
+        getAssistantSessionValue(
+            `title:${mode}:${mood}`,
+            () => getAssistantTitle(
+                mode,
+                mood
+            )
+        );
+
+    if (els.dxAssistantTitle) {
+        els.dxAssistantTitle.textContent =
+            assistantTitle;
+    }
 
     const greeting =
         getAssistantSessionValue(
-`greeting:${mood}`,
+            `greeting:${mood}`,
             () => getAssistantGreeting(
                 mood,
-                best.band));
+                best.band
+            )
+        );
 
     const opening =
         getAssistantOpening(
@@ -2137,7 +2157,7 @@ function renderDxAssistant() {
         ${escapeHtml(greeting)}
 
     </div
-    <button
+    <button>
         id="dxAssistantBandBtn"
         class="dx-assistant-band-btn"
         type="button">
@@ -2551,7 +2571,7 @@ const ituToIso = {
     SUI: "ch",
     SVK: "sk",
     SVN: "si",
-    SVZ: "sz",
+    SWZ: "sz",
     SYR: "sy",
     THA: "th",
     TJK: "tj",
