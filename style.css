@@ -2386,28 +2386,32 @@ td:nth-child(9) {
     line-height: 1.5;
 }
 
-.data-load-warning{
-    display:flex;
-    align-items:flex-start;
-    gap:14px;
+.data-load-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
 }
 
-.data-load-warning-content{
-    flex:1;
+.data-load-warning.hidden {
+    display: none !important;
 }
 
-.data-load-warning-actions{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-left:20px;
+.data-load-warning-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.data-load-warning-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 20px;
+    flex: 0 0 auto;
 }
 
 .data-load-privacy {
     margin-top: 10px;
-
     font-size: 0.78rem;
     color: rgba(220, 235, 240, 0.55);
-
     letter-spacing: 0.03em;
 }
