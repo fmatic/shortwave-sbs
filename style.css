@@ -2402,3 +2402,12 @@ td:nth-child(9) {
     gap:8px;
     margin-left:20px;
 }
+
+.data-load-privacy {
+    margin-top: 10px;
+
+    font-size: 0.78rem;
+    color: rgba(220, 235, 240, 0.55);
+
+    letter-spacing: 0.03em;
+}
