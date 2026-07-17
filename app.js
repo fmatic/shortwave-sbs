@@ -500,100 +500,6 @@ function getAssistantEncouragement() {
     ];
 }
 
-const ASSISTANT_SNAPSHOT_KEY =
-    "dxAssistant:lastSnapshot";
-
-const ASSISTANT_BASELINE_KEY =
-    "dxAssistant:sessionBaseline";
-
-function loadAssistantSnapshot() {
-    try {
-        const raw =
-            localStorage.getItem(
-                ASSISTANT_SNAPSHOT_KEY
-            );
-
-        if (!raw) {
-            return null;
-        }
-
-        const snapshot =
-            JSON.parse(raw);
-
-        if (
-            !snapshot ||
-            typeof snapshot !== "object"
-        ) {
-            return null;
-        }
-
-        return snapshot;
-    } catch (error) {
-        console.warn(
-            "Could not load Assistant snapshot:",
-            error
-        );
-
-        return null;
-    }
-}
-
-function saveAssistantSnapshot(snapshot) {
-    try {
-        localStorage.setItem(
-            ASSISTANT_SNAPSHOT_KEY,
-            JSON.stringify({
-                ...snapshot,
-                timestamp: Date.now()
-            })
-        );
-    } catch (error) {
-        console.warn(
-            "Could not save Assistant snapshot:",
-            error
-        );
-    }
-}
-
-function getAssistantSessionBaseline() {
-    try {
-        const savedBaseline =
-            sessionStorage.getItem(
-                ASSISTANT_BASELINE_KEY
-            );
-
-        if (savedBaseline !== null) {
-            return savedBaseline
-                ? JSON.parse(savedBaseline)
-                : null;
-        }
-
-        /*
-         * Luetaan edellisen selainistunnon viimeinen
-         * tilanne ja lukitaan se tämän istunnon
-         * vertailukohdaksi.
-         */
-        const previousSnapshot =
-            loadAssistantSnapshot();
-
-        sessionStorage.setItem(
-            ASSISTANT_BASELINE_KEY,
-            previousSnapshot
-                ? JSON.stringify(previousSnapshot)
-                : ""
-        );
-
-        return previousSnapshot;
-    } catch (error) {
-        console.warn(
-            "Could not create Assistant baseline:",
-            error
-        );
-
-        return loadAssistantSnapshot();
-    }
-}
-
 function getAssistantSessionValue(key, generator) {
     const storageKey = `dxAssistant:${key}`;
 
@@ -2666,15 +2572,15 @@ ${humour ? `
         </div>
     `;
 
-    renderAssistantTargets(
-        best.band,
-        mode,
-        best.activeCount);
-}
-
-saveAssistantSnapshot(
-    currentSnapshot
+renderAssistantTargets(
+    best.band,
+    mode,
+    best.activeCount
 );
+
+saveAssistantSnapshot(currentSnapshot);
+
+}
 
 function conditionLabel(score) {
     if (score >= 85)
