@@ -695,6 +695,113 @@ function getAssistantObservation(
     ];
 }
 
+function getAssistantUnusual(
+    best,
+    rankedBands,
+    targets
+) {
+    const unusual = [];
+
+    const kp = Number(spaceWeather?.kp);
+    const topScores = targets
+        .map(target => Number(target.score || 0))
+        .filter(Number.isFinite);
+
+    const longDistanceTargets = targets.filter(
+        target =>
+            Number(target.path?.distance || 0) >= 8000
+    );
+
+    const greylineTargets = targets.filter(
+        target =>
+            target.awareness?.label ===
+            "Greyline potential"
+    );
+
+    /*
+     * Korkea Kp, mutta mukana on silti vahvoja pitkän matkan
+     * laskennallisia kohteita. Emme väitä niiden kuuluvan,
+     * vaan huomautamme ristiriidasta.
+     */
+    if (
+        Number.isFinite(kp) &&
+        kp >= 5 &&
+        longDistanceTargets.length >= 2 &&
+        topScores.some(score => score >= 110)
+    ) {
+        unusual.push(
+            "⚠️ This is interesting: geomagnetic activity is elevated, yet several long-distance targets still rank strongly on paper."
+        );
+    }
+
+    /*
+     * Suositeltu bandi voittaa toiseksi parhaan selvällä erolla.
+     */
+    const secondBest = rankedBands[1];
+
+    if (
+        secondBest &&
+        best.score - secondBest.score >= 18
+    ) {
+        unusual.push(
+            `📈 ${best.band} currently has an unusually clear lead over the other active bands.`
+        );
+    }
+
+    /*
+     * Kaikki neljä kärkikohdetta ovat greyline-kohteita.
+     */
+    if (
+        targets.length >= 4 &&
+        greylineTargets.length === targets.length
+    ) {
+        unusual.push(
+            "🌅 Every leading target currently shows greyline potential — a notably consistent pattern."
+        );
+    }
+
+    /*
+     * Tarkistetaan, onko samalla taajuudella useita aktiivisia
+     * lähetyksiä suositellulla bandilla.
+     */
+    const frequencyCounts = new Map();
+
+    getActiveBySources()
+        .filter(item => item.band === best.band)
+        .forEach(item => {
+            const frequency = String(item.freq || "");
+
+            if (!frequency) {
+                return;
+            }
+
+            frequencyCounts.set(
+                frequency,
+                (frequencyCounts.get(frequency) || 0) + 1
+            );
+        });
+
+    const crowdedFrequency = [...frequencyCounts.entries()]
+        .filter(([, count]) => count >= 3)
+        .sort((a, b) => b[1] - a[1])[0];
+
+    if (crowdedFrequency) {
+        const [frequency, count] = crowdedFrequency;
+
+        unusual.push(
+            `🎧 ${frequency} kHz is unusually crowded right now, with ${count} active schedule entries sharing the frequency.`
+        );
+    }
+
+    if (!unusual.length) {
+        return "";
+    }
+
+    return unusual[
+        Math.floor(Math.random() * unusual.length)
+    ];
+}
+
 function applyLayout(name) {
 
     const layout = sectionLayouts[name];
@@ -1909,6 +2016,13 @@ function renderDxAssistant() {
         targets
     );
 
+	const unusual =
+    getAssistantUnusual(
+        best,
+        rankedBands,
+        targets
+    );
+
     const whyTitle =
         getAssistantSessionValue(
             "whyTitle",
@@ -1994,6 +2108,13 @@ function renderDxAssistant() {
 ${observation ? `
     <div class="assistant-observation">
         ${escapeHtml(observation)}
+    </div>
+` : ""}
+
+${unusual ? `
+    <div class="assistant-unusual">
+        <strong>Something unusual</strong>
+        <span>${escapeHtml(unusual)}</span>
     </div>
 ` : ""}
 
