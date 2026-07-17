@@ -2386,107 +2386,28 @@ td:nth-child(9) {
     line-height: 1.5;
 }
 
-.data-load-warning {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-
-    margin: 14px auto;
-    padding: 13px 15px;
-    max-width: 1180px;
-
-    border: 1px solid rgba(255, 190, 80, 0.28);
-    border-left: 3px solid rgba(255, 190, 80, 0.82);
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255, 190, 80, 0.08),
-            rgba(255, 190, 80, 0.025)
-        );
-
-    color: rgba(235, 242, 246, 0.92);
-    box-shadow:
-        0 10px 28px rgba(0, 0, 0, 0.16);
+.data-load-warning{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
 }
 
-.data-load-warning.hidden {
-    display: none;
+.data-load-warning-content{
+    flex:1;
 }
 
-.data-load-warning-icon {
-    flex: 0 0 auto;
-    padding-top: 1px;
-    font-size: 1.1rem;
+.data-load-warning-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:20px;
 }
 
-.data-load-warning-content {
-    flex: 1;
-    min-width: 0;
-}
+.data-load-privacy {
+    margin-top: 10px;
 
-.data-load-warning-content strong {
-    display: block;
-    margin-bottom: 4px;
-    color: rgba(255, 215, 145, 0.96);
-    font-size: 0.92rem;
-}
+    font-size: 0.78rem;
+    color: rgba(220, 235, 240, 0.55);
 
-.data-load-warning-content p {
-    margin: 0;
-    color: rgba(218, 231, 238, 0.78);
-    font-size: 0.84rem;
-    line-height: 1.5;
-}
-
-.data-load-retry {
-    flex: 0 0 auto;
-
-    padding: 7px 11px;
-    border: 1px solid rgba(255, 205, 120, 0.28);
-    border-radius: 7px;
-
-    background: rgba(255, 190, 80, 0.08);
-    color: rgba(255, 225, 175, 0.95);
-
-    cursor: pointer;
-}
-
-.data-load-retry:hover {
-    background: rgba(255, 190, 80, 0.14);
-}
-
-.data-load-warning-close {
-    flex: 0 0 auto;
-
-    padding: 0 3px;
-    border: 0;
-    background: transparent;
-
-    color: rgba(218, 231, 238, 0.55);
-    font-size: 1.3rem;
-    line-height: 1;
-
-    cursor: pointer;
-}
-
-.data-load-warning-close:hover {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-@media (max-width: 700px) {
-    .data-load-warning {
-        flex-wrap: wrap;
-        margin: 10px;
-    }
-
-    .data-load-retry {
-        margin-left: 32px;
-    }
-
-    .data-load-warning-close {
-        position: absolute;
-        right: 20px;
-    }
+    letter-spacing: 0.03em;
 }
