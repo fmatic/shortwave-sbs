@@ -2157,7 +2157,7 @@ function getAssistantContextMessage(
         ${escapeHtml(greeting)}
 
     </div
-    <button>
+    <button
         id="dxAssistantBandBtn"
         class="dx-assistant-band-btn"
         type="button">
