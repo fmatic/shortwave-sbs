@@ -2375,3 +2375,13 @@ td:nth-child(9) {
 .assistant-unusual span {
     display: block;
 }
+
+.assistant-memory {
+    margin: 7px 0 9px;
+    padding: 8px 11px;
+    border-left: 2px solid rgba(91, 231, 213, 0.34);
+    background: rgba(91, 231, 213, 0.035);
+    color: rgba(214, 231, 239, 0.82);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}

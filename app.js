@@ -500,6 +500,100 @@ function getAssistantEncouragement() {
     ];
 }
 
+const ASSISTANT_SNAPSHOT_KEY =
+    "dxAssistant:lastSnapshot";
+
+const ASSISTANT_BASELINE_KEY =
+    "dxAssistant:sessionBaseline";
+
+function loadAssistantSnapshot() {
+    try {
+        const raw =
+            localStorage.getItem(
+                ASSISTANT_SNAPSHOT_KEY
+            );
+
+        if (!raw) {
+            return null;
+        }
+
+        const snapshot =
+            JSON.parse(raw);
+
+        if (
+            !snapshot ||
+            typeof snapshot !== "object"
+        ) {
+            return null;
+        }
+
+        return snapshot;
+    } catch (error) {
+        console.warn(
+            "Could not load Assistant snapshot:",
+            error
+        );
+
+        return null;
+    }
+}
+
+function saveAssistantSnapshot(snapshot) {
+    try {
+        localStorage.setItem(
+            ASSISTANT_SNAPSHOT_KEY,
+            JSON.stringify({
+                ...snapshot,
+                timestamp: Date.now()
+            })
+        );
+    } catch (error) {
+        console.warn(
+            "Could not save Assistant snapshot:",
+            error
+        );
+    }
+}
+
+function getAssistantSessionBaseline() {
+    try {
+        const savedBaseline =
+            sessionStorage.getItem(
+                ASSISTANT_BASELINE_KEY
+            );
+
+        if (savedBaseline !== null) {
+            return savedBaseline
+                ? JSON.parse(savedBaseline)
+                : null;
+        }
+
+        /*
+         * Luetaan edellisen selainistunnon viimeinen
+         * tilanne ja lukitaan se tämän istunnon
+         * vertailukohdaksi.
+         */
+        const previousSnapshot =
+            loadAssistantSnapshot();
+
+        sessionStorage.setItem(
+            ASSISTANT_BASELINE_KEY,
+            previousSnapshot
+                ? JSON.stringify(previousSnapshot)
+                : ""
+        );
+
+        return previousSnapshot;
+    } catch (error) {
+        console.warn(
+            "Could not create Assistant baseline:",
+            error
+        );
+
+        return loadAssistantSnapshot();
+    }
+}
+
 function getAssistantSessionValue(key, generator) {
     const storageKey = `dxAssistant:${key}`;
 
@@ -524,6 +618,201 @@ function getAssistantSessionValue(key, generator) {
 
         return generator();
     }
+}
+
+const ASSISTANT_SNAPSHOT_KEY =
+    "dxAssistant:lastSnapshot";
+
+const ASSISTANT_BASELINE_KEY =
+    "dxAssistant:sessionBaseline";
+
+function loadAssistantSnapshot() {
+    try {
+        const raw =
+            localStorage.getItem(
+                ASSISTANT_SNAPSHOT_KEY
+            );
+
+        if (!raw) {
+            return null;
+        }
+
+        const snapshot =
+            JSON.parse(raw);
+
+        if (
+            !snapshot ||
+            typeof snapshot !== "object"
+        ) {
+            return null;
+        }
+
+        return snapshot;
+    } catch (error) {
+        console.warn(
+            "Could not load Assistant snapshot:",
+            error
+        );
+
+        return null;
+    }
+}
+
+function saveAssistantSnapshot(snapshot) {
+    try {
+        localStorage.setItem(
+            ASSISTANT_SNAPSHOT_KEY,
+            JSON.stringify({
+                ...snapshot,
+                timestamp: Date.now()
+            })
+        );
+    } catch (error) {
+        console.warn(
+            "Could not save Assistant snapshot:",
+            error
+        );
+    }
+}
+
+function getAssistantSessionBaseline() {
+    try {
+        const savedBaseline =
+            sessionStorage.getItem(
+                ASSISTANT_BASELINE_KEY
+            );
+
+        if (savedBaseline !== null) {
+            return savedBaseline
+                ? JSON.parse(savedBaseline)
+                : null;
+        }
+
+        /*
+         * Luetaan edellisen selainistunnon viimeinen
+         * tilanne ja lukitaan se tämän istunnon
+         * vertailukohdaksi.
+         */
+        const previousSnapshot =
+            loadAssistantSnapshot();
+
+        sessionStorage.setItem(
+            ASSISTANT_BASELINE_KEY,
+            previousSnapshot
+                ? JSON.stringify(previousSnapshot)
+                : ""
+        );
+
+        return previousSnapshot;
+    } catch (error) {
+        console.warn(
+            "Could not create Assistant baseline:",
+            error
+        );
+
+        return loadAssistantSnapshot();
+    }
+}
+
+function getAssistantMemoryMessage(
+    previous,
+    current
+) {
+    if (!previous) {
+        return "";
+    }
+
+    const previousTime =
+        Number(previous.timestamp);
+
+    const currentTime =
+        Number(current.timestamp);
+
+    /*
+     * Ei verrata hyvin vanhaan tilanteeseen.
+     * Tässä raja on 48 tuntia.
+     */
+    if (
+        Number.isFinite(previousTime) &&
+        Number.isFinite(currentTime) &&
+        currentTime - previousTime >
+            48 * 60 * 60 * 1000
+    ) {
+        return "";
+    }
+
+    if (
+        previous.band &&
+        current.band &&
+        previous.band !== current.band
+    ) {
+        return (
+            `🔄 Things have changed since your last visit — ` +
+            `${current.band} has taken the lead from ` +
+            `${previous.band}.`
+        );
+    }
+
+    const previousActive =
+        Number(previous.activeCount);
+
+    const currentActive =
+        Number(current.activeCount);
+
+    if (
+        Number.isFinite(previousActive) &&
+        Number.isFinite(currentActive)
+    ) {
+        const difference =
+            currentActive - previousActive;
+
+        if (difference >= 10) {
+            return (
+                `📈 ${current.band} has gained ` +
+                `${difference} active broadcasts ` +
+                `since your last visit.`
+            );
+        }
+
+        if (difference <= -10) {
+            return (
+                `📉 ${current.band} has become noticeably ` +
+                `quieter since your last visit, with ` +
+                `${Math.abs(difference)} fewer active broadcasts.`
+            );
+        }
+    }
+
+    const previousScore =
+        Number(previous.score);
+
+    const currentScore =
+        Number(current.score);
+
+    if (
+        Number.isFinite(previousScore) &&
+        Number.isFinite(currentScore)
+    ) {
+        const scoreChange =
+            currentScore - previousScore;
+
+        if (scoreChange >= 15) {
+            return (
+                `👀 ${current.band} looks considerably stronger ` +
+                `than it did during your previous visit.`
+            );
+        }
+
+        if (scoreChange <= -15) {
+            return (
+                `📡 ${current.band} is still leading, but the ` +
+                `calculated conditions have weakened since ` +
+                `your previous visit.`
+            );
+        }
+    }
+
+    return "";
 }
 
 function getAssistantAnalysis(band, mode, activeCount) {
@@ -2071,6 +2360,28 @@ function getAssistantContextMessage(
             targets
         );
 
+	const currentSnapshot = {
+    band: best.band,
+    score: best.score,
+    activeCount: best.activeCount,
+    mode,
+    mood,
+    timestamp: Date.now(),
+    topStations: targets.map(
+        target =>
+            target.item.station || ""
+    )
+};
+
+const previousSnapshot =
+    getAssistantSessionBaseline();
+
+const memoryMessage =
+    getAssistantMemoryMessage(
+        previousSnapshot,
+        currentSnapshot
+    );
+
     const assistantTitle =
         getAssistantSessionValue(
             `title:${mode}:${mood}`,
@@ -2156,7 +2467,18 @@ function getAssistantContextMessage(
 
         ${escapeHtml(greeting)}
 
-    </div
+    </div>
+	
+	    ${memoryMessage ? `
+
+        <div class="assistant-memory">
+
+            ${escapeHtml(memoryMessage)}
+
+        </div>
+
+    ` : ""}
+	
     <button
         id="dxAssistantBandBtn"
         class="dx-assistant-band-btn"
@@ -2349,6 +2671,10 @@ ${humour ? `
         mode,
         best.activeCount);
 }
+
+saveAssistantSnapshot(
+    currentSnapshot
+);
 
 function conditionLabel(score) {
     if (score >= 85)
