@@ -256,32 +256,111 @@ function getAssistantWhyTitle() {
     ];
 }
 
-function getAssistantTitle(mode) {
-    const titlesByMode = {
-        Day: [
-            "☀️ Daylight Desk",
-            "📡 HF Observer",
+function getAssistantMood(
+    mode,
+    score,
+    activeCount,
+    targets) {
+    const kp = Number(spaceWeather?.kp);
+    const xray = String(
+            spaceWeather?.xray || "").toLowerCase();
+
+    const greylineCount = targets.filter(
+            target =>
+            target.awareness?.label ===
+            "Greyline potential").length;
+
+    /*
+     * Vakava avaruussää ohittaa muut tunnelmat.
+     */
+    if (
+        (Number.isFinite(kp) && kp >= 5) ||
+        xray.includes("x-class")) {
+        return "storm";
+    }
+
+    /*
+     * Twilight ja vähintään kaksi laskennallista
+     * greyline-kohdetta.
+     */
+    if (
+        mode === "Twilight" &&
+        greylineCount >= 2) {
+        return "greyline";
+    }
+
+    /*
+     * Selvästi vahva suositus ja olosuhteet eivät
+     * ole geomagneettisesti levottomat.
+     */
+    if (
+        score >= 115 &&
+        (!Number.isFinite(kp) || kp <= 3)) {
+        return "excellent";
+    }
+
+    /*
+     * Tavallista hiljaisempi tilanne.
+     */
+    if (
+        activeCount < 12 ||
+        score < 55) {
+        return "quiet";
+    }
+
+    if (mode === "Night") {
+        return "night";
+    }
+
+    return "good";
+}
+
+function getAssistantTitle(mode, mood) {
+    const titlesByMood = {
+        storm: [
+            "⚠️ Space Weather Watch",
+            "📡 Disturbed Band Watch",
+            "◉ DX Assistant"
+        ],
+
+        greyline: [
+            "🌅 Greyline Watch",
+            "🧭 Twilight Listening Desk",
+            "📻 Greyline Desk",
+            "◉ DX Assistant"
+        ],
+
+        excellent: [
+            "🎯 DX Opportunity Desk",
+            "📡 Band Watch",
             "🎧 Listening Guide",
             "◉ DX Assistant"
         ],
 
-        Twilight: [
-            "🌅 Greyline Watch",
-            "🧭 Band Watch",
-            "📻 Twilight Listening Desk",
+        quiet: [
+            "☕ Quiet Band Watch",
+            "🎧 Patient Listener",
+            "📻 Band Observer",
             "◉ DX Assistant"
         ],
 
-        Night: [
+        night: [
             "🌙 Night Watch",
             "📻 Lower Band Desk",
             "🎧 After-Dark Listening",
+            "◉ DX Assistant"
+        ],
+
+        good: [
+            "📡 HF Observer",
+            "🎧 Listening Guide",
+            "🧭 Band Watch",
             "◉ DX Assistant"
         ]
     };
 
     const titles =
-        titlesByMode[mode] ||
+        titlesByMood[mood] ||
         ["◉ DX Assistant"];
 
     return titles[
@@ -289,25 +368,49 @@ function getAssistantTitle(mode) {
     ];
 }
 
-function getAssistantGreeting() {
+function getAssistantGreeting(mood, band) {
+    const greetingsByMood = {
+        storm: [
+            "🌞 Space weather is keeping things interesting today.",
+            "⚠️ The ionosphere is having one of those days.",
+            "📡 Conditions are disturbed, so let's keep expectations realistic."
+        ],
 
-    const greetings = [
+        greyline: [
+            "🌅 Welcome back. Greyline is starting to look interesting.",
+            "👀 This is one of my favourite times to check the bands.",
+            "🎧 Twilight is changing the picture nicely."
+        ],
 
-        "👋 Good to see you.",
+        excellent: [
+            "😎 Welcome back. This could be one of those sessions.",
+            "📻 The bands are giving us something to work with today.",
+            "🎯 Good timing — the current picture looks promising."
+        ],
 
-        "📻 Ready for another DX session?",
+        quiet: [
+            "☕ Welcome back. Let's see what the quieter bands are hiding.",
+            "🎧 Nothing is shouting for attention, but let's have a look.",
+            "📻 A quiet band can still reward a patient listener."
+        ],
 
-        "🎧 Let's see what's happening on the bands.",
+        night: [
+            "🌙 Welcome back. The lower bands are taking over.",
+            "🎧 A good time to slow down and listen carefully.",
+            "📻 Night-time HF has its own kind of magic."
+        ],
 
-        "🌍 Time to chase a few signals.",
+        good: [
+            "👋 Good to see you.",
+            "📻 Ready for another DX session?",
+            "🎧 Let's see what's happening on the bands.",
+            "📡 I've been watching the bands for you."
+        ]
+    };
 
-        "☕ Welcome back.",
-
-        "🛰️ Let's have a look at today's conditions.",
-
-        "📡 I've been watching the bands for you."
-
-    ];
+    const greetings =
+        greetingsByMood[mood] ||
+        greetingsByMood.good;
 
     return greetings[
         Math.floor(Math.random() * greetings.length)
@@ -470,13 +573,12 @@ function getAssistantOperatorNote(band) {
     const uniqueFrequencies = [
         ...new Set(
             getActiveBySources()
-                .filter(item => item.band === band)
-                .map(item => Number(item.freq))
-                .filter(Number.isFinite)
-        )
+            .filter(item => item.band === band)
+            .map(item => Number(item.freq))
+            .filter(Number.isFinite))
     ]
-        .sort((a, b) => a - b)
-        .slice(0, 3);
+    .sort((a, b) => a - b)
+    .slice(0, 3);
 
     if (!uniqueFrequencies.length) {
         return "Nothing really stands out just yet.";
@@ -629,61 +731,50 @@ function getAssistantObservation(
     band,
     mode,
     activeCount,
-    targets
-) {
+    targets) {
     const observations = [];
 
     const dominantRegion =
         getDominantAssistantRegion(targets);
 
     const greylineCount = targets.filter(
-        target =>
+            target =>
             target.awareness?.label ===
-            "Greyline potential"
-    ).length;
+            "Greyline potential").length;
 
     const longDistanceCount = targets.filter(
-        target =>
-            Number(target.path?.distance || 0) >= 7000
-    ).length;
+            target =>
+            Number(target.path?.distance || 0) >= 7000).length;
 
     if (
         mode === "Twilight" &&
-        greylineCount >= 3
-    ) {
+        greylineCount >= 3) {
         observations.push(
-            `👀 ${greylineCount} of the leading targets currently show greyline potential.`
-        );
+`👀 ${greylineCount} of the leading targets currently show greyline potential.`);
     }
 
     if (
         dominantRegion &&
-        targets.length >= 3
-    ) {
+        targets.length >= 3) {
         observations.push(
-            `🧭 Most of the strongest calculated paths currently point towards ${dominantRegion}.`
-        );
+`🧭 Most of the strongest calculated paths currently point towards ${dominantRegion}.`);
     }
 
     if (longDistanceCount >= 3) {
         observations.push(
-            `🌍 ${longDistanceCount} of the leading targets are more than 7,000 km away.`
-        );
+`🌍 ${longDistanceCount} of the leading targets are more than 7,000 km away.`);
     }
 
     if (activeCount >= 70) {
         observations.push(
-            `📻 ${band} is especially busy right now, with ${activeCount} active broadcasts.`
-        );
+`📻 ${band} is especially busy right now, with ${activeCount} active broadcasts.`);
     }
 
     if (
         spaceWeather &&
-        Number(spaceWeather.kp) >= 5
-    ) {
+        Number(spaceWeather.kp) >= 5) {
         observations.push(
-            `⚠️ Geomagnetic activity is elevated, so even the strongest paths may behave unpredictably.`
-        );
+`⚠️ Geomagnetic activity is elevated, so even the strongest paths may behave unpredictably.`);
     }
 
     if (!observations.length) {
@@ -698,8 +789,7 @@ function getAssistantObservation(
 function getAssistantUnusual(
     best,
     rankedBands,
-    targets
-) {
+    targets) {
     const unusual = [];
 
     const kp = Number(spaceWeather?.kp);
@@ -708,15 +798,13 @@ function getAssistantUnusual(
         .filter(Number.isFinite);
 
     const longDistanceTargets = targets.filter(
-        target =>
-            Number(target.path?.distance || 0) >= 8000
-    );
+            target =>
+            Number(target.path?.distance || 0) >= 8000);
 
     const greylineTargets = targets.filter(
-        target =>
+            target =>
             target.awareness?.label ===
-            "Greyline potential"
-    );
+            "Greyline potential");
 
     /*
      * Korkea Kp, mutta mukana on silti vahvoja pitkän matkan
@@ -727,11 +815,9 @@ function getAssistantUnusual(
         Number.isFinite(kp) &&
         kp >= 5 &&
         longDistanceTargets.length >= 2 &&
-        topScores.some(score => score >= 110)
-    ) {
+        topScores.some(score => score >= 110)) {
         unusual.push(
-            "⚠️ This is interesting: geomagnetic activity is elevated, yet several long-distance targets still rank strongly on paper."
-        );
+            "⚠️ This is interesting: geomagnetic activity is elevated, yet several long-distance targets still rank strongly on paper.");
     }
 
     /*
@@ -741,11 +827,9 @@ function getAssistantUnusual(
 
     if (
         secondBest &&
-        best.score - secondBest.score >= 18
-    ) {
+        best.score - secondBest.score >= 18) {
         unusual.push(
-            `📈 ${best.band} currently has an unusually clear lead over the other active bands.`
-        );
+`📈 ${best.band} currently has an unusually clear lead over the other active bands.`);
     }
 
     /*
@@ -753,11 +837,9 @@ function getAssistantUnusual(
      */
     if (
         targets.length >= 4 &&
-        greylineTargets.length === targets.length
-    ) {
+        greylineTargets.length === targets.length) {
         unusual.push(
-            "🌅 Every leading target currently shows greyline potential — a notably consistent pattern."
-        );
+            "🌅 Every leading target currently shows greyline potential — a notably consistent pattern.");
     }
 
     /*
@@ -767,30 +849,28 @@ function getAssistantUnusual(
     const frequencyCounts = new Map();
 
     getActiveBySources()
-        .filter(item => item.band === best.band)
-        .forEach(item => {
-            const frequency = String(item.freq || "");
+    .filter(item => item.band === best.band)
+    .forEach(item => {
+        const frequency = String(item.freq || "");
 
-            if (!frequency) {
-                return;
-            }
+        if (!frequency) {
+            return;
+        }
 
-            frequencyCounts.set(
-                frequency,
-                (frequencyCounts.get(frequency) || 0) + 1
-            );
-        });
+        frequencyCounts.set(
+            frequency,
+            (frequencyCounts.get(frequency) || 0) + 1);
+    });
 
     const crowdedFrequency = [...frequencyCounts.entries()]
-        .filter(([, count]) => count >= 3)
-        .sort((a, b) => b[1] - a[1])[0];
+    .filter(([, count]) => count >= 3)
+    .sort((a, b) => b[1] - a[1])[0];
 
     if (crowdedFrequency) {
         const [frequency, count] = crowdedFrequency;
 
         unusual.push(
-            `🎧 ${frequency} kHz is unusually crowded right now, with ${count} active schedule entries sharing the frequency.`
-        );
+`🎧 ${frequency} kHz is unusually crowded right now, with ${count} active schedule entries sharing the frequency.`);
     }
 
     if (!unusual.length) {
@@ -1911,17 +1991,18 @@ function renderDxAssistant() {
 
     const mode = getPathMode(elevation);
     const selectedSources = getSelectedSources();
-    
+
     const assistantTitle =
-    getAssistantSessionValue(
-        `title:${mode}`,
-        () => getAssistantTitle(mode)
-    );
-    
+        getAssistantSessionValue(
+`title:${mode}:${mood}`,
+            () => getAssistantTitle(
+                mode,
+                mood));
+
     if (els.dxAssistantTitle) {
-    els.dxAssistantTitle.textContent =
-        assistantTitle;
-}
+        els.dxAssistantTitle.textContent =
+            assistantTitle;
+    }
 
     const rankedBands = bandOrder
         .map(band => {
@@ -1979,10 +2060,19 @@ function renderDxAssistant() {
 
     const targets = getAssistantTargets(best.band);
 
+    const mood =
+        getAssistantMood(
+            mode,
+            best.score,
+            best.activeCount,
+            targets);
+
     const greeting =
         getAssistantSessionValue(
-            "greeting",
-            getAssistantGreeting);
+`greeting:${mood}`,
+            () => getAssistantGreeting(
+                mood,
+                best.band));
 
     const opening =
         getAssistantOpening(
@@ -2008,20 +2098,18 @@ function renderDxAssistant() {
             best.score,
             targets);
 
-	const observation =
-    getAssistantObservation(
-        best.band,
-        mode,
-        best.activeCount,
-        targets
-    );
+    const observation =
+        getAssistantObservation(
+            best.band,
+            mode,
+            best.activeCount,
+            targets);
 
-	const unusual =
-    getAssistantUnusual(
-        best,
-        rankedBands,
-        targets
-    );
+    const unusual =
+        getAssistantUnusual(
+            best,
+            rankedBands,
+            targets);
 
     const whyTitle =
         getAssistantSessionValue(
@@ -2103,29 +2191,27 @@ function renderDxAssistant() {
 
         </div>
     </div>
-` : ""}
+        ` : ""}
 
 ${observation ? `
     <div class="assistant-observation">
         ${escapeHtml(observation)}
     </div>
-` : ""}
+        ` : ""}
 
 ${unusual ? `
     <div class="assistant-unusual">
         <strong>Something unusual</strong>
         <span>${escapeHtml(unusual)}</span>
     </div>
-` : ""}
+        ` : ""}
 
 ${humour ? `
     <div class="assistant-humour">
         ${escapeHtml(humour)}
     </div>
-` : ""}
+        ` : ""}
 `;
-
-	
 
     const dxAssistantBandBtn =
 
@@ -2465,7 +2551,7 @@ const ituToIso = {
     SUI: "ch",
     SVK: "sk",
     SVN: "si",
-	SVZ: "sz",
+    SVZ: "sz",
     SYR: "sy",
     THA: "th",
     TJK: "tj",
