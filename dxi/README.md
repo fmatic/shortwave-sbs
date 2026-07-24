@@ -22,3 +22,7 @@ Analysts
 Decision Engine
       ↓
 DX Assistant
+
+Golden Rule
+
+The DX Intelligence Engine must remain completely independent from the shortwave.sbs user interface. Every analyst operates solely on structured data and produces structured results.
