@@ -10,7 +10,7 @@ Free to copy + distribute.
 Days, if in numbers: 1-Monday etc.
 For country, language and target-area codes refer to readme.txt on my website.
 
-Last update: Jul 21, 2026
+Last update: Aug 08, 2026
 
 kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 ================================================================================
@@ -1594,7 +1594,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 4920          1700-1805       CHN Xizang RTV               TB  CHN         t
 4920          2050-0200       CHN Xizang RTV               TB  CHN         t
 4930          1200-1400 Tu,Fr USA Voice of America         E   Af          /BOT
-4940          2300-1030 irr   CLM Estación 4940            S   VEN
+4940          2300-1100 irr   CLM Estación 4940            S   VEN
 4940          0400-1730       RUS Baron Channel Marker         EEu         vo
 4940          0530-0700 Tu,Fr USA Voice of America         E   SAf         /BOT
 4955          1000-1400       PRU R.Cultura Amauta, Huanta S,Q PRU         hu
@@ -1619,7 +1619,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 5025          0000-2400 irr   CUB Radio Rebelde            S   Car         q
 5035          1000-2345       B   R.Educacao Rural, Coari  P   B           co
 5040          1830-2000       VUT Radio Vanuatu            BSL VUT
-5045          0400-2400 Fr-Su AUS Bay Islands Radio        E   AUS         ri
+5045          0400-2400       AUS Bay Islands Radio        E   AUS         ri
 5050          0000-0005 We    CHN Beibu Bay Radio          BR  FE          n
 5050          0000-0005 Mo,Sa CHN Beibu Bay Radio          KH  FE          n
 5050          0000-0005 Tu    CHN Beibu Bay Radio          LAO FE          n
@@ -1642,7 +1642,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 5050          1100-1200       CHN China Radio Int.         VN  FE          n
 5050          0000-0100 Su    USA America250 DueDiligence  E   CAm         o
 5050          0000-0400       USA WRMI Radio Miami Int.    E   CAm         o
-5055          0600-0900       AUS 4DX Radio                E   AUS         sj
+5055          0500-1100       AUS 4DX Radio                E   AUS         sj
 5082          1530-1540 SaSu  POL E11 Polish Spy Numbers   E               p
 5085          0100-0300       USA WTWW Lebanon, TN         E   NAm         L
 5085          0300-0330 Sa    USA WTWW Lebanon, TN         E   NAm         L
@@ -1836,8 +1836,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 5970          1600-1630       G   BBC                      DR  AFG         /OMA-a
 5970          1630-1700 SaSu  G   BBC                      DR  AFG         /OMA-a
 5970          1630-1700 Mo-Fr G   BBC                      PS  AFG         /OMA-a
-5970          1800-1830       G   BBC                      FS  IRN         /OMA-a
-5970          1830-1930       G   BBC                      FS  IRN         /OMA-a
 5975          0600-0800 Th-Tu CHN China National Radio 8   K   CHN         B
 5975          0800-0900 Th-Tu CHN China National Radio 8   M   CHN         B
 5975          0900-1400       CHN China National Radio 8   K   CHN         B
@@ -1968,6 +1966,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 6060          2155-2300       CHN Sichuan Ethnic Radio     M   CHN         c
 6060          2300-2330       CHN Sichuan Ethnic Radio     AMD CHN         c
 6060          2330-0130       CHN Sichuan Ethnic Radio     KHA CHN         c
+6060          1645-1900       HOL Radio Casanova           NL  Eu          w
 6065          1200-1605       CHN CNR 2 China Business R.  M   CHN         B
 6065          2055-2230       CHN CNR 2 China Business R.  M   CHN         B
 6065          0300-0400       USA Adventist World Radio    MSY EAf         /MDG
@@ -2039,8 +2038,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 6110          1630-1700       CLA Nippon no Kaze           K   KRE         /TWN-s
 6110          0255-2101       ETH Fana Broadcasting Corp.  AH  EAf         j
 6115          0000-2400 spur  B   Rádio Voz Missionária    P   B           cb
-6115          1600-1800 irr   COG Radio Congo              KT  CAf         b
-6115          1800-1900 irr   COG Radio Congo              F   CAf         b
 6115          1000-1200 SaSu  D   Radio SE-TA2             D   Eu          ge
 6115          0000-0800       J   Radio Nikkei 2           J   FE          c
 6115          0800-1000 Mo-Fr J   Radio Nikkei 2           J   FE          c
@@ -2254,6 +2251,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 6370          2130-2200       TWN Sound of Hope            M   FE 
 6370          2200-2300       TWN Sound of Hope            M   FE 
 6370          2300-2400       TWN Sound of Hope            M   FE 
+6400          1900-2100 9Aug  HOL Free Radio Sce Holland   E   Eu          xx
 6484.5        0000-2400       CHN XSV Tianjin Radio        -TY FE          tj
 6487          0000-2400       USA NSS US Navy              -TY NAm         a
 6496.4        1000-2200       CAN CFH Halifax Radio        -TY NAm         hx
@@ -2570,7 +2568,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 7245          2000-2100       CHN China Radio Int.         R   EEu         a
 7245          1300-1605       CHN CNR 2 China Business R.  M   CHN         B
 7245          2055-2300       CHN CNR 2 China Business R.  M   CHN         B
-7245          1800-1830       G   BBC                      FS  IRN         /OMA-a
 7245          1059-1358 Mo-Fr NZL RNZ Pacific              E   WOc         r
 7245          1059-1358 SaSu  NZL RNZ Pacific              E   Oc          r
 7245          1128-1135 Mo-Fr NZL RNZ Pacific              SLM WOc         r
@@ -2720,6 +2717,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 7340          1100-1155       CHN PBS Xinjiang             KZ  CHN         uc
 7340          1155-1800       CHN PBS Xinjiang             KZ  CHN         uc
 7340          2300-0350       CHN PBS Xinjiang             KZ  CHN         uc
+7340          1500-1600       F   Mini Atlantique Weather  F,E NAO         i
 7340          1200-1500       KOR Unification Media Group  K   KRE         /TWN-s
 7345          2030-2130       CHN China Radio Int.         I   SEu         ka
 7345          1100-1805       CHN CNR 7 Greater Bay Area   CA  CHN         h
@@ -2797,6 +2795,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 7396.8        1720-1740       THA HSW64 Bangkok Meteo Fax      SEA         u
 7396.8        2000-2005       THA HSW64 Bangkok Meteo Fax      SEA         u
 7396.8        2300-2340       THA HSW64 Bangkok Meteo Fax      SEA         u
+7400          1900-2100 9Aug  HOL Free Radio Sce Holland   E   Eu          xx
 7400          0000-2400       HOL Radio Piepzender         NL  Eu          zw
 7410          1130-1200       CHN China Radio Int.         TAG PHL         n
 7410          1300-1400       CHN China Radio Int.         J   FE          j
@@ -2885,7 +2884,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 7475          0130-0700 irr   USA Radio YHWH               E   WNA         xx
 7477          2300-2335       CLA Voice of Tibet           TB  FE          /TJK
 7480          1430-2100       USA Radio Farda              FS  IRN         /UZB
-7480          1445-1500       USA Trans World Radio        KZ  CAs         /UZB
 7483          2335-2400       CLA Voice of Tibet           TB  FE          /TJK
 7485          2300-2335       CHN CNR1 Jammer/Firedrake    M   FE 
 7485          2335-2400       CHN CNR1 Jammer/Firedrake    M   FE 
@@ -2962,6 +2960,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 7650          1500-1530       CLA Voice of Martyrs         M   FE          /UZB
 7650          2100-2130       CLA Voice of Martyrs         M   FE          /UZB
 7685          0000-2400 irr   B   Rádio Cidade Oldies      P   SAm         xx
+7700          1900-2100 9Aug  HOL Free Radio Sce Holland   E   Eu          xx
 7730          0000-2400       CHN CNR1 Jammer/Firedrake    M   FE 
 7730          0000-0100       TWN Sound of Hope            M   FE 
 7730          0100-0200       TWN Sound of Hope            M   FE 
@@ -3800,7 +3799,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 9550          1400-1500       CHN China Radio Int.         VN  SEA         b
 9550          1500-1600       CHN China Radio Int.         VN  SEA         b
 9550          1600-1700       CHN China Radio Int.         VN  SEA         b
-9550          0330-0430       G   BBC                      FS  IRN         /OMA-a
 9550          0100-0200       ROU Radio Romania Int.       F   ENA         t
 9550          1800-1900       USA Adventist World Radio    K   FE          /GUM-a
 9555          1000-1300       CHN CNR1 Jammer/Firedrake    M   FE          qq
@@ -4135,6 +4133,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 9765          1800-1900       CHN China Radio Int.         R   EEu         s
 9765          2300-2400       CHN China Radio Int.         KH  SEA         n
 9765          1045-1215       CHN CNR1 Jammer/Firedrake    M   FE 
+9765          0600-0630       G   BBC                      F   NAf         w
 9765          2100-2300       MDG MWV Palavra Alegre       P   SAm         m
 9765          1500-1600       TUR Voice of Turkey          FS  IRN         e
 9770          1600-1700       CHN China Radio Int.         HK  SAf         u
@@ -4305,7 +4304,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 9870          1820-1920       IRN IRIB Voice of I.R.Iran   HA  WAf         s
 9870          0000-0200       TUR Voice of Turkey          S   SAm         e
 9875          1300-1330       CHN CNR1 Jammer/Firedrake    M   FE 
-9875          0330-0430       G   BBC                      FS  IRN         /OMA-a
 9875          0700-0900       KRE Voice of Korea           R   FE          u
 9875          1800-1900       KRE Voice of Korea           F   ME          u
 9875          1900-2000       KRE Voice of Korea           E   ME          u
@@ -4402,7 +4400,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 9950          0700-1300 Tu,Th USA Voice of America         E   EEu         /D-L
 9950          1500-1530       USA VoA Radio Ashna          DR  AFG         /KWT
 9950          1530-1600       USA VoA Radio Ashna          PS  AFG         /KWT
-9950          1530-2130 Mo-Fr USA Voice of America         K   FE          /PHL-t
+9950          1500-2200 Mo-Fr USA Voice of America         K   FE          /PHL-t
 9950          1600-1630       USA VoA Radio Ashna          DR  AFG         /KWT
 9950          1630-1700       USA VoA Radio Ashna          PS  AFG         /KWT
 9950          1700-1730       USA VoA Radio Ashna          DR  AFG         /KWT
@@ -4510,6 +4508,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 10347         1120-1130 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 10356         1530-1540 Th    POL E11 Polish Spy Numbers   E               p
 10375         1540-1550 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
+10387         1140-1150 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 10423         0930-0940 Su    RUS E06 Russian Spy Numbers  E   RUS         or
 10429         0715-0725 Tu,Fr POL E11 Polish Spy Numbers   E               p
 10536         1000-2200       CAN CFH Halifax Radio        -TY NAm         hx
@@ -4745,6 +4744,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11460         2130-2200       TWN Sound of Hope            M   FE 
 11460         2200-2300       TWN Sound of Hope            M   FE 
 11460         2300-2400       TWN Sound of Hope            M   FE 
+11472         0210-0220 Mo    RUS E06 Russian Spy Numbers  E   RUS         c
 11500         2000-1700       CHN CNR1 Jammer/Firedrake    M   FE 
 11500         0000-0100       TWN Sound of Hope            M   FE 
 11500         0100-0200       TWN Sound of Hope            M   FE 
@@ -4759,6 +4759,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11500         2130-2200       TWN Sound of Hope            M   FE 
 11500         2200-2300       TWN Sound of Hope            M   FE 
 11500         2300-2400       TWN Sound of Hope            M   FE 
+11508         0740-0750 Su    RUS V07 Russian Spy Numbers  S   FE          kh
 11510         1300-1400       CLA Free North Korea Radio   K   KRE         /UZB
 11520         2000-1600       CHN CNR1 Jammer/Firedrake    M   CHN
 11520         0000-0100       TWN Sound of Hope            M   FE 
@@ -4879,7 +4880,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11620         0000-0100       ROU Radio Romania Int.       E   ENA         t
 11620         0100-0200       ROU Radio Romania Int.       F   ENA         t
 11620         0300-0400       ROU Radio Romania Int.       E   WNA         t
-11625         1900-2200       J   NHK Radio Japan          J   ME          y
 11630         0600-0800 We-Mo CHN China National Radio 17  KZ  CHN         L
 11630         0800-0900 We-Mo CHN China National Radio 17  M   CHN         L
 11630         0900-1200       CHN China National Radio 17  KZ  CHN         L
@@ -4888,7 +4888,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11630         1600-1805       CHN China National Radio 17  KZ  CHN         L
 11630         2355-0600       CHN China National Radio 17  KZ  CHN         L
 11630         1400-1430       S   IBRA Radio               TIG EAf         /UAE
-11632         0210-0220 Mo    RUS E06 Russian Spy Numbers  E   RUS         c
 11635         1000-1100       CHN China Radio Int.         E   Sib         b
 11635         1800-1900       KRE Voice of Korea           F   ME          u
 11635         1900-2000       KRE Voice of Korea           E   ME          u
@@ -5158,6 +5157,9 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11790         1730-1830       CHN China Radio Int.         HA  NIG         k
 11790         2300-2400       CHN China Radio Int.         E   SEA         x
 11790         0430-0500       F   Radio France Int.        SWA EAf         i
+11790         0600-0630       F   Radio France Int.        HA  WAf         i
+11790         2000-2100       F   Radio France Int.        F   WAf         i
+11790         2100-2200       F   Radio France Int.        F   WAf         i
 11790         0700-0800 Su    ROU Radio Romania Int.       RO  ME          g
 11795         1100-1200       CHN China Radio Int.         E   SAs         ka
 11795         1000-1100       KOR KBS World Radio          E   SAm         k
@@ -5214,6 +5216,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11850         1620-1650       IRN IRIB Voice of I.R.Iran   BE  SAs         s
 11850         1920-2020       IRN IRIB Voice of I.R.Iran   E   SAf         s
 11850         1500-1530       ROU Radio Romania Int.       R   EEu         t
+11850         1730-1800 Fr-Su TWN Radio Taiwan Int.        F   Eu          s
 11850         1300-1400       USA Adventist World Radio    M   FE          /GUM-a
 11850         1400-1500       USA Voice of America         TB  FE          /KWT
 11855         1800-1830 Su-Tu CAN Bible Voice              FS  ME          /D-n
@@ -5297,6 +5300,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11885         2030-0100       MLA RTM Sabah V FM           KAD MLA         ka
 11885         1000-1100       TWN Radio Taiwan Int.        M   FE          p
 11885         1100-1200       TWN Radio Taiwan Int.        M   FE          p
+11885         1230-1245       USA Radio Free Asia          KH  SEA         /TWN-p
 11885         1600-1630       VTN Voice of Vietnam         E   Eu          s
 11885         1630-1700       VTN Voice of Vietnam         R   Eu          s
 11885         1700-1800       VTN Voice of Vietnam         VN  Eu          s
@@ -5472,12 +5476,8 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 11990         2130-2200       TWN Sound of Hope            M   FE 
 11990         2200-2300       TWN Sound of Hope            M   FE 
 11990         2300-2400       TWN Sound of Hope            M   FE 
-11995         0600-0630       F   Radio France Int.        HA  WAf         i
-11995         2000-2100       F   Radio France Int.        F   WAf         i
-11995         2100-2200       F   Radio France Int.        F   WAf         i
 11995         1400-1500       G   BBC                      DR  AFG         /OMA-a
 11995         1500-1600       G   BBC                      PS  AFG         /OMA-a
-11995         1730-1800 Fr-Su TWN Radio Taiwan Int.        D   Eu          s
 12000         0300-0400       CHN China Radio Int.         E   SAs         ka
 12005         0900-1000       CHN China Radio Int.         M   Oc          k
 12005         1000-1100       CHN China Radio Int.         CA  Oc          k
@@ -5541,6 +5541,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 12080         0000-0600       CHN CNR 2 China Business R.  M   CHN         as
 12080         0600-0900 Th-Tu CHN CNR 2 China Business R.  M   CHN         as
 12080         0900-1000       CHN CNR 2 China Business R.  M   CHN         as
+12084         0400-0410 Th    RUS E06 Russian Spy Numbers  E   RUS         c
 12085         2300-2400       CHN China Radio Int.         MO  MNG         x
 12085         0100-0140 Tests MNG Voice of Mongolia        -MX FE          u
 12085         0900-0930       MNG Voice of Mongolia        E   FE          u
@@ -5591,8 +5592,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 12140         1600-1630       USA VoA Radio Ashna          DR  AFG         /KWT
 12140         1630-1700       USA VoA Radio Ashna          PS  AFG         /KWT
 12140         1700-1730       USA VoA Radio Ashna          DR  AFG         /KWT
-12140         0930-1530 Mo-Fr USA Voice of America         K   FE          /PHL-t
-12140         2130-0330 Mo-Fr USA Voice of America         K   FE          /PHL-t
+12140         0500-1500 Mo-Fr USA Voice of America         K   FE          /PHL-t
 12147         1100-1110 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 12150         1100-1200       CHN CNR1 Jammer/Firedrake    M   FE 
 12150         1200-1300       CHN CNR1 Jammer/Firedrake    M   FE 
@@ -5611,7 +5611,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 12150         1100-1200       USA Voice of America         M   FE          /PHL-t
 12150         1200-1300       USA Voice of America         M   FE          /PHL-t
 12153         1000-1010 Tu,Fr POL E11 Polish Spy Numbers   E               p
-12158         1140-1150 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 12158         1540-1550 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 12160         0000-0100       TWN Sound of Hope            M   FE 
 12160         0100-0200       TWN Sound of Hope            M   FE 
@@ -5630,8 +5629,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 12160         1500-2000       USA WWCR 2 Nashville, TN     E   NAm         n
 12168         1430-1440 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 12175         1520-1530 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
-12178         0740-0750 Su    RUS V07 Russian Spy Numbers  S   FE          kh
-12189         0400-0410 Th    RUS E06 Russian Spy Numbers  E   RUS         c
+12187         1120-1130 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 12190         2200-1600       CHN CNR1 Jammer/Firedrake    M   CHN
 12190         0000-0100       TWN Sound of Hope            M   FE 
 12190         0100-0200       TWN Sound of Hope            M   FE 
@@ -5642,6 +5640,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 12190         1500-1600       TWN Sound of Hope            CA  FE 
 12190         2200-2300       TWN Sound of Hope            M   FE 
 12190         2300-2400       TWN Sound of Hope            M   FE 
+12208         0720-0730 Su    RUS V07 Russian Spy Numbers  S   FE          kh
 12210         2100-1500       CHN CNR1 Jammer/Firedrake    M   CHN
 12210         0000-0100       TWN Sound of Hope            M   FE 
 12210         0100-0200       TWN Sound of Hope            M   FE 
@@ -5918,6 +5917,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13074         0440-0455 irr   J   JFX Kagoshima Fish.Fax       WOc         m
 13074         0700-0715 Tu,Fr J   JFX Kagoshima Fish.Fax       WOc         m
 13074         0730-0745 Tu,Fr J   JFX Kagoshima Fish.Fax       WOc         m
+13074         0800-0815       J   JFX Kagoshima Fish.Fax       WOc         m
 13074         0830-0845       J   JFX Kagoshima Fish.Fax       WOc         m
 13074         0930-0945       J   JFX Kagoshima Fish.Fax       WOc         m
 13077         0000-2400       CAN VFF Iqaluit Radio        E   NAm         ch
@@ -6022,7 +6022,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13368         1410-1420 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 13373         0400-0410 Th    RUS E06 Russian Spy Numbers  E   RUS         c
 13375         1500-1510 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
-13378         0720-0730 Su    RUS V07 Russian Spy Numbers  S   FE          kh
+13408         0700-0710 Su    RUS V07 Russian Spy Numbers  S   FE          kh
 13413         0310-0320 Mo    RUS E06 Russian Spy Numbers  E   RUS         c
 13417.8       0600-1800       F   FUG French Navy FSK      F   Eu          sa
 13417.8       1800-0600       F   FUG French Navy FSK      F   Eu          sa
@@ -6049,6 +6049,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13495         2200-2300       TWN Sound of Hope            M   FE 
 13495         2300-2400       TWN Sound of Hope            M   FE 
 13510         1000-2200       CAN CFH Halifax Radio        -TY NAm         hx
+13519         1410-1420 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 13525         0000-2400 irr   B   Rádio Tury               P   B           xx
 13527.7       0000-2400       RUS Channel Marker D         -CW EEu         se
 13527.8       0000-2400       RUS Channel Marker P         -CW RUS         kl
@@ -6070,6 +6071,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13530         2130-2200       TWN Sound of Hope            M   FE 
 13530         2200-2300       TWN Sound of Hope            M   FE 
 13530         2300-2400       TWN Sound of Hope            M   FE 
+13540         0500-0510 Th    RUS E06 Russian Spy Numbers  E   RUS         xx
 13550         0000-0100       TWN Sound of Hope            M   FE 
 13550         0100-0200       TWN Sound of Hope            M   FE 
 13550         0200-1200       TWN Sound of Hope            M   FE 
@@ -6082,7 +6084,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13550         2200-2300       TWN Sound of Hope            M   FE 
 13550         2300-2400       TWN Sound of Hope            M   FE 
 13560         0000-2400       XUU RFID devices                             /XUU
-13562         1410-1420 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 13570         0000-1200       KOR HLL Seoul Meteo Fax          FE          sg
 13570         1400-0100       USA Radio Marti              S   CUB         g
 13575         1200-1300       CHN China Radio Int.         R   EEu         u
@@ -6092,6 +6093,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13580         0500-0530       ROU Radio Romania Int.       F   Af          t
 13580         2200-2300       ROU Radio Romania Int.       E   FE          t
 13580         1557-1627 Su    SWZ Trans World Radio        KNK EAf
+13584         0310-0320 Mo    RUS E06 Russian Spy Numbers  E   RUS         c
 13590         0300-0400       CHN China Radio Int.         E   FE          b
 13590         0400-0500       CHN China Radio Int.         E   FE          b
 13590         1000-1100       CHN China Radio Int.         E   SEA         b
@@ -6168,7 +6170,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13645         1800-1830       CHN China Radio Int.         HA  NIG         /MLI
 13650         1300-1400       CHN China Radio Int.         M   CAs         u
 13650         2300-2400       CHN China Radio Int.         P   SAm         /CUB
-13650         1500-1700       J   NHK Radio Japan          J   ME          y
 13650         0300-0400       KRE Voice of Korea           M   SEA         u
 13650         0400-0500       KRE Voice of Korea           F   SEA         u
 13650         0500-0600       KRE Voice of Korea           E   SEA         u
@@ -6365,15 +6366,12 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13810         1800-2000       CHN China Radio Int.         D   WEu         ka
 13810         0400-1100       CHN CNR1 DIGITAL             M   FE          k
 13810         0330-0400       CHN CRI DIGITAL              M   Oc          k
-13810         0600-0630       G   BBC                      F   NAf         w
 13825         0100-0900       CHN CNR1 DIGITAL             M   FE          b
 13825         1000-1030       CHN CNR1 Jammer/Firedrake    M   FE          u
 13825         1200-1300       CLA Mizzima Radio            BR  SEA         /UZB
 13825         2200-2400       G   BBC                      E   INS         /OMA-a
-13825         0500-0510 Th    RUS E06 Russian Spy Numbers  E   RUS         xx
 13825         1000-1030       TWN Radio Taiwan Int.        CA  SEA         p
 13825         1030-1100       TWN Radio Taiwan Int.        HK  SEA         p
-13827         0310-0320 Mo    RUS E06 Russian Spy Numbers  E   RUS         c
 13830         1530-1600       CVA Radio Vaticana           AH  EAf
 13830         1600-1615 Sa    CVA Radio Vaticana           SWA EAf         /MDG
 13830         1600-1630 Su-Mo CVA Radio Vaticana           SWA EAf         /MDG
@@ -6426,6 +6424,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13882.5       1636-1655       D   DWD Pinneberg Met Fax        Eu          pi
 13882.5       1800-1947       D   DWD Pinneberg Met Fax        Eu          pi
 13882.5       2035-2300       D   DWD Pinneberg Met Fax        Eu          pi
+13887         1100-1110 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 13890         2200-1700       CHN CNR1 Jammer/Firedrake    M   CHN
 13890         0000-0100       TWN Sound of Hope            M   FE 
 13890         0100-0200       TWN Sound of Hope            M   FE 
@@ -6456,7 +6455,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13920         2200-2300       TWN Sound of Hope            M   FE 
 13920         2300-2400       TWN Sound of Hope            M   FE 
 13945         0600-0610 Th    RUS E06 Russian Spy Numbers  E   RUS         xx
-13958         1120-1130 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 13960         2130-1500       CHN CNR1 Jammer/Firedrake    M   FE 
 13960         0000-0100       TWN Sound of Hope            M   FE 
 13960         0100-0200       TWN Sound of Hope            M   FE 
@@ -6471,7 +6469,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 13974         0300-0400       TWN Star-Star Bc.Station     M   CHN         y
 13974         1100-1200       TWN Star-Star Bc.Station     M   CHN         y
 13974         1200-1300       TWN Star-Star Bc.Station     M   CHN         y
-13978         0700-0710 Su    RUS V07 Russian Spy Numbers  S   FE          kh
 13980         2300-1500       CHN CNR1 Jammer/Firedrake    M   FE 
 13980         0000-0100       TWN Sound of Hope            M   FE 
 13980         0100-0200       TWN Sound of Hope            M   FE 
@@ -6536,6 +6533,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 14635         2300-2400       TWN Sound of Hope            M   FE 
 14636         0220-0230 Su    RUS V07 Russian Spy Numbers  S   FE          kh
 14638         0000-2400       ISR 4XZ Israeli Navy Haifa   -CW    
+14648         0300-0310 Th    RUS E06 Russian Spy Numbers  E   RUS         c
 14690         2200-1500       CHN CNR1 Jammer/Firedrake    M   FE 
 14690         0000-0100       TWN Sound of Hope            M   FE 
 14690         0100-0200       TWN Sound of Hope            M   FE 
@@ -6571,6 +6569,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 14800         2130-2200       TWN Sound of Hope            M   FE 
 14800         2200-2300       TWN Sound of Hope            M   FE 
 14800         2300-2400       TWN Sound of Hope            M   FE 
+14819         1430-1440 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 14820         2100-1500       CHN CNR1 Jammer/Firedrake    M   CHN
 14820.1       0000-0100       TWN Sound of Hope            M   FE 
 14820.1       0100-0200       TWN Sound of Hope            M   FE 
@@ -6582,8 +6581,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 14820.1       2130-2200       TWN Sound of Hope            M   FE 
 14820.1       2200-2300       TWN Sound of Hope            M   FE 
 14820.1       2300-2400       TWN Sound of Hope            M   FE 
-14845         0300-0310 Th    RUS E06 Russian Spy Numbers  E   RUS         c
-14862         1430-1440 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 14870         2200-1600       CHN CNR1 Jammer/Firedrake    M   CHN
 14870.1       0100-0200       TWN Sound of Hope            M   FE 
 14870.1       0200-1200       TWN Sound of Hope            M   FE 
@@ -6624,7 +6621,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 14940         2300-2400       TWN Sound of Hope            M   FE 
 14944         1200-1300       TWN Star-Star Bc.Station     M   CHN         y
 14944         1300-1400       TWN Star-Star Bc.Station     M   CHN         y
-14958         1100-1110 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 14972         0315-0325 Mo,We POL E11 Polish Spy Numbers   E               p
 14980         2200-1500       CHN CNR1 Jammer/Firedrake    M   CHN
 14980         0000-0100       TWN Sound of Hope            M   FE 
@@ -6662,7 +6658,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 15120         1900-2000       ROU Radio Romania Int.       S   E           t
 15120         1030-1045 Mo-Sa USA Trans World Radio        MO  MNG         /UZB
 15120         1045-1100       USA Trans World Radio        MO  MNG         /UZB
-15120         0330-0930 Mo-Fr USA Voice of America         K   FE          /PHL-t
 15125         0000-0100       CHN China Radio Int.         E   SEA         b
 15125         0100-0200       CHN China Radio Int.         E   SEA         b
 15125         1600-1700       CHN China Radio Int.         A   EAf         /MLI
@@ -6693,10 +6688,12 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 15140         1800-1830       CUB Radio Habana Cuba        F   NAm         b
 15140         1830-1900       CUB Radio Habana Cuba        CR  NAm         b
 15140         1900-2000       CUB Radio Habana Cuba        E   NAm         b
+15140         0000-0500 Mo-Fr USA Voice of America         K   FE          /PHL-t
+15140         2200-2400 Su-Th USA Voice of America         K   FE          /PHL-t
 15145         0600-0700       CHN China Radio Int.         E   ME          ka
 15145         0700-0800       CHN China Radio Int.         AM  SEA         x
 15145         0400-0500 irr   F   TDF DIGITAL              F   Af          i
-15145         1700-1730 Fr-Su TWN Radio Taiwan Int.        D   Eu          s
+15145         1700-1730 Fr-Su TWN Radio Taiwan Int.        F   Eu          s
 15150         0150-0155 Tu-Sa B   Rádio Nacional Amazônia  E   B           b
 15150         0155-0200 Tu-Sa B   Rádio Nacional Amazônia  S   B           b
 15150         0625-0207       B   Rádio Nacional Amazônia  P   B           b
@@ -7033,7 +7030,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 15445         0800-0900       CHN CRI DIGITAL              M   Oc          k
 15445         1500-1545 12356 ETH Noise Jammer                 EAf
 15445         1500-1530 12356 I   IRRS Oromia Nat.Media    OO  EAf         /ROU-g
-15450         0030-0045 Fr-Su PHL FEBC Manila              C-M SEA         b
+15450         0030-0045 Fr-Su PHL FEBC Manila              RUM SEA         b
 15450         0045-0100 Fr-Su PHL FEBC Manila              RAK SEA         b
 15450         0900-0930       PHL FEBC Manila              KHA SEA         b
 15450         0930-1000       PHL FEBC Manila              MO  FE          i
@@ -7205,7 +7202,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 15615         1915-2045       AUS VMW Wiluna Met Fax           Oc          w
 15615         2215-2400       AUS VMW Wiluna Met Fax           Oc          w
 15615         1730-1930       CLA Radio Payam              FS  IRN         /G-w
-15615         0600-0610 Th    RUS E06 Russian Spy Numbers  E   RUS         xx
 15620         0920-1250       IRN IRIB Voice of I.R.Iran   DR  CAs         s
 15620         1400-1430       PHL FEBC Manila              JV  INS         b
 15625         2100-2200       USA Adventist World Radio    M   FE          /GUM-a
@@ -7217,7 +7213,6 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 15635         1430-1700       USA Radio Farda              FS  IRN         /UAE
 15640         0400-0500       CHN CRI DIGITAL              M   Oc          k
 15640         0500-0530       F   Radio for Peace Int.     FS  IRN         /UZB
-15640         0000-0100       J   NHK Radio Japan          J   ME          y
 15640         0200-0330       PHL Radyo Pilipinas          E   ME          t
 15660         1100-1300       CHN China Radio Int.         E   SAs         ka
 15660         1330-1630       USA VoA Radio Ashna          DR  AFG         /KWT
@@ -7357,6 +7352,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 15890         1200-1300       TWN Sound of Hope            M   FE 
 15890         1300-1400       TWN Sound of Hope            M   FE 
 15890         0000-0100       TWN Star-Star Bc.Station     M   CHN         y
+15919         1450-1500 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 15920         0000-2400       CHN CNR1 Jammer/Firedrake    M   FE 
 15920         0000-0100       TWN Sound of Hope            M   FE 
 15920         0100-0200       TWN Sound of Hope            M   FE 
@@ -7401,6 +7397,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 16100         2130-2200       TWN Sound of Hope            M   FE 
 16100         2200-2300       TWN Sound of Hope            M   FE 
 16100         2300-2400       TWN Sound of Hope            M   FE 
+16115         0600-0610 Th    RUS E06 Russian Spy Numbers  E   RUS         xx
 16123         0000-2400       PTR NAU US Navy              -TY NAm         i
 16135         1719-0400       HWA KVM70 Fax Honolulu           Oc          nm
 16160         2130-1500       CHN CNR1 Jammer/Firedrake    M   CHN
@@ -7413,9 +7410,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 16160         2130-2200       TWN Sound of Hope            M   FE 
 16160         2200-2300       TWN Sound of Hope            M   FE 
 16160         2300-2400       TWN Sound of Hope            M   FE 
-16162         1450-1500 Th,Sa RUS E07 Russian Spy Numbers  E   RUS         m
 16213         0000-2400       PTR NAU US Navy              -TY NAm         i
-16232         1500-1510 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 16249.7       0000-0100       TWN Sound of Hope            M   FE 
 16249.7       0100-0200       TWN Sound of Hope            M   FE 
 16249.7       0200-1200       TWN Sound of Hope            M   FE 
@@ -7507,6 +7502,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 16907.5       0400-0415       J   JFX Kagoshima Fish.Fax       WOc         m
 16907.5       0610-0625       J   JFX Kagoshima Fish.Fax       WOc         m
 16907.5       0700-0715 Mo,We J   JFX Kagoshima Fish.Fax       WOc         m
+16907.5       0800-0815       J   JFX Kagoshima Fish.Fax       WOc         m
 16907.5       1030-1055       J   JFX Kagoshima Fish.Fax       WOc         m
 16910         0000-0900       KOR HLJ Seoul Radio          -CW FE 
 16980         2100-1600       CHN CNR1 Jammer/Firedrake    M   CHN
@@ -7605,6 +7601,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 17440.1       2130-2200       TWN Sound of Hope            M   FE 
 17440.1       2200-2300       TWN Sound of Hope            M   FE 
 17440.1       2300-2400       TWN Sound of Hope            M   FE 
+17453         1500-1510 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 17470         0600-0610 Th    RUS E06 Russian Spy Numbers  E   RUS         xx
 17485         0500-0700       CHN China Radio Int.         A   NAf         ka
 17490         0000-0100       CHN China Radio Int.         CA  SEA         b
@@ -7664,7 +7661,7 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 17540         2300-2400       CHN China Radio Int.         CA  PHL         b
 17540         0700-1000 irr   CVA Radio Vaticana           E   CAf
 17540         1500-1800 irr   CVA Radio Vaticana           E   CAf
-17545         1500-1600       F   Mini Atlantique Weather  F   WAf         i
+17545         1500-1600       F   Mini Atlantique Weather  F,E NAO         i
 17550         0000-0600       CHN China National Radio 1   M   CHN         b
 17550         0600-0900 We-Mo CHN China National Radio 1   M   CHN         b
 17550         0900-1200       CHN China National Radio 1   M   CHN         b
@@ -7884,10 +7881,10 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 17790         1500-2130       USA PAB Radio Africa         E   SAm         o
 17790         2130-2200       USA WRMI Radio Miami Int.    E   ENA         o
 17800         2300-0600       CHN China National Radio 8   MO  CHN         qq
-17800         2200-2400       J   NHK Radio Japan          J   ME          y
+17800         2200-2350       J   NHK Radio Japan          J   ME          y
 17810         0430-0500       G   BBC                      DR  AFG         /OMA-a
 17810         0500-0530       G   BBC                      PS  AFG         /OMA-a
-17810         0700-0730 Su-Th G   BBC                      A   EAf         /OMA-a
+17810         0700-0730 Su-Th G   BBC                      A   EAf         /UAE
 17810         0830-0930       G   BBC                      DR  AFG         /OMA-a
 17810         0930-1030       G   BBC                      PS  AFG         /OMA-a
 17810         1030-1100       G   BBC                      DR  AFG         /OMA-a
@@ -8002,13 +7999,13 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 18200         2300-2400       TWN Sound of Hope            M   FE 
 18217         0200-0210 Su    RUS V07 Russian Spy Numbers  S   FE          kh
 18235         0000-2400       CHN BAF Beijing Meteo Fax        FE          bm
-18332         1520-1530 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
-18900         2200-1200       CHN CNR1 Jammer/Firedrake    M   CHN
-18900.2       0000-0100       TWN Sound of Hope            M   FE 
-18900.2       0100-0200       TWN Sound of Hope            M   FE 
-18900.2       0200-1200       TWN Sound of Hope            M   FE 
-18900.2       2200-2300       TWN Sound of Hope            M   FE 
-18900.2       2300-2400       TWN Sound of Hope            M   FE 
+18353         1520-1530 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
+18950         2200-1200       CHN CNR1 Jammer/Firedrake    M   CHN
+18950         0000-0100       TWN Sound of Hope            M   FE 
+18950         0100-0200       TWN Sound of Hope            M   FE 
+18950         0200-1200       TWN Sound of Hope            M   FE 
+18950         2200-2300       TWN Sound of Hope            M   FE 
+18950         2300-2400       TWN Sound of Hope            M   FE 
 18970         2200-1500       CHN CNR1 Jammer/Firedrake    M   CHN
 18970         0000-0100       TWN Sound of Hope            M   FE 
 18970         0100-0200       TWN Sound of Hope            M   FE 
@@ -8028,8 +8025,8 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 19052         1000-1100       TWN Star-Star Bc.Station     M   CHN         y
 19052         1100-1200       TWN Star-Star Bc.Station     M   CHN         y
 19052         1300-1400       TWN Star-Star Bc.Station     M   CHN         y
-19132         1540-1550 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 19184         0845-0855 Tu,Th POL E11 Polish Spy Numbers   E               p
+19253         1540-1550 Tu,Fr RUS E07 Russian Spy Numbers  E   RUS         m
 19770         0000-2400       CHN XSQ Guangzhou Radio      M   FE          gx
 19770         0000-2400       I   Romaradio IAR            I   SEu         r
 19779         0000-2400       CHN XSQ Guangzhou Radio      M   FE          gx
@@ -8142,13 +8139,13 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 21760         1100-1145 Sa    CVA Radio Vaticana           M   FE 
 21760         1230-1250       CVA Radio Vaticana           R   Sib
 21775         1100-1145 Sa    CVA Radio Vaticana           M   FE 
-21800         2300-1400       CHN CNR1 Jammer/Firedrake    M   FE 
-21800         0000-0100       TWN Sound of Hope            M   FE 
-21800         0100-0200       TWN Sound of Hope            M   FE 
-21800         0200-1200       TWN Sound of Hope            M   FE 
-21800         1200-1300       TWN Sound of Hope            M   FE 
-21800         1300-1400       TWN Sound of Hope            M   FE 
-21800         2300-2400       TWN Sound of Hope            M   FE 
+21780         2300-1400       CHN CNR1 Jammer/Firedrake    M   FE 
+21780         0000-0100       TWN Sound of Hope            M   FE 
+21780         0100-0200       TWN Sound of Hope            M   FE 
+21780         0200-1200       TWN Sound of Hope            M   FE 
+21780         1200-1300       TWN Sound of Hope            M   FE 
+21780         1300-1400       TWN Sound of Hope            M   FE 
+21780         2300-2400       TWN Sound of Hope            M   FE 
 21830         0430-0500       CHN CRI DIGITAL              M   Oc          k
 21830         0500-0530       CHN CRI DIGITAL              M   Oc          k
 21925         0000-2400       USA New York Radio           E   NAO         bg
@@ -8203,3 +8200,4 @@ kHz           Time(UTC) Days  ITU Station                Lang. Target   Remarks
 26151         0000-2400       CHN XSV Tianjin Radio        M   FE          tj
 26163         0000-2400       GRC SVO Olimpia Radio        -TY SEu         o
 26172         0000-2400       I   Romaradio IAR            I   SEu         r
+27184         0000-2400 irr   USA K-LOVE/Air1 Pirate Enid  E   CNA         en
