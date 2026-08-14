@@ -1,4 +1,4 @@
-let allSchedules = [];
+﻿let allSchedules = [];
 let userLocation = null;
 let spaceWeather = null;
 
@@ -3675,6 +3675,24 @@ async function loadSchedules() {
         allSchedules =
             data.schedules || [];
 
+        // DXing.world Shortwave Bridge deep-link support.
+        // Example: https://shortwave.sbs/?q=BBC
+        const bridgeParams = new URLSearchParams(window.location.search);
+        const bridgeQuery = (bridgeParams.get("q") || "").trim();
+
+        if (bridgeQuery && els.searchInput) {
+            els.searchInput.value = bridgeQuery;
+
+            // Search the entire schedule rather than the default 49m/on-air view.
+            if (els.bandSelect) {
+                els.bandSelect.value = "";
+            }
+
+            if (els.onAirOnly) {
+                els.onAirOnly.checked = false;
+            }
+        }
+
         renderSourceInfo(
             data.sources
         );
@@ -3702,6 +3720,21 @@ async function loadSchedules() {
             `• lists updated ${updated}`;
 
         render();
+
+        if (bridgeQuery) {
+            requestAnimationFrame(() => {
+                document
+                    .querySelector('[data-section="controls"]')
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+                els.searchInput?.focus({
+                    preventScroll: true
+                });
+            });
+        }
     } catch (error) {
         allSchedules = [];
 
