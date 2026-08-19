@@ -3203,19 +3203,24 @@ function getActiveBySources() {
 
 async function runDxiShadowMode() {
     try {
-        const [
-            { LiveDataAdapter },
-            { ActivityAnalyst },
-            { GreylineAnalyst },
-            { PropagationAnalyst },
-            { DxIntelligenceEngine }
+        const [{
+                LiveDataAdapter
+            }, {
+                ActivityAnalyst
+            }, {
+                GreylineAnalyst
+            }, {
+                PropagationAnalyst
+            }, {
+                DxIntelligenceEngine
+            }
         ] = await Promise.all([
-            import("./dxi/adapters/LiveDataAdapter.js"),
-            import("./dxi/analysts/ActivityAnalyst.js"),
-            import("./dxi/analysts/GreylineAnalyst.js"),
-            import("./dxi/analysts/PropagationAnalyst.js"),
-            import("./dxi/engine/DxIntelligenceEngine.js")
-        ]);
+                    import("./dxi/adapters/LiveDataAdapter.js"),
+                    import("./dxi/analysts/ActivityAnalyst.js"),
+                    import("./dxi/analysts/GreylineAnalyst.js"),
+                    import("./dxi/analysts/PropagationAnalyst.js"),
+                    import("./dxi/engine/DxIntelligenceEngine.js")
+                ]);
 
         const active =
             getActiveBySources();
@@ -3225,18 +3230,18 @@ async function runDxiShadowMode() {
          */
         const stations =
             active.map(item => ({
-                frequency:
+                    frequency:
                     Number(item.freq),
 
-                station:
+                    station:
                     item.station || "",
 
-                band:
+                    band:
                     item.band || "",
 
-                source:
+                    source:
                     item.source || ""
-            }));
+                }));
 
         /*
          * Band activity
@@ -3265,8 +3270,7 @@ async function runDxiShadowMode() {
             active
             .filter(item =>
                 item.txLat &&
-                item.txLon
-            )
+                item.txLon)
             .map(item => {
                 const txLat =
                     Number(item.txLat);
@@ -3276,25 +3280,23 @@ async function runDxiShadowMode() {
 
                 return {
                     frequency:
-                        Number(item.freq),
+                    Number(item.freq),
 
                     station:
-                        item.station || "",
+                    item.station || "",
 
                     band:
-                        item.band || "",
+                    item.band || "",
 
                     rxMode:
-                        getSolarModeForLocation(
-                            rxLocation.lat,
-                            rxLocation.lon
-                        ),
+                    getSolarModeForLocation(
+                        rxLocation.lat,
+                        rxLocation.lon),
 
                     txMode:
-                        getSolarModeForLocation(
-                            txLat,
-                            txLon
-                        )
+                    getSolarModeForLocation(
+                        txLat,
+                        txLon)
                 };
             });
 
@@ -3304,35 +3306,27 @@ async function runDxiShadowMode() {
         const rxElevation =
             getSolarElevationApprox(
                 rxLocation.lat,
-                rxLocation.lon
-            );
+                rxLocation.lon);
 
         const mode =
             getPathMode(
-                rxElevation
-            );
+                rxElevation);
 
         const propagation = {
             kp:
-                Number(
-                    spaceWeather?.kp ?? 0
-                ),
+            spaceWeather?.kp ?? null,
 
             sfi:
-                Number(
-                    spaceWeather?.sfi ?? 100
-                ),
+            spaceWeather?.sfi ?? null,
 
             mode,
 
             favoredBands:
-                bandOrder.filter(
-                    band =>
-                        getConditionScore(
-                            band,
-                            mode
-                        ) >= 70
-                )
+            bandOrder.filter(
+                band =>
+                getConditionScore(
+                    band,
+                    mode) >= 70)
         };
 
         /*
@@ -3361,24 +3355,21 @@ async function runDxiShadowMode() {
 
         const activityResult =
             activityAnalyst.analyze(
-                snapshot.stations
-            );
+                snapshot.stations);
 
         const greylineAnalyst =
             new GreylineAnalyst();
 
         const greylineResult =
             greylineAnalyst.analyze(
-                snapshot.greyline.paths
-            );
+                snapshot.greyline.paths);
 
         const propagationAnalyst =
             new PropagationAnalyst();
 
         const propagationResult =
             propagationAnalyst.analyze(
-                snapshot.propagation
-            );
+                snapshot);
 
         /*
          * Intelligence engine
@@ -3388,42 +3379,36 @@ async function runDxiShadowMode() {
 
         const intelligence =
             engine.combine([
-                activityResult,
-                greylineResult,
-                propagationResult
-            ]);
+                    activityResult,
+                    greylineResult,
+                    propagationResult
+                ]);
 
         /*
          * Shadow-mode diagnostics
          */
         console.group(
-            "📡 DX Intelligence shadow mode"
-        );
+            "📡 DX Intelligence shadow mode");
 
         console.log(
             "Snapshot:",
-            snapshot
-        );
+            snapshot);
 
         console.log(
             "Activity analysis:",
-            activityResult
-        );
+            activityResult);
 
         console.log(
             "Greyline analysis:",
-            greylineResult
-        );
+            greylineResult);
 
         console.log(
             "Propagation analysis:",
-            propagationResult
-        );
+            propagationResult);
 
         console.log(
             "DX intelligence:",
-            intelligence
-        );
+            intelligence);
 
         console.groupEnd();
 
@@ -3431,8 +3416,7 @@ async function runDxiShadowMode() {
     } catch (error) {
         console.warn(
             "DX Intelligence shadow mode failed:",
-            error
-        );
+            error);
 
         return null;
     }

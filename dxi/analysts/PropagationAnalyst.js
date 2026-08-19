@@ -15,20 +15,40 @@ export class PropagationAnalyst {
     analyze(snapshot = {}) {
         if (!snapshot || typeof snapshot !== "object") {
             throw new TypeError(
-                "PropagationAnalyst expects a DX snapshot."
-            );
+                "PropagationAnalyst expects a DX snapshot.");
         }
 
         const propagation =
             snapshot.propagation || {};
 
-        const kp = Number(propagation.kp);
-        const sfi = Number(propagation.sfi);
+        const toFiniteNumber = value => {
+            if (
+                value === null ||
+                value === undefined ||
+                value === "") {
+                return NaN;
+            }
+
+            const number =
+                Number(value);
+
+            return Number.isFinite(number)
+             ? number
+             : NaN;
+        };
+
+        const kp =
+            toFiniteNumber(
+                propagation.kp);
+
+        const sfi =
+            toFiniteNumber(
+                propagation.sfi);
 
         const favoredBands =
             Array.isArray(propagation.favoredBands)
-                ? propagation.favoredBands
-                : [];
+             ? propagation.favoredBands
+             : [];
 
         const diagnostics = [];
 
@@ -48,7 +68,7 @@ export class PropagationAnalyst {
                 diagnostics.push({
                     code: "HIGH_SOLAR_FLUX",
                     message:
-                        `Solar flux is strong at ${sfi}.`,
+`Solar flux is strong at ${sfi}.`,
                     value: sfi
                 });
             } else if (sfi >= 120) {
@@ -57,7 +77,7 @@ export class PropagationAnalyst {
                 diagnostics.push({
                     code: "GOOD_SOLAR_FLUX",
                     message:
-                        `Solar flux is favourable at ${sfi}.`,
+`Solar flux is favourable at ${sfi}.`,
                     value: sfi
                 });
             } else if (sfi < 90) {
@@ -66,7 +86,7 @@ export class PropagationAnalyst {
                 diagnostics.push({
                     code: "LOW_SOLAR_FLUX",
                     message:
-                        `Solar flux is relatively low at ${sfi}.`,
+`Solar flux is relatively low at ${sfi}.`,
                     value: sfi
                 });
             }
@@ -85,7 +105,7 @@ export class PropagationAnalyst {
                 diagnostics.push({
                     code: "QUIET_GEOMAGNETIC",
                     message:
-                        `Geomagnetic conditions are quiet at Kp ${kp}.`,
+`Geomagnetic conditions are quiet at Kp ${kp}.`,
                     value: kp
                 });
             } else if (kp >= 5) {
@@ -94,7 +114,7 @@ export class PropagationAnalyst {
                 diagnostics.push({
                     code: "GEOMAGNETIC_STORM",
                     message:
-                        `Geomagnetic activity is elevated at Kp ${kp}.`,
+`Geomagnetic activity is elevated at Kp ${kp}.`,
                     value: kp
                 });
             } else if (kp >= 4) {
@@ -103,7 +123,7 @@ export class PropagationAnalyst {
                 diagnostics.push({
                     code: "DISTURBED_GEOMAGNETIC",
                     message:
-                        `Geomagnetic conditions are disturbed at Kp ${kp}.`,
+`Geomagnetic conditions are disturbed at Kp ${kp}.`,
                     value: kp
                 });
             }
@@ -123,20 +143,18 @@ export class PropagationAnalyst {
             diagnostics.push({
                 code: "FAVORED_BANDS",
                 message:
-                    `${favoredBands.join(", ")} currently have favourable propagation support.`,
+`${favoredBands.join(", ")} currently have favourable propagation support.`,
                 value: favoredBands
             });
         }
 
         score = Math.max(
-            0,
-            Math.min(100, Math.round(score))
-        );
+                0,
+                Math.min(100, Math.round(score)));
 
         confidence = Math.min(
-            100,
-            confidence
-        );
+                100,
+                confidence);
 
         let propagationLevel = "normal";
 
@@ -159,12 +177,12 @@ export class PropagationAnalyst {
 
             metadata: {
                 kp: Number.isFinite(kp)
-                    ? kp
-                    : null,
+                 ? kp
+                 : null,
 
                 sfi: Number.isFinite(sfi)
-                    ? sfi
-                    : null,
+                 ? sfi
+                 : null,
 
                 favoredBands,
                 propagationLevel
