@@ -86,7 +86,20 @@ export class ActivityAnalyst {
 
         const diagnostics = [];
 
-        if (busiestBand) {
+        const isNearTie =
+            busiestBand &&
+            secondBand &&
+            secondBandCount > 0 &&
+            leadRatio <= 0.10;
+
+        if (isNearTie) {
+            diagnostics.push({
+                code: "NEAR_TIE",
+                message:
+`${busiestBand} and ${secondBand} are nearly tied for current activity.`,
+                value: leadRatio
+            });
+        } else if (busiestBand) {
             diagnostics.push({
                 code: "BUSIEST_BAND",
                 message:
