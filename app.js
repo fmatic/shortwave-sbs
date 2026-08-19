@@ -3203,6 +3203,101 @@ function getActiveBySources() {
     });
 }
 
+async function runDxiShadowMode() {
+    try {
+        const [
+            { LiveDataAdapter },
+            { ActivityAnalyst },
+            { DxIntelligenceEngine }
+        ] = await Promise.all([
+            import("./dxi/adapters/LiveDataAdapter.js"),
+            import("./dxi/analysts/ActivityAnalyst.js"),
+            import("./dxi/engine/DxIntelligenceEngine.js")
+        ]);
+
+        const active =
+            getActiveBySources();
+
+        /*
+         * Normalize only the station data DXI needs
+         * at this stage.
+         */
+        const stations =
+            active.map(item => ({
+                frequency: Number(item.freq),
+                station: item.station || "",
+                band: item.band || "",
+                source: item.source || ""
+            }));
+
+        const bandActivity = {};
+
+        for (const station of stations) {
+            if (!station.band) {
+                continue;
+            }
+
+            bandActivity[station.band] =
+                (bandActivity[station.band] || 0) + 1;
+        }
+
+        const adapter =
+            new LiveDataAdapter();
+
+        const snapshot =
+            adapter.createSnapshot({
+                stations,
+                bandActivity
+            });
+
+        const activityAnalyst =
+            new ActivityAnalyst();
+
+        const activityResult =
+            activityAnalyst.analyze(
+                snapshot.stations
+            );
+
+        const engine =
+            new DxIntelligenceEngine();
+
+        const intelligence =
+            engine.combine([
+                activityResult
+            ]);
+
+        console.group(
+            "📡 DX Intelligence shadow mode"
+        );
+
+        console.log(
+            "Snapshot:",
+            snapshot
+        );
+
+        console.log(
+            "Activity analysis:",
+            activityResult
+        );
+
+        console.log(
+            "DX intelligence:",
+            intelligence
+        );
+
+        console.groupEnd();
+
+        return intelligence;
+    } catch (error) {
+        console.warn(
+            "DX Intelligence shadow mode failed:",
+            error
+        );
+
+        return null;
+    }
+}
+
 function renderTargets() {
     const band = els.bandSelect.value;
     const active = getActiveBySources().filter(item => {
@@ -3720,6 +3815,7 @@ async function loadSchedules() {
             `• lists updated ${updated}`;
 
         render();
+		runDxiShadowMode();
 
         if (bridgeQuery) {
             requestAnimationFrame(() => {
