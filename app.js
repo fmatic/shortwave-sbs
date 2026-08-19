@@ -3203,38 +3203,43 @@ function getActiveBySources() {
 
 async function runDxiShadowMode() {
     try {
-        const [{
-                LiveDataAdapter
-            }, {
-                ActivityAnalyst
-            }, {
-                PropagationAnalyst
-            }, {
-                DxIntelligenceEngine
-            }
+        const [
+            { LiveDataAdapter },
+            { ActivityAnalyst },
+            { GreylineAnalyst },
+            { PropagationAnalyst },
+            { DxIntelligenceEngine }
         ] = await Promise.all([
-                    import("./dxi/adapters/LiveDataAdapter.js"),
-                    import("./dxi/analysts/ActivityAnalyst.js"),
-                    import("./dxi/analysts/PropagationAnalyst.js"),
-                    import("./dxi/engine/DxIntelligenceEngine.js")
-                ]);
+            import("./dxi/adapters/LiveDataAdapter.js"),
+            import("./dxi/analysts/ActivityAnalyst.js"),
+            import("./dxi/analysts/GreylineAnalyst.js"),
+            import("./dxi/analysts/PropagationAnalyst.js"),
+            import("./dxi/engine/DxIntelligenceEngine.js")
+        ]);
 
         const active =
             getActiveBySources();
 
         /*
-         * Normalize live station data for DXI.
+         * Active stations
          */
         const stations =
             active.map(item => ({
-                    frequency: Number(item.freq),
-                    station: item.station || "",
-                    band: item.band || "",
-                    source: item.source || ""
-                }));
+                frequency:
+                    Number(item.freq),
+
+                station:
+                    item.station || "",
+
+                band:
+                    item.band || "",
+
+                source:
+                    item.source || ""
+            }));
 
         /*
-         * Build current band activity snapshot.
+         * Band activity
          */
         const bandActivity = {};
 
@@ -3248,39 +3253,90 @@ async function runDxiShadowMode() {
         }
 
         /*
-         * Determine current propagation mode from
-         * the user's active/fallback receiving location.
-         *
-         * This is independent from broadcast activity.
+         * Receiver location
          */
-        const location =
+        const rxLocation =
             getCurrentLocationForCalculations();
 
-        const solarElevation =
-            getSolarElevationApprox(
-                location.lat,
-                location.lon);
-
-        const propagationMode =
-            getPathMode(solarElevation);
-
         /*
-         * Use the existing shortwave.sbs band-condition
-         * model to determine which bands are currently
-         * propagation-favored.
-         *
-         * >= 70 corresponds to Very good / Excellent
-         * in the current HF Conditions model.
+         * Live greyline paths
          */
-        const favoredBands =
-            bandOrder.filter(
-                band =>
-                getConditionScore(
-                    band,
-                    propagationMode) >= 70);
+        const paths =
+            active
+            .filter(item =>
+                item.txLat &&
+                item.txLon
+            )
+            .map(item => {
+                const txLat =
+                    Number(item.txLat);
+
+                const txLon =
+                    Number(item.txLon);
+
+                return {
+                    frequency:
+                        Number(item.freq),
+
+                    station:
+                        item.station || "",
+
+                    band:
+                        item.band || "",
+
+                    rxMode:
+                        getSolarModeForLocation(
+                            rxLocation.lat,
+                            rxLocation.lon
+                        ),
+
+                    txMode:
+                        getSolarModeForLocation(
+                            txLat,
+                            txLon
+                        )
+                };
+            });
 
         /*
-         * Create one stable DXI snapshot.
+         * Propagation picture
+         */
+        const rxElevation =
+            getSolarElevationApprox(
+                rxLocation.lat,
+                rxLocation.lon
+            );
+
+        const mode =
+            getPathMode(
+                rxElevation
+            );
+
+        const propagation = {
+            kp:
+                Number(
+                    spaceWeather?.kp ?? 0
+                ),
+
+            sfi:
+                Number(
+                    spaceWeather?.sfi ?? 100
+                ),
+
+            mode,
+
+            favoredBands:
+                bandOrder.filter(
+                    band =>
+                        getConditionScore(
+                            band,
+                            mode
+                        ) >= 70
+                )
+        };
+
+        /*
+         * Normalize live data
          */
         const adapter =
             new LiveDataAdapter();
@@ -3290,65 +3346,84 @@ async function runDxiShadowMode() {
                 stations,
                 bandActivity,
 
-                propagation: {
-                    kp: spaceWeather?.kp,
-                    sfi: spaceWeather?.sfi,
-                    favoredBands,
-                    mode: propagationMode
-                }
+                greyline: {
+                    paths
+                },
+
+                propagation
             });
 
         /*
-         * Independent analysts.
+         * Analysts
          */
         const activityAnalyst =
             new ActivityAnalyst();
 
+        const activityResult =
+            activityAnalyst.analyze(
+                snapshot.stations
+            );
+
+        const greylineAnalyst =
+            new GreylineAnalyst();
+
+        const greylineResult =
+            greylineAnalyst.analyze(
+                snapshot.greyline.paths
+            );
+
         const propagationAnalyst =
             new PropagationAnalyst();
 
-        const activityResult =
-            activityAnalyst.analyze(
-                snapshot.stations);
-
         const propagationResult =
             propagationAnalyst.analyze(
-                snapshot);
+                snapshot.propagation
+            );
 
         /*
-         * Correlate independent analyst results.
+         * Intelligence engine
          */
         const engine =
             new DxIntelligenceEngine();
 
         const intelligence =
             engine.combine([
-                    activityResult,
-                    propagationResult
-                ]);
+                activityResult,
+                greylineResult,
+                propagationResult
+            ]);
 
         /*
-         * Shadow mode:
-         * observe only — no UI changes.
+         * Shadow-mode diagnostics
          */
         console.group(
-            "📡 DX Intelligence shadow mode");
+            "📡 DX Intelligence shadow mode"
+        );
 
         console.log(
             "Snapshot:",
-            snapshot);
+            snapshot
+        );
 
         console.log(
             "Activity analysis:",
-            activityResult);
+            activityResult
+        );
+
+        console.log(
+            "Greyline analysis:",
+            greylineResult
+        );
 
         console.log(
             "Propagation analysis:",
-            propagationResult);
+            propagationResult
+        );
 
         console.log(
             "DX intelligence:",
-            intelligence);
+            intelligence
+        );
 
         console.groupEnd();
 
@@ -3356,7 +3431,8 @@ async function runDxiShadowMode() {
     } catch (error) {
         console.warn(
             "DX Intelligence shadow mode failed:",
-            error);
+            error
+        );
 
         return null;
     }
