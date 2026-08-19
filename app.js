@@ -192,8 +192,7 @@ function getDataResourceLabel(resource) {
 function renderDataLoadWarning() {
     if (
         !els.dataLoadWarning ||
-        !els.dataLoadWarningText
-    ) {
+        !els.dataLoadWarningText) {
         return;
     }
 
@@ -203,7 +202,7 @@ function renderDataLoadWarning() {
     }
 
     const resources = [...failedDataResources]
-        .map(getDataResourceLabel);
+    .map(getDataResourceLabel);
 
     let resourceText = "";
 
@@ -211,19 +210,19 @@ function renderDataLoadWarning() {
         resourceText = resources[0];
     } else if (resources.length === 2) {
         resourceText =
-            `${resources[0]} and ${resources[1]}`;
+`${resources[0]} and ${resources[1]}`;
     } else {
         resourceText =
-            `${resources.slice(0, -1).join(", ")} ` +
-            `and ${resources.at(-1)}`;
+            `${resources.slice(0, -1).join(", ")} ` + 
+`and ${resources.at(-1)}`;
     }
 
     els.dataLoadWarningText.textContent =
-        `Unable to load ${resourceText}. ` +
-        `A browser extension, privacy tool or temporary network ` +
-        `problem may be blocking required resources. ` +
-        `shortwave.sbs contains no advertisements or ` +
-        `advertising trackers.`;
+        `Unable to load ${resourceText}. ` + 
+        `A browser extension, privacy tool or temporary network ` + 
+        `problem may be blocking required resources. ` + 
+        `shortwave.sbs contains no advertisements or ` + 
+`advertising trackers.`;
 
     els.dataLoadWarning.classList.remove("hidden");
 }
@@ -233,9 +232,8 @@ function markDataLoadFailed(resource, error) {
     renderDataLoadWarning();
 
     console.warn(
-        `Could not load ${resource}:`,
-        error
-    );
+`Could not load ${resource}:`,
+        error);
 }
 
 function markDataLoadSuccessful(resource) {
@@ -3205,31 +3203,39 @@ function getActiveBySources() {
 
 async function runDxiShadowMode() {
     try {
-        const [
-            { LiveDataAdapter },
-            { ActivityAnalyst },
-            { DxIntelligenceEngine }
+        const [{
+                LiveDataAdapter
+            }, {
+                ActivityAnalyst
+            }, {
+                PropagationAnalyst
+            }, {
+                DxIntelligenceEngine
+            }
         ] = await Promise.all([
-            import("./dxi/adapters/LiveDataAdapter.js"),
-            import("./dxi/analysts/ActivityAnalyst.js"),
-            import("./dxi/engine/DxIntelligenceEngine.js")
-        ]);
+                    import("./dxi/adapters/LiveDataAdapter.js"),
+                    import("./dxi/analysts/ActivityAnalyst.js"),
+                    import("./dxi/analysts/PropagationAnalyst.js"),
+                    import("./dxi/engine/DxIntelligenceEngine.js")
+                ]);
 
         const active =
             getActiveBySources();
 
         /*
-         * Normalize only the station data DXI needs
-         * at this stage.
+         * Normalize live station data for DXI.
          */
         const stations =
             active.map(item => ({
-                frequency: Number(item.freq),
-                station: item.station || "",
-                band: item.band || "",
-                source: item.source || ""
-            }));
+                    frequency: Number(item.freq),
+                    station: item.station || "",
+                    band: item.band || "",
+                    source: item.source || ""
+                }));
 
+        /*
+         * Build current band activity snapshot.
+         */
         const bandActivity = {};
 
         for (const station of stations) {
@@ -3241,49 +3247,108 @@ async function runDxiShadowMode() {
                 (bandActivity[station.band] || 0) + 1;
         }
 
+        /*
+         * Determine current propagation mode from
+         * the user's active/fallback receiving location.
+         *
+         * This is independent from broadcast activity.
+         */
+        const location =
+            getCurrentLocationForCalculations();
+
+        const solarElevation =
+            getSolarElevationApprox(
+                location.lat,
+                location.lon);
+
+        const propagationMode =
+            getPathMode(solarElevation);
+
+        /*
+         * Use the existing shortwave.sbs band-condition
+         * model to determine which bands are currently
+         * propagation-favored.
+         *
+         * >= 70 corresponds to Very good / Excellent
+         * in the current HF Conditions model.
+         */
+        const favoredBands =
+            bandOrder.filter(
+                band =>
+                getConditionScore(
+                    band,
+                    propagationMode) >= 70);
+
+        /*
+         * Create one stable DXI snapshot.
+         */
         const adapter =
             new LiveDataAdapter();
 
         const snapshot =
             adapter.createSnapshot({
                 stations,
-                bandActivity
+                bandActivity,
+
+                propagation: {
+                    kp: spaceWeather?.kp,
+                    sfi: spaceWeather?.sfi,
+                    favoredBands,
+                    mode: propagationMode
+                }
             });
 
+        /*
+         * Independent analysts.
+         */
         const activityAnalyst =
             new ActivityAnalyst();
 
+        const propagationAnalyst =
+            new PropagationAnalyst();
+
         const activityResult =
             activityAnalyst.analyze(
-                snapshot.stations
-            );
+                snapshot.stations);
 
+        const propagationResult =
+            propagationAnalyst.analyze(
+                snapshot);
+
+        /*
+         * Correlate independent analyst results.
+         */
         const engine =
             new DxIntelligenceEngine();
 
         const intelligence =
             engine.combine([
-                activityResult
-            ]);
+                    activityResult,
+                    propagationResult
+                ]);
 
+        /*
+         * Shadow mode:
+         * observe only — no UI changes.
+         */
         console.group(
-            "📡 DX Intelligence shadow mode"
-        );
+            "📡 DX Intelligence shadow mode");
 
         console.log(
             "Snapshot:",
-            snapshot
-        );
+            snapshot);
 
         console.log(
             "Activity analysis:",
-            activityResult
-        );
+            activityResult);
+
+        console.log(
+            "Propagation analysis:",
+            propagationResult);
 
         console.log(
             "DX intelligence:",
-            intelligence
-        );
+            intelligence);
 
         console.groupEnd();
 
@@ -3291,8 +3356,7 @@ async function runDxiShadowMode() {
     } catch (error) {
         console.warn(
             "DX Intelligence shadow mode failed:",
-            error
-        );
+            error);
 
         return null;
     }
@@ -3648,41 +3712,34 @@ function render() {
 async function loadSpaceWeather() {
     try {
         const res = await fetch(
-            "data/space-weather.json",
-            {
+                "data/space-weather.json", {
                 cache: "no-store"
-            }
-        );
+            });
 
         if (!res.ok) {
             throw new Error(
-                `HTTP ${res.status} ${res.statusText}`
-            );
+`HTTP ${res.status} ${res.statusText}`);
         }
 
         const data = await res.json();
 
         if (
             !data ||
-            typeof data !== "object"
-        ) {
+            typeof data !== "object") {
             throw new Error(
-                "Space weather data is invalid"
-            );
+                "Space weather data is invalid");
         }
 
         spaceWeather = data;
 
         console.info(
-            "Space weather data loaded successfully"
-        );
+            "Space weather data loaded successfully");
     } catch (error) {
         spaceWeather = null;
 
         console.warn(
             "Could not load space weather data:",
-            error
-        );
+            error);
     }
 }
 
@@ -3732,37 +3789,31 @@ async function loadSchedules() {
 
     try {
         const res = await fetch(
-            "data/schedules.json",
-            {
+                "data/schedules.json", {
                 cache: "no-store"
-            }
-        );
+            });
 
         if (!res.ok) {
             throw new Error(
-                `HTTP ${res.status} ${res.statusText}`
-            );
+`HTTP ${res.status} ${res.statusText}`);
         }
 
         const data = await res.json();
 
         if (!Array.isArray(data.schedules)) {
             throw new Error(
-                "Schedule data is missing or invalid"
-            );
+                "Schedule data is missing or invalid");
         }
 
         markDataLoadSuccessful(
-            "schedules"
-        );
+            "schedules");
 
         const savedRegion =
             localStorage.getItem("swRegion");
 
         if (
             savedRegion &&
-            locationProfiles[savedRegion]
-        ) {
+            locationProfiles[savedRegion]) {
             els.regionSelect.value =
                 savedRegion;
         }
@@ -3789,42 +3840,39 @@ async function loadSchedules() {
         }
 
         renderSourceInfo(
-            data.sources
-        );
+            data.sources);
 
         const generatedAt =
             new Date(data.generatedAt);
 
         const updated =
             Number.isNaN(generatedAt.getTime())
-                ? "unknown"
-                : generatedAt.toLocaleString(
-                    "fi-FI",
-                    {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false
-                    }
-                );
+             ? "unknown"
+             : generatedAt.toLocaleString(
+                "fi-FI", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false
+            });
 
         els.dataInfo.textContent =
-            `${data.count ?? allSchedules.length} schedules ` +
-            `• lists updated ${updated}`;
+            `${data.count ?? allSchedules.length} schedules ` + 
+`• lists updated ${updated}`;
 
         render();
-		runDxiShadowMode();
+        runDxiShadowMode();
 
         if (bridgeQuery) {
             requestAnimationFrame(() => {
                 document
-                    .querySelector('[data-section="controls"]')
-                    ?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
+                .querySelector('[data-section="controls"]')
+                ?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
 
                 els.searchInput?.focus({
                     preventScroll: true
@@ -3836,8 +3884,7 @@ async function loadSchedules() {
 
         markDataLoadFailed(
             "schedules",
-            error
-        );
+            error);
 
         els.dataInfo.textContent =
             "Schedule data unavailable";
@@ -3904,32 +3951,28 @@ els.detailModal.addEventListener("click", event => {
 if (els.dataLoadRetry) {
     els.dataLoadRetry.addEventListener(
         "click",
-        async () => {
-            els.dataLoadRetry.disabled = true;
-            els.dataLoadRetry.textContent = "Retrying…";
+        async() => {
+        els.dataLoadRetry.disabled = true;
+        els.dataLoadRetry.textContent = "Retrying…";
 
-            try {
-                await loadSchedules();
-            } finally {
-                els.dataLoadRetry.disabled = false;
-                els.dataLoadRetry.textContent = "Retry";
-            }
+        try {
+            await loadSchedules();
+        } finally {
+            els.dataLoadRetry.disabled = false;
+            els.dataLoadRetry.textContent = "Retry";
         }
-    );
+    });
 }
 
 if (
     els.dataLoadWarningClose &&
-    els.dataLoadWarning
-) {
+    els.dataLoadWarning) {
     els.dataLoadWarningClose.addEventListener(
         "click",
         () => {
-            els.dataLoadWarning.classList.add(
-                "hidden"
-            );
-        }
-    );
+        els.dataLoadWarning.classList.add(
+            "hidden");
+    });
 }
 
 document.addEventListener("keydown", event => {

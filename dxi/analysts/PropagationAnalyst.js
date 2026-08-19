@@ -3,8 +3,8 @@
  *
  * PropagationAnalyst
  *
- * Evaluates current HF propagation conditions from
- * normalized space-weather and band-condition inputs.
+ * Evaluates current HF propagation conditions
+ * independently from broadcast activity.
  *
  * @author Janne Heinikangas
  */
@@ -12,23 +12,22 @@
 import { AnalysisResult } from "../contracts/AnalysisResult.js";
 
 export class PropagationAnalyst {
-    analyze(conditions = {}) {
-        if (
-            !conditions ||
-            typeof conditions !== "object" ||
-            Array.isArray(conditions)
-        ) {
+    analyze(snapshot = {}) {
+        if (!snapshot || typeof snapshot !== "object") {
             throw new TypeError(
-                "PropagationAnalyst expects a propagation conditions object."
+                "PropagationAnalyst expects a DX snapshot."
             );
         }
 
-        const kp = Number(conditions.kp);
-        const sfi = Number(conditions.sfi);
+        const propagation =
+            snapshot.propagation || {};
+
+        const kp = Number(propagation.kp);
+        const sfi = Number(propagation.sfi);
 
         const favoredBands =
-            Array.isArray(conditions.favoredBands)
-                ? conditions.favoredBands
+            Array.isArray(propagation.favoredBands)
+                ? propagation.favoredBands
                 : [];
 
         const diagnostics = [];
@@ -36,47 +35,15 @@ export class PropagationAnalyst {
         let score = 50;
         let confidence = 0;
 
-        let knownInputs = 0;
-
         /*
-         * Geomagnetic activity
-         */
-
-        if (Number.isFinite(kp)) {
-            knownInputs++;
-
-            if (kp <= 2) {
-                score += 20;
-
-                diagnostics.push({
-                    code: "QUIET_GEOMAGNETIC",
-                    message:
-                        `Geomagnetic conditions are quiet at Kp ${kp}.`,
-                    value: kp
-                });
-            } else if (kp <= 4) {
-                score += 5;
-            } else {
-                score -= 30;
-
-                diagnostics.push({
-                    code: "DISTURBED_GEOMAGNETIC",
-                    message:
-                        `Geomagnetic activity is elevated at Kp ${kp}.`,
-                    value: kp
-                });
-            }
-        }
-
-        /*
-         * Solar flux
+         * Solar Flux Index
          */
 
         if (Number.isFinite(sfi)) {
-            knownInputs++;
+            confidence += 40;
 
             if (sfi >= 150) {
-                score += 20;
+                score += 25;
 
                 diagnostics.push({
                     code: "HIGH_SOLAR_FLUX",
@@ -84,9 +51,16 @@ export class PropagationAnalyst {
                         `Solar flux is strong at ${sfi}.`,
                     value: sfi
                 });
-            } else if (sfi >= 110) {
-                score += 10;
-            } else if (sfi < 80) {
+            } else if (sfi >= 120) {
+                score += 15;
+
+                diagnostics.push({
+                    code: "GOOD_SOLAR_FLUX",
+                    message:
+                        `Solar flux is favourable at ${sfi}.`,
+                    value: sfi
+                });
+            } else if (sfi < 90) {
                 score -= 15;
 
                 diagnostics.push({
@@ -99,85 +73,101 @@ export class PropagationAnalyst {
         }
 
         /*
-         * Already normalized band information
+         * Geomagnetic activity
          */
 
-        if (favoredBands.length > 0) {
-            knownInputs++;
+        if (Number.isFinite(kp)) {
+            confidence += 40;
 
-            score += Math.min(
-                15,
-                favoredBands.length * 3
-            );
+            if (kp <= 2) {
+                score += 20;
+
+                diagnostics.push({
+                    code: "QUIET_GEOMAGNETIC",
+                    message:
+                        `Geomagnetic conditions are quiet at Kp ${kp}.`,
+                    value: kp
+                });
+            } else if (kp >= 5) {
+                score -= 30;
+
+                diagnostics.push({
+                    code: "GEOMAGNETIC_STORM",
+                    message:
+                        `Geomagnetic activity is elevated at Kp ${kp}.`,
+                    value: kp
+                });
+            } else if (kp >= 4) {
+                score -= 15;
+
+                diagnostics.push({
+                    code: "DISTURBED_GEOMAGNETIC",
+                    message:
+                        `Geomagnetic conditions are disturbed at Kp ${kp}.`,
+                    value: kp
+                });
+            }
+        }
+
+        /*
+         * Favoured bands supplied by the live-data adapter.
+         *
+         * PropagationAnalyst does not care whether broadcasts
+         * actually exist on these bands. That belongs to
+         * ActivityAnalyst / CorrelationEngine.
+         */
+
+        if (favoredBands.length) {
+            confidence += 20;
 
             diagnostics.push({
                 code: "FAVORED_BANDS",
                 message:
-                    `${favoredBands.length} HF bands are currently rated as favorable.`,
-                value: favoredBands.length
+                    `${favoredBands.join(", ")} currently have favourable propagation support.`,
+                value: favoredBands
             });
         }
 
-        score =
-            Math.max(
-                0,
-                Math.min(100, Math.round(score))
-            );
+        score = Math.max(
+            0,
+            Math.min(100, Math.round(score))
+        );
 
-        confidence =
-            Math.min(
-                100,
-                Math.round(
-                    (knownInputs / 3) * 100
-                )
-            );
+        confidence = Math.min(
+            100,
+            confidence
+        );
 
-        let propagationLevel = "fair";
+        let propagationLevel = "normal";
 
         if (score >= 80) {
             propagationLevel = "excellent";
         } else if (score >= 65) {
             propagationLevel = "good";
-        } else if (score >= 40) {
-            propagationLevel = "fair";
-        } else if (score >= 20) {
+        } else if (score < 35) {
             propagationLevel = "poor";
-        } else {
-            propagationLevel = "very-poor";
-        }
-
-        if (propagationLevel === "excellent") {
-            diagnostics.push({
-                code: "FAVORABLE_PROPAGATION",
-                message:
-                    "Current HF propagation conditions are highly favorable.",
-                value: score
-            });
+        } else if (score < 50) {
+            propagationLevel = "disturbed";
         }
 
         return new AnalysisResult({
             analyst: "PropagationAnalyst",
-
             score,
             confidence,
 
             diagnostics,
 
             metadata: {
-                kp:
-                    Number.isFinite(kp)
-                        ? kp
-                        : null,
+                kp: Number.isFinite(kp)
+                    ? kp
+                    : null,
 
-                sfi:
-                    Number.isFinite(sfi)
-                        ? sfi
-                        : null,
+                sfi: Number.isFinite(sfi)
+                    ? sfi
+                    : null,
 
                 favoredBands,
-
-                propagationLevel,
-                knownInputs
+                propagationLevel
             }
         });
     }
