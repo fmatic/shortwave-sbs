@@ -1,19 +1,10 @@
 {
-<<<<<<< HEAD
-  "updated": "2026-08-30T23:28:00.240Z",
+  "updated": "2026-08-31T00:25:14.076Z",
   "kp": 2,
-  "sfi": 107,
+  "sfi": 108,
   "aIndex": 7,
   "xray": "B-class",
-  "xrayFlux": 4.998441909265239e-7,
-=======
-  "updated": "2026-08-23T15:44:05.079Z",
-  "kp": 2,
-  "sfi": 125,
-  "aIndex": 7,
-  "xray": "B-class",
-  "xrayFlux": 7.421425038955931e-7,
->>>>>>> 9427b13 (DXI tweaks)
+  "xrayFlux": 4.803306410394725e-7,
   "aurora": false,
   "hf": {
     "lowBands": "fair",
