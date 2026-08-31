@@ -92,9 +92,9 @@ export class DxIntelligenceEngine {
          * High activity + strong greyline
          */
 
-        if (
-            activityLevel === "very-busy" &&
-            greylineLevel === "strong") {
+       if (
+    ["busy", "very-busy"].includes(activityLevel) &&
+    greylineLevel === "strong") {
             correlations.push({
                 code: "HIGH_ACTIVITY_GREYLINE",
 

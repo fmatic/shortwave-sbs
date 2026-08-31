@@ -11,10 +11,12 @@
 import { AnalysisResult } from "../contracts/AnalysisResult.js";
 
 export class ActivityAnalyst {
+
     analyze(broadcasts = []) {
         if (!Array.isArray(broadcasts)) {
             throw new TypeError(
-                "ActivityAnalyst expects an array of broadcasts.");
+                "ActivityAnalyst expects an array of broadcasts."
+            );
         }
 
         const bandCounts = {};
@@ -30,57 +32,147 @@ export class ActivityAnalyst {
                 (bandCounts[band] || 0) + 1;
         }
 
-        const rankedBands = Object.entries(bandCounts)
-            .sort((a, b) => b[1] - a[1]);
+        const rankedBands =
+            Object.entries(bandCounts)
+                .sort((a, b) => b[1] - a[1]);
 
-        const busiestBand =
-            rankedBands[0]?.[0] || null;
+        return this.analyzeMetrics({
+            activeBroadcasts: broadcasts.length,
+            bandCounts,
+            busiestBand: rankedBands[0]?.[0] || null,
+            busiestBandCount: rankedBands[0]?.[1] || 0,
+            secondBand: rankedBands[1]?.[0] || null,
+            secondBandCount: rankedBands[1]?.[1] || 0
+        });
+    }
 
-        const busiestBandCount =
-            rankedBands[0]?.[1] || 0;
-
-        const secondBand =
-            rankedBands[1]?.[0] || null;
-
-        const secondBandCount =
-            rankedBands[1]?.[1] || 0;
+    analyzeMetrics({
+        activeBroadcasts = 0,
+        bandCounts = null,
+        busiestBand = null,
+        busiestBandCount = 0,
+        secondBand = null,
+        secondBandCount = 0
+    } = {}) {
 
         const lead =
             busiestBandCount - secondBandCount;
 
         const leadRatio =
             busiestBandCount > 0
-             ? lead / busiestBandCount
-             : 0;
+                ? lead / busiestBandCount
+                : 0;
 
+        /*
+         * Historical shadow logs do not contain full bandCounts.
+         *
+         * In that case activeBroadcasts is used as the total activity
+         * baseline. Live analysis continues to use the actual sum of
+         * bandCounts.
+         */
         const totalBandActivity =
-            Object.values(bandCounts)
-            .reduce((sum, count) => sum + count, 0);
+            bandCounts
+                ? Object.values(bandCounts)
+                    .reduce(
+                        (sum, count) =>
+                            sum + count,
+                        0
+                    )
+                : activeBroadcasts;
 
-        const relativeActivityScore =
+        /*
+         * Band intensity
+         *
+         * Empirically calibrated from the DXI shadow baseline:
+         *
+         * P0   = 140
+         * P10  = 175
+         * P25  = 188
+         * P50  = 198
+         * P75  = 232
+         * P90  = 282
+         * P100 = 311
+         */
+
+        const intensityPoints = [
+            [140, 0],
+            [175, 20],
+            [188, 35],
+            [198, 50],
+            [232, 70],
+            [282, 90],
+            [311, 100]
+        ];
+
+        function interpolateScore(value, points) {
+            if (value <= points[0][0]) {
+                return points[0][1];
+            }
+
+            for (let i = 1; i < points.length; i++) {
+                const [x1, y1] = points[i - 1];
+                const [x2, y2] = points[i];
+
+                if (value <= x2) {
+                    const position =
+                        (value - x1) /
+                        (x2 - x1);
+
+                    return Math.round(
+                        y1 +
+                        position *
+                        (y2 - y1)
+                    );
+                }
+            }
+
+            return points[
+                points.length - 1
+            ][1];
+        }
+
+        const intensityScore =
+            interpolateScore(
+                busiestBandCount,
+                intensityPoints
+            );
+
+        const concentrationRatio =
             totalBandActivity > 0
-             ? Math.round(
-                (busiestBandCount / totalBandActivity) * 100)
-             : 0;
+                ? busiestBandCount /
+                    totalBandActivity
+                : 0;
 
-        const absoluteActivityScore =
+        const concentrationScore =
             Math.min(
                 100,
                 Math.round(
-                    (busiestBandCount / 50) * 100));
+                    concentrationRatio * 1000
+                )
+            );
+
+        const leadershipScore =
+            Math.min(
+                100,
+                Math.round(
+                    (leadRatio / 0.25) * 100
+                )
+            );
 
         const activityScore =
             Math.round(
-                relativeActivityScore * 0.4 +
-                absoluteActivityScore * 0.6);
+                intensityScore * 0.60 +
+                concentrationScore * 0.25 +
+                leadershipScore * 0.15
+            );
 
         let activityLevel = "quiet";
 
-        if (absoluteActivityScore >= 80) {
+        if (activityScore >= 75) {
             activityLevel = "very-busy";
-        } else if (absoluteActivityScore >= 55) {
+        } else if (activityScore >= 55) {
             activityLevel = "busy";
-        } else if (absoluteActivityScore >= 30) {
+        } else if (activityScore >= 30) {
             activityLevel = "moderate";
         }
 
@@ -112,7 +204,8 @@ export class ActivityAnalyst {
             busiestBand &&
             secondBand &&
             lead >= 3 &&
-            leadRatio >= 0.15) {
+            leadRatio >= 0.15
+        ) {
             diagnostics.push({
                 code: "ACTIVITY_LEAD",
                 message:
@@ -122,21 +215,22 @@ export class ActivityAnalyst {
         }
 
         if (busiestBand) {
-            if (absoluteActivityScore >= 80) {
+            if (activityScore >= 75) {
                 diagnostics.push({
                     code: "HIGH_ACTIVITY",
                     message:
 `${busiestBand} is genuinely very busy right now.`,
-                    value: absoluteActivityScore
+                    value: activityScore
                 });
             } else if (
-                relativeActivityScore >= 50 &&
-                absoluteActivityScore < 30) {
+                concentrationScore >= 70 &&
+                intensityScore < 30
+            ) {
                 diagnostics.push({
                     code: "QUIET_DOMINANCE",
                     message:
-`${busiestBand} dominates the current activity, but overall activity is still low.`,
-                    value: absoluteActivityScore
+`${busiestBand} dominates the current activity, but its absolute activity remains low.`,
+                    value: intensityScore
                 });
             }
         }
@@ -144,12 +238,15 @@ export class ActivityAnalyst {
         return new AnalysisResult({
             analyst: "ActivityAnalyst",
             score: activityScore,
-            confidence: broadcasts.length ? 100 : 0,
+            confidence:
+                activeBroadcasts > 0
+                    ? 100
+                    : 0,
 
             diagnostics,
 
             metadata: {
-                activeBroadcasts: broadcasts.length,
+                activeBroadcasts,
                 bandCounts,
                 busiestBand,
                 busiestBandCount,
@@ -158,8 +255,10 @@ export class ActivityAnalyst {
                 lead,
                 leadRatio,
                 totalBandActivity,
-                relativeActivityScore,
-                absoluteActivityScore,
+                intensityScore,
+                concentrationRatio,
+                concentrationScore,
+                leadershipScore,
                 activityScore,
                 activityLevel
             }

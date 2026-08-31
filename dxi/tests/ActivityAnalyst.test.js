@@ -1,117 +1,336 @@
-import { ActivityAnalyst } from "../analysts/ActivityAnalyst.js";
+import assert from "node:assert/strict";
 
-const analyst = new ActivityAnalyst();
+import {
+    ActivityAnalyst
+} from "../analysts/ActivityAnalyst.js";
 
-const broadcasts = [{
-        station: "Station A",
-        freq: 5900,
-        band: "49m"
-    }, {
-        station: "Station B",
-        freq: 5950,
-        band: "49m"
-    }, {
-        station: "Station C",
-        freq: 6000,
-        band: "49m"
-    },
-    {
-        station: "Station D",
-        freq: 9500,
-        band: "31m"
-    }, {
-        station: "Station E",
-        freq: 9600,
-        band: "31m"
-    },
-    {
-        station: "Station F",
-        freq: 11800,
-        band: "25m"
+const analyst =
+    new ActivityAnalyst();
+
+
+function test(name, fn) {
+    try {
+        fn();
+
+        console.log(
+            `PASS: ${name}`
+        );
+    } catch (error) {
+        console.error(
+            `FAIL: ${name}`
+        );
+
+        throw error;
     }
-];
-
-const scenarios = [{
-        name: "quiet dominance",
-        broadcasts: [{
-                band: "49m"
-            }, {
-                band: "49m"
-            }, {
-                band: "49m"
-            }, {
-                band: "31m"
-            }, {
-                band: "31m"
-            }, {
-                band: "25m"
-            }
-        ]
-    },
-    {
-        name: "busy band",
-        broadcasts: [
-            ...Array.from({
-                length: 45
-            }, () => ({
-                    band: "49m"
-                })),
-            ...Array.from({
-                length: 20
-            }, () => ({
-                    band: "31m"
-                })),
-            ...Array.from({
-                length: 10
-            }, () => ({
-                    band: "25m"
-                }))
-        ]
-    },
-    {
-        name: "balanced activity",
-        broadcasts: [
-            ...Array.from({
-                length: 20
-            }, () => ({
-                    band: "49m"
-                })),
-            ...Array.from({
-                length: 18
-            }, () => ({
-                    band: "31m"
-                })),
-            ...Array.from({
-                length: 17
-            }, () => ({
-                    band: "25m"
-                }))
-        ]
-    }
-];
-
-for (const scenario of scenarios) {
-    console.log(`\n=== ${scenario.name} ===`);
-
-    const result =
-        analyst.analyze(scenario.broadcasts);
-
-    console.log(
-        JSON.stringify(result, null, 2));
 }
 
-const result = analyst.analyze(broadcasts);
+
+function hasDiagnostic(
+    result,
+    code
+) {
+    return result.diagnostics.some(
+        diagnostic =>
+            diagnostic.code === code
+    );
+}
+
+
+/*
+ * QUIET
+ *
+ * Low busiest-band intensity,
+ * weak concentration and only a
+ * small lead over the second band.
+ */
+
+test(
+    "quiet activity is classified as quiet",
+    () => {
+        const result =
+            analyst.analyzeMetrics({
+                activeBroadcasts: 3000,
+
+                busiestBand: "49m",
+                busiestBandCount: 150,
+
+                secondBand: "31m",
+                secondBandCount: 145
+            });
+
+        assert.equal(
+            result.metadata.activityLevel,
+            "quiet"
+        );
+
+        assert.ok(
+            result.score < 30
+        );
+    }
+);
+
+
+/*
+ * MODERATE
+ */
+
+test(
+    "normal activity is classified as moderate",
+    () => {
+        const result =
+            analyst.analyzeMetrics({
+                activeBroadcasts: 3100,
+
+                busiestBand: "49m",
+                busiestBandCount: 190,
+
+                secondBand: "31m",
+                secondBandCount: 180
+            });
+
+        assert.equal(
+            result.metadata.activityLevel,
+            "moderate"
+        );
+
+        assert.ok(
+            result.score >= 30 &&
+            result.score < 55
+        );
+    }
+);
+
+
+/*
+ * BUSY
+ */
+
+test(
+    "elevated activity is classified as busy",
+    () => {
+        const result =
+            analyst.analyzeMetrics({
+                activeBroadcasts: 3200,
+
+                busiestBand: "49m",
+                busiestBandCount: 240,
+
+                secondBand: "31m",
+                secondBandCount: 210
+            });
+
+        assert.equal(
+            result.metadata.activityLevel,
+            "busy"
+        );
+
+        assert.ok(
+            result.score >= 55 &&
+            result.score < 75
+        );
+    }
+);
+
+
+/*
+ * VERY BUSY
+ */
+
+test(
+    "exceptionally high activity is classified as very-busy",
+    () => {
+        const result =
+            analyst.analyzeMetrics({
+                activeBroadcasts: 3300,
+
+                busiestBand: "49m",
+                busiestBandCount: 290,
+
+                secondBand: "31m",
+                secondBandCount: 240
+            });
+
+        assert.equal(
+            result.metadata.activityLevel,
+            "very-busy"
+        );
+
+        assert.ok(
+            result.score >= 75
+        );
+
+        assert.ok(
+            hasDiagnostic(
+                result,
+                "HIGH_ACTIVITY"
+            )
+        );
+    }
+);
+
+
+/*
+ * NEAR TIE
+ */
+
+test(
+    "near-tied leading bands are detected",
+    () => {
+        const result =
+            analyst.analyzeMetrics({
+                activeBroadcasts: 3100,
+
+                busiestBand: "49m",
+                busiestBandCount: 200,
+
+                secondBand: "31m",
+                secondBandCount: 190
+            });
+
+        assert.ok(
+            hasDiagnostic(
+                result,
+                "NEAR_TIE"
+            )
+        );
+
+        assert.ok(
+            result.metadata.leadRatio <= 0.10
+        );
+    }
+);
+
+
+/*
+ * CLEAR ACTIVITY LEAD
+ */
+
+test(
+    "a clearly dominant leading band is detected",
+    () => {
+        const result =
+            analyst.analyzeMetrics({
+                activeBroadcasts: 3200,
+
+                busiestBand: "49m",
+                busiestBandCount: 240,
+
+                secondBand: "31m",
+                secondBandCount: 180
+            });
+
+        assert.ok(
+            hasDiagnostic(
+                result,
+                "ACTIVITY_LEAD"
+            )
+        );
+
+        assert.equal(
+            result.metadata.lead,
+            60
+        );
+    }
+);
+
+
+/*
+ * NORMAL BROADCAST ARRAY PATH
+ *
+ * Ensures analyze() still builds the
+ * band ranking correctly before handing
+ * the metrics to ActivityAnalyst v2.
+ */
+
+test(
+    "broadcast arrays are converted into correct band metrics",
+    () => {
+        const broadcasts = [
+            { band: "49m" },
+            { band: "49m" },
+            { band: "49m" },
+
+            { band: "31m" },
+            { band: "31m" },
+
+            { band: "25m" }
+        ];
+
+        const result =
+            analyst.analyze(
+                broadcasts
+            );
+
+        assert.equal(
+            result.metadata.activeBroadcasts,
+            6
+        );
+
+        assert.equal(
+            result.metadata.busiestBand,
+            "49m"
+        );
+
+        assert.equal(
+            result.metadata.busiestBandCount,
+            3
+        );
+
+        assert.equal(
+            result.metadata.secondBand,
+            "31m"
+        );
+
+        assert.equal(
+            result.metadata.secondBandCount,
+            2
+        );
+    }
+);
+
+
+/*
+ * EMPTY INPUT
+ */
+
+test(
+    "empty broadcast list returns zero confidence",
+    () => {
+        const result =
+            analyst.analyze([]);
+
+        assert.equal(
+            result.confidence,
+            0
+        );
+
+        assert.equal(
+            result.metadata.busiestBand,
+            null
+        );
+    }
+);
+
+
+/*
+ * INVALID INPUT
+ */
+
+test(
+    "invalid input is rejected",
+    () => {
+        assert.throws(
+            () =>
+                analyst.analyze(
+                    "not an array"
+                ),
+
+            TypeError
+        );
+    }
+);
+
 
 console.log(
-    JSON.stringify(result, null, 2));
-
-try {
-    analyst.analyze("not an array");
-
-    console.error(
-        "FAIL: invalid input should have thrown an error");
-} catch (error) {
-    console.log(
-        "PASS: invalid input rejected:",
-        error.message);
-}
+    "\nActivityAnalyst tests passed."
+);
