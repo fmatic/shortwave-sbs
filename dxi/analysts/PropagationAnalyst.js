@@ -62,9 +62,12 @@ export class PropagationAnalyst {
         if (Number.isFinite(sfi)) {
             confidence += 40;
 
-            if (sfi >= 150) {
-                score += 25;
+            const contribution =
+                solarContribution(sfi);
 
+            score += contribution;
+
+            if (sfi >= 150) {
                 diagnostics.push({
                     code: "HIGH_SOLAR_FLUX",
                     message:
@@ -72,8 +75,6 @@ export class PropagationAnalyst {
                     value: sfi
                 });
             } else if (sfi >= 120) {
-                score += 15;
-
                 diagnostics.push({
                     code: "GOOD_SOLAR_FLUX",
                     message:
@@ -81,8 +82,6 @@ export class PropagationAnalyst {
                     value: sfi
                 });
             } else if (sfi < 90) {
-                score -= 15;
-
                 diagnostics.push({
                     code: "LOW_SOLAR_FLUX",
                     message:
@@ -99,9 +98,12 @@ export class PropagationAnalyst {
         if (Number.isFinite(kp)) {
             confidence += 40;
 
-            if (kp <= 2) {
-                score += 20;
+            const contribution =
+                geomagneticContribution(kp);
 
+            score += contribution;
+
+            if (kp <= 2) {
                 diagnostics.push({
                     code: "QUIET_GEOMAGNETIC",
                     message:
@@ -109,8 +111,6 @@ export class PropagationAnalyst {
                     value: kp
                 });
             } else if (kp >= 5) {
-                score -= 30;
-
                 diagnostics.push({
                     code: "GEOMAGNETIC_STORM",
                     message:
@@ -118,8 +118,6 @@ export class PropagationAnalyst {
                     value: kp
                 });
             } else if (kp >= 4) {
-                score -= 15;
-
                 diagnostics.push({
                     code: "DISTURBED_GEOMAGNETIC",
                     message:
@@ -127,6 +125,70 @@ export class PropagationAnalyst {
                     value: kp
                 });
             }
+        }
+
+        function interpolate(
+            value,
+            x1,
+            y1,
+            x2,
+            y2) {
+            const position =
+                (value - x1) /
+            (x2 - x1);
+
+            return (
+                y1 +
+                position * (y2 - y1));
+        }
+
+        function solarContribution(sfi) {
+            if (sfi < 90) {
+                return Math.max(
+                    -15,
+                    interpolate(
+                        sfi,
+                        70, -15,
+                        90, 0));
+            }
+
+            if (sfi < 120) {
+                return interpolate(
+                    sfi,
+                    90, 0,
+                    120, 15);
+            }
+
+            if (sfi < 150) {
+                return interpolate(
+                    sfi,
+                    120, 15,
+                    150, 25);
+            }
+
+            return 25;
+        }
+
+        function geomagneticContribution(kp) {
+            if (kp <= 2) {
+                return 20;
+            }
+
+            if (kp < 4) {
+                return interpolate(
+                    kp,
+                    2, 20,
+                    4, -15);
+            }
+
+            if (kp < 5) {
+                return interpolate(
+                    kp,
+                    4, -15,
+                    5, -30);
+            }
+
+            return -30;
         }
 
         /*
@@ -158,9 +220,9 @@ export class PropagationAnalyst {
 
         let propagationLevel = "normal";
 
-        if (score >= 80) {
+        if (score >= 90) {
             propagationLevel = "excellent";
-        } else if (score >= 65) {
+        } else if (score >= 70) {
             propagationLevel = "good";
         } else if (score < 35) {
             propagationLevel = "poor";
@@ -185,7 +247,20 @@ export class PropagationAnalyst {
                  : null,
 
                 favoredBands,
-                propagationLevel
+
+                propagationLevel,
+
+                solarContribution:
+                Number.isFinite(sfi)
+                 ? Math.round(
+                    solarContribution(sfi) * 10) / 10
+                 : null,
+
+                geomagneticContribution:
+                Number.isFinite(kp)
+                 ? Math.round(
+                    geomagneticContribution(kp) * 10) / 10
+                 : null
             }
         });
     }

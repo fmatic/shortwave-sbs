@@ -11,6 +11,9 @@
 import fs from "node:fs";
 import { ActivityAnalyst } from "../analysts/ActivityAnalyst.js";
 import { DxIntelligenceEngine } from "../engine/DxIntelligenceEngine.js";
+import {
+    PropagationAnalyst
+} from "../analysts/PropagationAnalyst.js";
 
 const inputFile =
     process.argv[2];
@@ -168,6 +171,151 @@ const replayEngineResults =
                 propagationResult
             ]);
     });
+
+const propagationAnalyst =
+    new PropagationAnalyst();
+
+const replayPropagationResults =
+    records.map(record =>
+        propagationAnalyst.analyze({
+            propagation: {
+                kp:
+                    record.propagation?.kp ?? null,
+
+                sfi:
+                    record.propagation?.sfi ?? null,
+
+                favoredBands:
+                    Array.isArray(
+                        record.propagation?.favoredBands
+                    )
+                        ? record.propagation.favoredBands
+                        : []
+            }
+        })
+    );
+
+const replayEngineV2Results =
+    records.map((record, index) => {
+
+        const activityResult =
+            replayActivityResults[index];
+
+        const propagationResult =
+            replayPropagationResults[index];
+
+        /*
+         * Greyline is reconstructed from the
+         * historical shadow snapshot.
+         */
+
+        const greylineResult = {
+            analyst: "GreylineAnalyst",
+
+            score:
+                Number(
+                    record.greyline?.score || 0
+                ),
+
+            confidence:
+                Number(
+                    record.greyline?.confidence || 0
+                ),
+
+            diagnostics:
+                record.greyline?.diagnostics || [],
+
+            metadata: {
+                greylineLevel:
+                    record.greyline
+                        ?.greylineLevel || null,
+
+                totalPaths:
+                    record.greyline
+                        ?.totalPaths || 0,
+
+                greylineCount:
+                    record.greyline
+                        ?.greylineCount || 0,
+
+                greylineRatio:
+                    record.greyline
+                        ?.greylineRatio || 0
+            }
+        };
+
+        return intelligenceEngine.combine([
+            activityResult,
+            greylineResult,
+            propagationResult
+        ]);
+    });
+	
+	const replayEngineV2Scores =
+    replayEngineV2Results.map(
+        result => result.score
+    );
+
+const replayEngineV2PrimaryCorrelations = {};
+
+for (const result of replayEngineV2Results) {
+    const code =
+        result.primaryCorrelation?.code ||
+        "none";
+
+    replayEngineV2PrimaryCorrelations[code] =
+        (replayEngineV2PrimaryCorrelations[code] || 0) + 1;
+}
+
+const replayEngineV2AllCorrelations = {};
+
+for (const result of replayEngineV2Results) {
+    for (
+        const correlation
+        of result.correlations || []
+    ) {
+        const code =
+            correlation.code || "unknown";
+
+        replayEngineV2AllCorrelations[code] =
+            (replayEngineV2AllCorrelations[code] || 0) + 1;
+    }
+}
+
+const replayEngineV2Summaries = {};
+
+for (const result of replayEngineV2Results) {
+    const summary =
+        result.summary || "unknown";
+
+    replayEngineV2Summaries[summary] =
+        (replayEngineV2Summaries[summary] || 0) + 1;
+}
+
+const replayPropagationScoreCounts = {};
+
+for (const result of replayPropagationResults) {
+    const score =
+        result.score;
+
+    replayPropagationScoreCounts[score] =
+        (replayPropagationScoreCounts[score] || 0) + 1;
+}
+	
+const replayPropagationScores =
+    replayPropagationResults.map(
+        result => result.score
+    );
+
+const replayPropagationLevels = {};
+
+for (const result of replayPropagationResults) {
+    const level =
+        result.metadata.propagationLevel;
+
+    replayPropagationLevels[level] =
+        (replayPropagationLevels[level] || 0) + 1;
+}
 
 const replayEngineScores =
     replayEngineResults.map(
@@ -367,6 +515,70 @@ for (let i = 0; i < records.length; i++) {
         (activityGreylineMatrix[key] || 0) + 1;
 }
 
+const kpValues =
+    records.map(
+        record =>
+            Number(
+                record.propagation?.kp ?? 0
+            )
+    );
+
+const sfiValues =
+    records.map(
+        record =>
+            Number(
+                record.propagation?.sfi ?? 0
+            )
+    );
+
+const favoredBandCounts =
+    records.map(
+        record => {
+            const bands =
+                record.propagation?.favoredBands;
+
+            return Array.isArray(bands)
+                ? bands.length
+                : 0;
+        }
+    );
+	
+const propagationLevels = {};
+
+for (const record of records) {
+    const level =
+        record.propagation
+            ?.propagationLevel ||
+        "unknown";
+
+    propagationLevels[level] =
+        (propagationLevels[level] || 0) + 1;
+}
+
+const propagationCombinations = {};
+
+for (const record of records) {
+    const kp =
+        record.propagation?.kp ?? null;
+
+    const sfi =
+        record.propagation?.sfi ?? null;
+
+    const score =
+        record.propagation?.score ?? null;
+
+    const level =
+        record.propagation
+            ?.propagationLevel ||
+        "unknown";
+
+    const key =
+        `Kp=${kp} SFI=${sfi} score=${score} level=${level}`;
+
+    propagationCombinations[key] =
+        (propagationCombinations[key] || 0) + 1;
+}
+
 console.log(
     "\nDXI Replay Analysis");
 
@@ -384,6 +596,31 @@ console.log(
 
 console.log(
     "\nActivity v2 + Greyline matrix:");
+
+console.log(
+    "\nPropagation v2 replay"
+);
+
+console.log(
+    "\nPropagation v2 score distribution:"
+);
+
+console.log(
+    replayPropagationScoreCounts
+);
+
+console.log(
+    `  mean: ${average(replayPropagationScores).toFixed(1)}`
+);
+
+console.log(
+    `  range: ${range(replayPropagationScores).min}-${range(replayPropagationScores).max}`
+);
+
+console.log(
+    "  levels:",
+    replayPropagationLevels
+);
 
 console.log(
     activityGreylineMatrix);
@@ -483,6 +720,56 @@ console.log(
 `  range: ${range(replayEngineScores).min}-${range(replayEngineScores).max}`);
 
 console.log(
+    "\nPropagation distributions"
+);
+
+console.log(
+    "\nKp"
+);
+
+console.log(
+    distribution(
+        kpValues
+    )
+);
+
+console.log(
+    "\nSFI"
+);
+
+console.log(
+    distribution(
+        sfiValues
+    )
+);
+
+console.log(
+    "\nFavored band count"
+);
+
+console.log(
+    distribution(
+        favoredBandCounts
+    )
+);
+
+console.log(
+    "\nPropagation levels:"
+);
+
+console.log(
+    propagationLevels
+);
+
+console.log(
+    "\nPropagation combinations:"
+);
+
+console.log(
+    propagationCombinations
+);
+
+console.log(
     "\nReplayed primary correlations:");
 
 console.log(
@@ -493,3 +780,39 @@ console.log(
 
 console.log(
     replayEngineSummaries);
+
+console.log(
+    "\nDX Intelligence v2 full replay"
+);
+
+console.log(
+    `  mean: ${average(replayEngineV2Scores).toFixed(1)}`
+);
+
+console.log(
+    `  range: ${range(replayEngineV2Scores).min}-${range(replayEngineV2Scores).max}`
+);
+
+console.log(
+    "\nDXI v2 primary correlations:"
+);
+
+console.log(
+    replayEngineV2PrimaryCorrelations
+);
+
+console.log(
+    "\nDXI v2 all correlations:"
+);
+
+console.log(
+    replayEngineV2AllCorrelations
+);
+
+console.log(
+    "\nDXI v2 summaries:"
+);
+
+console.log(
+    replayEngineV2Summaries
+);
