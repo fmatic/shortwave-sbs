@@ -41,7 +41,7 @@ const map = L.map("txMap", {
     worldCopyJump: true
 }).setView([35, 20], 2);
 
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+L.tileLayer("https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_2yra_1_b4af3f30f3a739a9ed79816f", {
     attribution: "&copy; OpenStreetMap &copy; CARTO",
     subdomains: "abcd",
     maxZoom: 19
