@@ -152,26 +152,73 @@ function assistantBandScore(band, mode, count, sw) {
     return Math.round(score);
 }
 
-function pathAwareness(item,date=new Date(),rxMode=null){
-  if(!item.txLat||!item.txLon)return {label:"Unknown path",score:0};
+function pathAwareness(item, date = new Date(), rxMode = null) {
+    if (!item.txLat || !item.txLon)
+        return {
+            label: "Unknown path",
+            score: 0
+        };
 
-  const band=item.band||"";
-  const rx=rxMode||modeFor(RX.lat,RX.lon,date);
-  const tx=modeFor(Number(item.txLat),Number(item.txLon),date);
+    const band = item.band || "";
+    const rx = rxMode || modeFor(RX.lat, RX.lon, date);
+    const tx = modeFor(Number(item.txLat), Number(item.txLon), date);
 
-  const grey=rx==="Twilight"||tx==="Twilight",
-        nn=rx==="Night"&&tx==="Night",
-        dd=rx==="Day"&&tx==="Day";
+    const grey = rx === "Twilight" || tx === "Twilight",
+    nn = rx === "Night" && tx === "Night",
+    dd = rx === "Day" && tx === "Day";
 
-  const low=["120m","90m","75m","60m","49m"],
-        mid=["41m","31m"],
-        high=["25m","22m","19m","16m","13m","11m"];
+    const low = ["120m", "90m", "75m", "60m", "49m"],
+    mid = ["41m", "31m"],
+    high = ["25m", "22m", "19m", "16m", "13m", "11m"];
 
-  if(grey)return {label:"Greyline potential",score:low.includes(band)?95:85};
-  if(low.includes(band))return nn?{label:"Strong low-band path",score:90}:dd?{label:"Daylight absorption likely",score:25}:{label:"Transition low-band path",score:65};
-  if(mid.includes(band))return nn?{label:"Good night path",score:78}:dd?{label:"Usable daytime path",score:62}:{label:"Mixed mid-band path",score:70};
-  if(high.includes(band))return dd?{label:"Good high-band daylight path",score:82}:nn?{label:"High-band night risk",score:35}:{label:"Transition high-band path",score:58};
-  return {label:nn?"Night path":dd?"Daylight path":"Mixed path",score:nn?80:dd?50:60};
+    if (grey)
+        return {
+            label: "Greyline potential",
+            score: low.includes(band) ? 95 : 85
+        };
+    if (low.includes(band))
+        return nn ? {
+            label: "Strong low-band path",
+            score: 90
+        }
+     : dd ? {
+        label: "Daylight absorption likely",
+        score: 25
+    }
+     : {
+        label: "Transition low-band path",
+        score: 65
+    };
+    if (mid.includes(band))
+        return nn ? {
+            label: "Good night path",
+            score: 78
+        }
+     : dd ? {
+        label: "Usable daytime path",
+        score: 62
+    }
+     : {
+        label: "Mixed mid-band path",
+        score: 70
+    };
+    if (high.includes(band))
+        return dd ? {
+            label: "Good high-band daylight path",
+            score: 82
+        }
+     : nn ? {
+        label: "High-band night risk",
+        score: 35
+    }
+     : {
+        label: "Transition high-band path",
+        score: 58
+    };
+    return {
+        label: nn ? "Night path" : dd ? "Daylight path" : "Mixed path",
+        score: nn ? 80 : dd ? 50 : 60
+    };
 }
 
 function season(date = new Date()) {
@@ -270,12 +317,12 @@ function analysis(band, mode, count, sw) {
 }
 
 export async function onRequestGet(context) {
-   const cacheKey = new Request(
-    new URL(context.request.url).origin + "/api/bridge?v=3",
-    {
-        method: "GET"
-    }
-);
+    const requestUrl = new URL(context.request.url);
+    const testKey = requestUrl.searchParams.get("test") || "";
+    const cacheKey = new Request(
+            requestUrl.origin + "/api/bridge?v=3&test=" + encodeURIComponent(testKey), {
+            method: "GET"
+        });
     const cache = caches.default;
     const hit = await cache.match(cacheKey);
 
@@ -334,15 +381,15 @@ export async function onRequestGet(context) {
             score: assistantBandScore(band, mode, count, sw)
         };
     }).filter(x => x.active_count > 0).sort((a, b) => b.score - a.score);
-	
-	const guide = rankedBands[0] || {
-    band: "49m",
-    active_count: 0,
-    score: 0
-};
 
-	const candidateStart = Date.now();
-   const candidateRows = active.filter(i => i.txLat && i.txLon && i.station && i.freq).map(i => {
+    const guide = rankedBands[0] || {
+        band: "49m",
+        active_count: 0,
+        score: 0
+    };
+
+    const candidateStart = Date.now();
+    const candidateRows = active.filter(i => i.txLat && i.txLon && i.station && i.freq).map(i => {
         const dist = distanceKm(RX.lat, RX.lon, Number(i.txLat), Number(i.txLon));
         const br = bearing(RX.lat, RX.lon, Number(i.txLat), Number(i.txLon));
         const aware = pathAwareness(i, now, mode);
@@ -357,11 +404,11 @@ export async function onRequestGet(context) {
             }, aware, sw, now)
         };
     }).sort((a, b) => b.score - a.score || b.distance - a.distance);
-	console.log("DX bridge candidate processing", {
-    active: active.length,
-    candidates: candidateRows.length,
-    ms: Date.now() - candidateStart
-});
+    console.log("DX bridge candidate processing", {
+        active: active.length,
+        candidates: candidateRows.length,
+        ms: Date.now() - candidateStart
+    });
 
     const selected = [],
     stations = new Set(),
