@@ -332,7 +332,8 @@ export async function onRequestGet(context) {
         };
     }).filter(x => x.active_count > 0).sort((a, b) => b.score - a.score);
 
-    const candidateRows = active.filter(i => i.txLat && i.txLon && i.station && i.freq).map(i => {
+	const candidateStart = Date.now();
+   const candidateRows = active.filter(i => i.txLat && i.txLon && i.station && i.freq).map(i => {
         const dist = distanceKm(RX.lat, RX.lon, Number(i.txLat), Number(i.txLon));
         const br = bearing(RX.lat, RX.lon, Number(i.txLat), Number(i.txLon));
         const aware = pathAwareness(i, now, mode);
@@ -347,6 +348,11 @@ export async function onRequestGet(context) {
             }, aware, sw, now)
         };
     }).sort((a, b) => b.score - a.score || b.distance - a.distance);
+	console.log("DX bridge candidate processing", {
+    active: active.length,
+    candidates: candidateRows.length,
+    ms: Date.now() - candidateStart
+});
 
     const selected = [],
     stations = new Set(),
