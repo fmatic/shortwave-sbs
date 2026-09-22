@@ -117,7 +117,12 @@ export async function onRequestGet(context){
   const cacheKey=new Request(new URL(context.request.url).origin+"/api/bridge?v=2",{method:"GET"});
   const cache=caches.default;
   const hit=await cache.match(cacheKey);
-  if(hit)return hit;
+
+if(hit){
+  const cached=new Response(hit.body,hit);
+  cached.headers.set("x-dxi-cache","HIT");
+  return cached;
+}
 
   const origin=new URL(context.request.url).origin;
   const [schedRes,swRes]=await Promise.all([
@@ -185,12 +190,14 @@ export async function onRequestGet(context){
   };
 
   const response=new Response(JSON.stringify(payload),{
-    headers:{
-      "content-type":"application/json; charset=utf-8",
-      "cache-control":"public, max-age=120, s-maxage=300",
-      "access-control-allow-origin":"https://dxing.world"
-    }
-  });
+  headers:{
+    "content-type":"application/json; charset=utf-8",
+    "cache-control":"public, max-age=120, s-maxage=300",
+    "access-control-allow-origin":"https://dxing.world",
+    "x-dxi-cache":"MISS"
+  }
+});
+  
   context.waitUntil(cache.put(cacheKey,response.clone()));
   return response;
 }
