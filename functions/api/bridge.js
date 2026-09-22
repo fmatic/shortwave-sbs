@@ -331,6 +331,12 @@ export async function onRequestGet(context) {
             score: assistantBandScore(band, mode, count, sw)
         };
     }).filter(x => x.active_count > 0).sort((a, b) => b.score - a.score);
+	
+	const guide = rankedBands[0] || {
+    band: "49m",
+    active_count: 0,
+    score: 0
+};
 
 	const candidateStart = Date.now();
    const candidateRows = active.filter(i => i.txLat && i.txLon && i.station && i.freq).map(i => {
