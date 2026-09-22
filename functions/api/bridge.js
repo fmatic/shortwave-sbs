@@ -270,9 +270,12 @@ function analysis(band, mode, count, sw) {
 }
 
 export async function onRequestGet(context) {
-    const cacheKey = new Request(new URL(context.request.url).origin + "/api/bridge?v=2", {
+   const cacheKey = new Request(
+    new URL(context.request.url).origin + "/api/bridge?v=3",
+    {
         method: "GET"
-    });
+    }
+);
     const cache = caches.default;
     const hit = await cache.match(cacheKey);
 
