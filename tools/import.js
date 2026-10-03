@@ -12,6 +12,12 @@ const outputPath = path.join(
         "data",
         "schedules.json");
 
+const frequencyOutputDir = path.join(
+    __dirname,
+    "..",
+    "data",
+    "frequency");
+
 async function main() {
     const schedules = [];
 
@@ -188,6 +194,72 @@ async function main() {
         },
             null,
             2));
+
+	/*
+ * Build lightweight per-frequency files for
+ * the VadelmaRX /api/frequency endpoint.
+ *
+ * Only EiBi schedules are required by this API.
+ */
+
+fs.rmSync(
+    frequencyOutputDir,
+    {
+        recursive: true,
+        force: true
+    });
+
+fs.mkdirSync(
+    frequencyOutputDir,
+    {
+        recursive: true
+    });
+
+const frequencyIndex = new Map();
+
+for (const item of finalSchedules) {
+
+    const sources =
+        String(item.source || "")
+            .split("+")
+            .map(x => x.trim());
+
+    if (!sources.includes("EiBi"))
+        continue;
+
+    const freq =
+        Number(item.freq);
+
+    if (!Number.isFinite(freq))
+        continue;
+
+    const key =
+        String(freq);
+
+    if (!frequencyIndex.has(key))
+        frequencyIndex.set(key, []);
+
+    frequencyIndex.get(key).push(item);
+}
+
+for (const [freq, items] of frequencyIndex) {
+
+    const filePath =
+        path.join(
+            frequencyOutputDir,
+            freq + ".json");
+
+    fs.writeFileSync(
+        filePath,
+        JSON.stringify({
+            frequency: Number(freq),
+            count: items.length,
+            schedules: items
+        }));
+}
+
+console.log(
+    `Frequency files: ${frequencyIndex.size}`);
 
     console.log("");
     console.log("Schedule source summary:");
