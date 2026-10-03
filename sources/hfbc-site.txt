@@ -1,5 +1,6 @@
-;         24-Apr-2026 SITE.TXT REFERENCE TABLE
+;         05-Aug-2026 SITE.TXT REFERENCE TABLE
 ;
+;05-Aug-2026: Add BNA Baarle-Nassau, HOL, 51N26, 004E56
 ;24-Apr-2026: Add PBH Batavia, IL, USA, 41N50, 088W24
 ;24-Apr-2026: Add EEE Maple Park, IL, USA, 41N51, 088W32
 ;21-Jan-2026: Add PTN Putten, HOL, 52N14, 05E37
@@ -218,6 +219,7 @@ BKO Bamako                         MLI 12N39 008W01
 BLA Blantyre                       MWI 15S42 035E02
 BLG Blagovechtchen                 RUS 50N16 127E30
 BLN Berlin (Deutschlandradio)      D   52N30 013E20
+BNA Baarle-Nassau                  HOL 51N26 004E56
 BNG Bangui                         CAF 04N21 018E35
 BOA Boa Vista                      B   02N51 060W43
 BOC Bocaue                         PHL 14N48 120E55

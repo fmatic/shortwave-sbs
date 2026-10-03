@@ -1,5 +1,6 @@
-;         20-May-2026 BROADCAS.TXT REFERENCE TABLE
+;         05-Aug-2026 BROADCAS.TXT REFERENCE TABLE
 ;
+;05-Aug-2026: Add DIS disco.miami
 ;20-May-2026: Change OMR Broadcaster Name to SunDance
 ;24-Apr-2026: Add EEE DPA Mac LLC
 ;24-Apr-2026: Add PBH Parable Broadcasting Company, LLC
@@ -225,6 +226,7 @@ CVC CVC
 CVO Christian Voice
 DEN Studio Denakker
 DIB Maldives Radio & Television
+DIS disco.miami
 DJR Djibouti Radio
 DRM Digital Radio Mondial
 DTK Media Broadcast GmbH (former:Deutsche Telekom)
