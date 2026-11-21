@@ -2415,3 +2415,60 @@ td:nth-child(9) {
     color: rgba(220, 235, 240, 0.55);
     letter-spacing: 0.03em;
 }
+
+/* =========================================
+   SEO CONTENT – Subtle information section
+   ========================================= */
+
+.seo-content {
+    max-width: 100%;
+    margin: 28px 0 12px;
+    padding: 20px 24px;
+
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.045);
+    border-radius: 12px;
+
+    color: #8494a5;
+    font-size: 12.5px;
+    line-height: 1.75;
+}
+
+.seo-content h2 {
+    margin: 0 0 12px;
+    color: #a4b3c2;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+}
+
+.seo-content h3 {
+    margin: 18px 0 5px;
+    color: #94a6b6;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.seo-content p {
+    margin: 0 0 10px;
+}
+
+.seo-content p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+    .seo-content {
+        padding: 16px;
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+    .seo-content h2 {
+        font-size: 14px;
+    }
+
+    .seo-content h3 {
+        font-size: 12.5px;
+    }
+}
