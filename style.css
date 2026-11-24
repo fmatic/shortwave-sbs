@@ -2472,3 +2472,13 @@ td:nth-child(9) {
         font-size: 12.5px;
     }
 }
+
+.seo-content a {
+    color: #79b8bd;
+    text-decoration: none;
+}
+
+.seo-content a:hover {
+    color: #a5d9dc;
+    text-decoration: underline;
+}
